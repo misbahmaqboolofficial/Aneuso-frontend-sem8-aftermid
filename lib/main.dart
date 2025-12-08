@@ -109,7 +109,9 @@ class MyApp extends StatelessWidget {
           '/products': (context) => const ProductsScreen(),
           '/admin/products': (context) => const AdminProductsScreen(),
           '/admin/product/form': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+            final args =
+                ModalRoute.of(context)!.settings.arguments
+                    as Map<String, dynamic>?;
             return ProductFormScreen(productId: args?['id'] as int?);
           },
           '/admin-dashboard': (context) => const DashboardScreen(),

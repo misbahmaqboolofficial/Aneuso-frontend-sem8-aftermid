@@ -12,16 +12,16 @@ class ProductModel extends ProductEntity {
     required int statusId,
     required List<String> images,
   }) : super(
-          id: id,
-          productName: productName,
-          productCode: productCode,
-          categoryId: categoryId,
-          description: description,
-          price: price,
-          stockQuantity: stockQuantity,
-          statusId: statusId,
-          images: images,
-        );
+         id: id,
+         productName: productName,
+         productCode: productCode,
+         categoryId: categoryId,
+         description: description,
+         price: price,
+         stockQuantity: stockQuantity,
+         statusId: statusId,
+         images: images,
+       );
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
@@ -30,10 +30,16 @@ class ProductModel extends ProductEntity {
       productCode: json['product_code'] ?? '',
       categoryId: json['category_id'] ?? 0,
       description: json['description'],
-      price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
+      price: json['price'] != null
+          ? double.tryParse(json['price'].toString())
+          : null,
       stockQuantity: json['stock_quantity'] ?? 0,
       statusId: json['status_id'] ?? 0,
-      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
 

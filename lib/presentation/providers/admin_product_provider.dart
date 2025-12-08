@@ -75,7 +75,10 @@ class AdminProductProvider with ChangeNotifier {
       // update local product images if present
       final idx = _products.indexWhere((e) => e.id == productId);
       if (idx >= 0) {
-        final updated = ProductModel.fromJson({..._products[idx].toJson(), 'images': urls});
+        final updated = ProductModel.fromJson({
+          ..._products[idx].toJson(),
+          'images': urls,
+        });
         _products[idx] = updated;
         notifyListeners();
       }
@@ -94,7 +97,10 @@ class AdminProductProvider with ChangeNotifier {
         final idx = _products.indexWhere((e) => e.id == productId);
         if (idx >= 0) {
           final images = _products[idx].images.where((i) => i != url).toList();
-          final updated = ProductModel.fromJson({..._products[idx].toJson(), 'images': images});
+          final updated = ProductModel.fromJson({
+            ..._products[idx].toJson(),
+            'images': images,
+          });
           _products[idx] = updated;
           notifyListeners();
         }
@@ -113,7 +119,10 @@ class AdminProductProvider with ChangeNotifier {
       if (ok) {
         final idx = _products.indexWhere((e) => e.id == productId);
         if (idx >= 0) {
-          final updated = ProductModel.fromJson({..._products[idx].toJson(), 'stock_quantity': stock});
+          final updated = ProductModel.fromJson({
+            ..._products[idx].toJson(),
+            'stock_quantity': stock,
+          });
           _products[idx] = updated;
           notifyListeners();
         }

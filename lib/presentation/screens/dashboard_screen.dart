@@ -308,9 +308,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         _dashboardItem('Users', Icons.people, Colors.blue),
         _dashboardItem('Reports', Icons.analytics, Colors.green),
-        _dashboardItem('Product Management', Icons.inventory, Colors.teal, onTap: () {
-          Navigator.pushNamed(context, '/admin/products');
-        }),
+        _dashboardItem(
+          'Product Management',
+          Icons.inventory,
+          Colors.teal,
+          onTap: () {
+            Navigator.pushNamed(context, '/admin/products');
+          },
+        ),
         _dashboardItem('Settings', Icons.settings, Colors.orange),
         _dashboardItem('Logs', Icons.history, Colors.purple),
       ],
@@ -347,15 +352,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         _dashboardItem('Request Pickup', Icons.schedule, Colors.blue),
         _dashboardItem('My Requests', Icons.list_alt, Colors.green),
-        _dashboardItem('Products', Icons.shopping_bag, Colors.orange, onTap: () {
-          Navigator.pushNamed(context, '/products');
-        }),
+        _dashboardItem(
+          'Products',
+          Icons.shopping_bag,
+          Colors.orange,
+          onTap: () {
+            Navigator.pushNamed(context, '/products');
+          },
+        ),
         _dashboardItem('Complaints', Icons.feedback, Colors.purple),
       ],
     );
   }
 
-  Widget _dashboardItem(String title, IconData icon, Color color, {VoidCallback? onTap}) {
+  Widget _dashboardItem(
+    String title,
+    IconData icon,
+    Color color, {
+    VoidCallback? onTap,
+  }) {
     return Card(
       child: InkWell(
         onTap: onTap,

@@ -31,9 +31,11 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
       ),
       body: Consumer<AdminProductProvider>(
         builder: (context, p, _) {
-          if (p.isLoading) return const Center(child: CircularProgressIndicator());
+          if (p.isLoading)
+            return const Center(child: CircularProgressIndicator());
           if (p.error != null) return Center(child: Text(p.error!));
-          if (p.products.isEmpty) return const Center(child: Text('No products'));
+          if (p.products.isEmpty)
+            return const Center(child: Text('No products'));
 
           return ListView.separated(
             itemCount: p.products.length,
@@ -46,10 +48,17 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 trailing: PopupMenuButton<String>(
                   onSelected: (v) async {
                     if (v == 'edit') {
-                      Navigator.pushNamed(context, '/admin/product/form', arguments: {'id': prod.id});
+                      Navigator.pushNamed(
+                        context,
+                        '/admin/product/form',
+                        arguments: {'id': prod.id},
+                      );
                     } else if (v == 'delete') {
                       final ok = await p.deleteProduct(prod.id);
-                      if (!ok) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Delete failed')));
+                      if (!ok)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Delete failed')),
+                        );
                     }
                   },
                   itemBuilder: (_) => [

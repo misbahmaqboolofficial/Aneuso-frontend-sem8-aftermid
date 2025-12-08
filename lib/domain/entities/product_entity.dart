@@ -28,10 +28,16 @@ class ProductEntity {
       productCode: json['product_code'] ?? '',
       categoryId: json['category_id'] ?? 0,
       description: json['description'],
-      price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
+      price: json['price'] != null
+          ? double.tryParse(json['price'].toString())
+          : null,
       stockQuantity: json['stock_quantity'] ?? 0,
       statusId: json['status_id'] ?? 0,
-      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
 }
