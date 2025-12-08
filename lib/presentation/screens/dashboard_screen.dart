@@ -119,11 +119,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.inventory),
+                title: const Text('Product Management'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/admin/products');
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.account_tree),
                 title: const Text('Branch Management'),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/branches');
+                },
+              ),
+            ],
+            // Citizen: browse products
+            if (user.isCitizen) ...[
+              ListTile(
+                leading: const Icon(Icons.shopping_bag),
+                title: const Text('Products'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/products');
                 },
               ),
             ],
@@ -289,6 +308,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         _dashboardItem('Users', Icons.people, Colors.blue),
         _dashboardItem('Reports', Icons.analytics, Colors.green),
+        _dashboardItem('Product Management', Icons.inventory, Colors.teal, onTap: () {
+          Navigator.pushNamed(context, '/admin/products');
+        }),
         _dashboardItem('Settings', Icons.settings, Colors.orange),
         _dashboardItem('Logs', Icons.history, Colors.purple),
       ],
@@ -325,18 +347,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         _dashboardItem('Request Pickup', Icons.schedule, Colors.blue),
         _dashboardItem('My Requests', Icons.list_alt, Colors.green),
-        _dashboardItem('Recycling Tips', Icons.eco, Colors.orange),
+        _dashboardItem('Products', Icons.shopping_bag, Colors.orange, onTap: () {
+          Navigator.pushNamed(context, '/products');
+        }),
         _dashboardItem('Complaints', Icons.feedback, Colors.purple),
       ],
     );
   }
 
-  Widget _dashboardItem(String title, IconData icon, Color color) {
+  Widget _dashboardItem(String title, IconData icon, Color color, {VoidCallback? onTap}) {
     return Card(
       child: InkWell(
-        onTap: () {
-          // Handle item tap
-        },
+        onTap: onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

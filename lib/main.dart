@@ -8,6 +8,7 @@ import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/register_screen.dart';
 import 'presentation/screens/otp_verification_screen.dart';
 import 'presentation/providers/company_provider.dart';
+import 'presentation/providers/admin_product_provider.dart';
 import 'presentation/screens/company_list_screen.dart';
 import 'presentation/screens/dashboard_screen.dart';
 import 'presentation/providers/branch_provider.dart';
@@ -20,6 +21,9 @@ import 'presentation/screens/topic_detail_screen.dart';
 import 'presentation/screens/video_detail_screen.dart';
 import 'presentation/screens/video_player_screen.dart';
 import 'presentation/screens/tutorials_home_screen.dart';
+import 'presentation/screens/products_screen.dart';
+import 'presentation/screens/admin/admin_products_screen.dart';
+import 'presentation/screens/admin/product_form_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CompanyProvider()),
         ChangeNotifierProvider(create: (_) => BranchProvider()),
         ChangeNotifierProvider(create: (_) => TutorialProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProductProvider()),
       ],
       child: MaterialApp(
         title: 'ANEUSO - Waste Management',
@@ -101,6 +106,12 @@ class MyApp extends StatelessWidget {
             );
           },
           '/dashboard': (context) => const DashboardScreen(),
+          '/products': (context) => const ProductsScreen(),
+          '/admin/products': (context) => const AdminProductsScreen(),
+          '/admin/product/form': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+            return ProductFormScreen(productId: args?['id'] as int?);
+          },
           '/admin-dashboard': (context) => const DashboardScreen(),
           '/industry-dashboard': (context) => const DashboardScreen(),
           '/driver-dashboard': (context) => const DashboardScreen(),
