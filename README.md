@@ -1,2 +1,1 @@
-# aneuso_mobile_app_flutter
-ANEUSO Mobile App Flutter
+# aneuso_app_flutter
