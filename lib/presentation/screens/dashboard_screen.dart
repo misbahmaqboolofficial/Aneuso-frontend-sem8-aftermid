@@ -16,13 +16,13 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   bool _isInitializing = true;
   int _selectedDrawerIndex = 0;
-  final List<String> _drawerTitles = [
-    'Dashboard',
-    'My Profile',
-    'Products',
-    'Tutorials',
-    'Settings'
-  ];
+  // final List<String> _drawerTitles = [
+  //   'Dashboard',
+  //   'My Profile',
+  //   'Products',
+  //   'Tutorials',
+  //   'Settings'
+  // ];
 
   @override
   void initState() {
@@ -69,11 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF4E56C0),
-            Color(0xFF9B5DE0),
-            Color(0xFFD78FEE),
-          ],
+          colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0), Color(0xFFD78FEE)],
         ),
       ),
       padding: const EdgeInsets.only(top: 40, bottom: 20, left: 16, right: 16),
@@ -89,10 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [
-                      Colors.white,
-                      Color(0xFFFDCFFA),
-                    ],
+                    colors: [Colors.white, Color(0xFFFDCFFA)],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -190,7 +183,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isSelected ? Color(0xFF4E56C0).withOpacity(0.1) : Colors.transparent,
+        color: isSelected
+            ? Color(0xFF4E56C0).withOpacity(0.1)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
@@ -199,7 +194,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isSelected ? Color(0xFF4E56C0) : Colors.grey.withOpacity(0.2),
+            color: isSelected
+                ? Color(0xFF4E56C0)
+                : Colors.grey.withOpacity(0.2),
           ),
           child: Icon(
             icon,
@@ -236,9 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (authProvider.currentUser == null && !_isInitializing) {
       return const Scaffold(
         body: Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF4E56C0),
-          ),
+          child: CircularProgressIndicator(color: Color(0xFF4E56C0)),
         ),
       );
     }
@@ -255,10 +250,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF4E56C0),
-                      Color(0xFF9B5DE0),
-                    ],
+                    colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                   ),
                   shape: BoxShape.circle,
                 ),
@@ -295,18 +287,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
             '${user.userType} Dashboard',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
           ),
         ),
         centerTitle: true,
@@ -318,10 +304,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: Color(0xFF4E56C0).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.menu_rounded,
-                color: Color(0xFF4E56C0),
-              ),
+              child: Icon(Icons.menu_rounded, color: Color(0xFF4E56C0)),
             ),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
@@ -374,7 +357,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.pushNamed(context, '/profile');
                     },
                   ),
-                  
+
                   // Admin-specific items
                   if (user.isAdmin) ...[
                     _buildDrawerItem(
@@ -411,7 +394,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
                   ],
-                  
+
                   // Citizen-specific items
                   if (user.isCitizen) ...[
                     _buildDrawerItem(
@@ -426,7 +409,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
                   ],
-                  
+
                   _buildDrawerItem(
                     6,
                     'Tutorials',
@@ -501,10 +484,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: Colors.grey[50],
               child: Text(
                 'ANEUSO v1.0.0',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ),
           ],
@@ -638,9 +618,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SizedBox(height: 20),
 
             // Dashboard Content
-            Expanded(
-              child: _buildDashboardContent(user),
-            ),
+            Expanded(child: _buildDashboardContent(user)),
           ],
         ),
       ),
@@ -674,10 +652,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             child: Text(
               'Unknown user type',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF4E56C0),
-              ),
+              style: TextStyle(fontSize: 16, color: Color(0xFF4E56C0)),
             ),
           ),
         );
@@ -686,12 +661,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildAdminDashboard() {
     final cards = [
-      _dashboardCard('Users', Icons.people_rounded, Color(0xFF4E56C0), 'Manage all users'),
-      _dashboardCard('Reports', Icons.analytics_rounded, Color(0xFF9B5DE0), 'View analytics'),
-      _dashboardCard('Products', Icons.inventory_rounded, Color(0xFFD78FEE), 'Manage inventory'),
-      _dashboardCard('Settings', Icons.settings_rounded, Color(0xFFF15BB5), 'System settings'),
-      _dashboardCard('Logs', Icons.history_rounded, Color(0xFF00BBF9), 'View activity logs'),
-      _dashboardCard('Support', Icons.support_agent_rounded, Color(0xFF00F5D4), 'Help & support'),
+      _dashboardCard(
+        'Users',
+        Icons.people_rounded,
+        Color(0xFF4E56C0),
+        'Manage all users',
+      ),
+      _dashboardCard(
+        'Reports',
+        Icons.analytics_rounded,
+        Color(0xFF9B5DE0),
+        'View analytics',
+      ),
+      _dashboardCard(
+        'Products',
+        Icons.inventory_rounded,
+        Color(0xFFD78FEE),
+        'Manage inventory',
+      ),
+      _dashboardCard(
+        'Settings',
+        Icons.settings_rounded,
+        Color(0xFFF15BB5),
+        'System settings',
+      ),
+      _dashboardCard(
+        'Logs',
+        Icons.history_rounded,
+        Color(0xFF00BBF9),
+        'View activity logs',
+      ),
+      _dashboardCard(
+        'Support',
+        Icons.support_agent_rounded,
+        Color(0xFF00F5D4),
+        'Help & support',
+      ),
     ];
 
     return GridView.builder(
@@ -708,12 +713,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildIndustryDashboard() {
     final cards = [
-      _dashboardCard('Inventory', Icons.inventory_rounded, Color(0xFF4E56C0), 'Waste inventory'),
-      _dashboardCard('Schedule', Icons.calendar_today_rounded, Color(0xFF9B5DE0), 'Pickup schedule'),
-      _dashboardCard('History', Icons.history_rounded, Color(0xFFD78FEE), 'Past pickups'),
-      _dashboardCard('Profile', Icons.person_rounded, Color(0xFFF15BB5), 'My profile'),
-      _dashboardCard('Reports', Icons.assessment_rounded, Color(0xFF00BBF9), 'Generate reports'),
-      _dashboardCard('Support', Icons.support_rounded, Color(0xFF00F5D4), 'Get help'),
+      _dashboardCard(
+        'Inventory',
+        Icons.inventory_rounded,
+        Color(0xFF4E56C0),
+        'Waste inventory',
+      ),
+      _dashboardCard(
+        'Schedule',
+        Icons.calendar_today_rounded,
+        Color(0xFF9B5DE0),
+        'Pickup schedule',
+      ),
+      _dashboardCard(
+        'History',
+        Icons.history_rounded,
+        Color(0xFFD78FEE),
+        'Past pickups',
+      ),
+      _dashboardCard(
+        'Profile',
+        Icons.person_rounded,
+        Color(0xFFF15BB5),
+        'My profile',
+      ),
+      _dashboardCard(
+        'Reports',
+        Icons.assessment_rounded,
+        Color(0xFF00BBF9),
+        'Generate reports',
+      ),
+      _dashboardCard(
+        'Support',
+        Icons.support_rounded,
+        Color(0xFF00F5D4),
+        'Get help',
+      ),
     ];
 
     return GridView.builder(
@@ -730,12 +765,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildDriverDashboard() {
     final cards = [
-      _dashboardCard('Routes', Icons.route_rounded, Color(0xFF4E56C0), 'My routes'),
-      _dashboardCard('Pickups', Icons.checklist_rounded, Color(0xFF9B5DE0), 'Today\'s tasks'),
-      _dashboardCard('Vehicle', Icons.directions_car_rounded, Color(0xFFD78FEE), 'Vehicle info'),
-      _dashboardCard('Earnings', Icons.attach_money_rounded, Color(0xFFF15BB5), 'My earnings'),
-      _dashboardCard('Schedule', Icons.schedule_rounded, Color(0xFF00BBF9), 'Weekly schedule'),
-      _dashboardCard('Support', Icons.help_rounded, Color(0xFF00F5D4), 'Help center'),
+      _dashboardCard(
+        'Routes',
+        Icons.route_rounded,
+        Color(0xFF4E56C0),
+        'My routes',
+      ),
+      _dashboardCard(
+        'Pickups',
+        Icons.checklist_rounded,
+        Color(0xFF9B5DE0),
+        'Today\'s tasks',
+      ),
+      _dashboardCard(
+        'Vehicle',
+        Icons.directions_car_rounded,
+        Color(0xFFD78FEE),
+        'Vehicle info',
+      ),
+      _dashboardCard(
+        'Earnings',
+        Icons.attach_money_rounded,
+        Color(0xFFF15BB5),
+        'My earnings',
+      ),
+      _dashboardCard(
+        'Schedule',
+        Icons.schedule_rounded,
+        Color(0xFF00BBF9),
+        'Weekly schedule',
+      ),
+      _dashboardCard(
+        'Support',
+        Icons.help_rounded,
+        Color(0xFF00F5D4),
+        'Help center',
+      ),
     ];
 
     return GridView.builder(
@@ -752,12 +817,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildCitizenDashboard() {
     final cards = [
-      _dashboardCard('Request', Icons.schedule_rounded, Color(0xFF4E56C0), 'Request pickup'),
-      _dashboardCard('My Requests', Icons.list_alt_rounded, Color(0xFF9B5DE0), 'View requests'),
-      _dashboardCard('Products', Icons.shopping_bag_rounded, Color(0xFFD78FEE), 'Browse products'),
-      _dashboardCard('Complaints', Icons.feedback_rounded, Color(0xFFF15BB5), 'Submit feedback'),
-      _dashboardCard('History', Icons.history_rounded, Color(0xFF00BBF9), 'Past activities'),
-      _dashboardCard('Profile', Icons.person_rounded, Color(0xFF00F5D4), 'My account'),
+      _dashboardCard(
+        'Request',
+        Icons.schedule_rounded,
+        Color(0xFF4E56C0),
+        'Request pickup',
+      ),
+      _dashboardCard(
+        'My Requests',
+        Icons.list_alt_rounded,
+        Color(0xFF9B5DE0),
+        'View requests',
+      ),
+      _dashboardCard(
+        'Products',
+        Icons.shopping_bag_rounded,
+        Color(0xFFD78FEE),
+        'Browse products',
+      ),
+      _dashboardCard(
+        'Complaints',
+        Icons.feedback_rounded,
+        Color(0xFFF15BB5),
+        'Submit feedback',
+      ),
+      _dashboardCard(
+        'History',
+        Icons.history_rounded,
+        Color(0xFF00BBF9),
+        'Past activities',
+      ),
+      _dashboardCard(
+        'Profile',
+        Icons.person_rounded,
+        Color(0xFF00F5D4),
+        'My account',
+      ),
     ];
 
     return GridView.builder(
@@ -772,7 +867,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _dashboardCard(String title, IconData icon, Color color, String subtitle) {
+  Widget _dashboardCard(
+    String title,
+    IconData icon,
+    Color color,
+    String subtitle,
+  ) {
     return GestureDetector(
       onTap: () {
         // Handle card tap based on title
@@ -794,10 +894,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               offset: Offset(0, 8),
             ),
           ],
-          border: Border.all(
-            color: color.withOpacity(0.1),
-            width: 1,
-          ),
+          border: Border.all(color: color.withOpacity(0.1), width: 1),
         ),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -809,10 +906,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 50,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      color.withOpacity(0.9),
-                      color.withOpacity(0.6),
-                    ],
+                    colors: [color.withOpacity(0.9), color.withOpacity(0.6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -825,13 +919,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
-                child: Center(
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
+                child: Center(child: Icon(icon, color: Colors.white, size: 24)),
               ),
               SizedBox(height: 15),
               Text(
@@ -846,10 +934,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SizedBox(height: 6),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
             ],
