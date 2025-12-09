@@ -15,7 +15,14 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   bool _isInitializing = true;
-  // bool _shouldRedirectToLogin = false;
+  int _selectedDrawerIndex = 0;
+  final List<String> _drawerTitles = [
+    'Dashboard',
+    'My Profile',
+    'Products',
+    'Tutorials',
+    'Settings'
+  ];
 
   @override
   void initState() {
@@ -48,7 +55,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _checkAuthStatus() {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.currentUser == null && !_isInitializing) {
-      // Use WidgetsBinding to schedule the navigation after the build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           Navigator.pushReplacementNamed(context, '/login');
@@ -57,230 +63,584 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Widget _buildDrawerHeader(UserEntity user) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF4E56C0),
+            Color(0xFF9B5DE0),
+            Color(0xFFD78FEE),
+          ],
+        ),
+      ),
+      padding: const EdgeInsets.only(top: 40, bottom: 20, left: 16, right: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // User Avatar
+          Row(
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.white,
+                      Color(0xFFFDCFFA),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    user.fullName.isNotEmpty ? user.fullName[0] : 'U',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF4E56C0),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.fullName,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      user.email,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+          // Status Chip
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: user.isActive
+                  ? Colors.green.withOpacity(0.2)
+                  : Colors.red.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: user.isActive ? Colors.green : Colors.red,
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  user.isActive ? Icons.check_circle : Icons.error,
+                  size: 14,
+                  color: user.isActive ? Colors.green : Colors.red,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  user.isActive ? 'Active' : 'Inactive',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: user.isActive ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    int index,
+    String title,
+    IconData icon,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? Color(0xFF4E56C0).withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isSelected ? Color(0xFF4E56C0) : Colors.grey.withOpacity(0.2),
+          ),
+          child: Icon(
+            icon,
+            color: isSelected ? Colors.white : Color(0xFF4E56C0),
+            size: 20,
+          ),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? Color(0xFF4E56C0) : Colors.black87,
+          ),
+        ),
+        trailing: isSelected
+            ? Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF4E56C0),
+                ),
+              )
+            : null,
+        onTap: onTap,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
-    // Check if user is null and we're done initializing
     if (authProvider.currentUser == null && !_isInitializing) {
-      // Return empty container while navigation happens
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF4E56C0),
+          ),
+        ),
+      );
     }
 
-    // Still initializing
     if (_isInitializing || authProvider.currentUser == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: Color(0xFFFDCFFA).withOpacity(0.1),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF4E56C0),
+                      Color(0xFF9B5DE0),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.recycling_rounded,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Loading Dashboard...',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Color(0xFF4E56C0),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     final user = authProvider.currentUser!;
 
     return Scaffold(
+      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
       appBar: AppBar(
-        title: Text('${user.userType} Dashboard'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              colors: [
+                Color(0xFF4E56C0),
+                Color(0xFF9B5DE0),
+              ],
+            ).createShader(bounds);
+          },
+          child: Text(
+            '${user.userType} Dashboard',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        centerTitle: true,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Color(0xFF4E56C0).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.menu_rounded,
+                color: Color(0xFF4E56C0),
+              ),
+            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => authProvider.logout(),
+            icon: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Color(0xFF4E56C0).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.notifications_none_rounded,
+                color: Color(0xFF4E56C0),
+                size: 22,
+              ),
+            ),
+            onPressed: () {},
           ),
+          SizedBox(width: 8),
         ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(user.fullName),
-              accountEmail: Text(user.email),
-              currentAccountPicture: CircleAvatar(
-                child: Text(user.fullName.isNotEmpty ? user.fullName[0] : ''),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.dashboard),
-              title: const Text('Dashboard'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('My Profile'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/profile');
-              },
-            ),
-            // Admin-only: Company & Branch Management
-            if (user.isAdmin) ...[
-              ListTile(
-                leading: const Icon(Icons.business),
-                title: const Text('Company Management'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/companies');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.inventory),
-                title: const Text('Product Management'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/admin/products');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.account_tree),
-                title: const Text('Branch Management'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/branches');
-                },
-              ),
-            ],
-            // Citizen: browse products
-            if (user.isCitizen) ...[
-              ListTile(
-                leading: const Icon(Icons.shopping_bag),
-                title: const Text('Products'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/products');
-                },
-              ),
-            ],
-            ExpansionTile(
-              leading: const Icon(Icons.play_circle_fill),
-              title: const Text('Tutorials'),
-              children: [
-                ListTile(
-                  title: const Text('Browse'),
-                  subtitle: const Text(
-                    'Explore topics, videos and featured content',
+            _buildDrawerHeader(user),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  _buildDrawerItem(
+                    0,
+                    'Dashboard',
+                    Icons.dashboard_rounded,
+                    _selectedDrawerIndex == 0,
+                    () {
+                      setState(() => _selectedDrawerIndex = 0);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/tutorials/home');
-                  },
-                ),
-                const Divider(),
-                if (user.isAdmin) ...[
-                  ListTile(
-                    title: const Text('Manage Topics'),
-                    subtitle: const Text(
-                      'Create / Update / Delete tutorial topics',
+                  _buildDrawerItem(
+                    1,
+                    'My Profile',
+                    Icons.person_rounded,
+                    _selectedDrawerIndex == 1,
+                    () {
+                      setState(() => _selectedDrawerIndex = 1);
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/profile');
+                    },
+                  ),
+                  
+                  // Admin-specific items
+                  if (user.isAdmin) ...[
+                    _buildDrawerItem(
+                      2,
+                      'Company Management',
+                      Icons.business_rounded,
+                      _selectedDrawerIndex == 2,
+                      () {
+                        setState(() => _selectedDrawerIndex = 2);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/companies');
+                      },
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (c) => AlertDialog(
-                          title: const Text('Manage Topics'),
-                          content: const Text(
-                            'Admin interface to manage topics will be here.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(c),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Manage Videos'),
-                    subtitle: const Text(
-                      'Create / Update / Delete tutorial videos',
+                    _buildDrawerItem(
+                      3,
+                      'Product Management',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 3,
+                      () {
+                        setState(() => _selectedDrawerIndex = 3);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
                     ),
-                    onTap: () {
+                    _buildDrawerItem(
+                      4,
+                      'Branch Management',
+                      Icons.account_tree_rounded,
+                      _selectedDrawerIndex == 4,
+                      () {
+                        setState(() => _selectedDrawerIndex = 4);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/branches');
+                      },
+                    ),
+                  ],
+                  
+                  // Citizen-specific items
+                  if (user.isCitizen) ...[
+                    _buildDrawerItem(
+                      5,
+                      'Products',
+                      Icons.shopping_bag_rounded,
+                      _selectedDrawerIndex == 5,
+                      () {
+                        setState(() => _selectedDrawerIndex = 5);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/products');
+                      },
+                    ),
+                  ],
+                  
+                  _buildDrawerItem(
+                    6,
+                    'Tutorials',
+                    Icons.play_circle_fill_rounded,
+                    _selectedDrawerIndex == 6,
+                    () {
+                      setState(() => _selectedDrawerIndex = 6);
                       Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (c) => AlertDialog(
-                          title: const Text('Manage Videos'),
-                          content: const Text(
-                            'Admin interface to manage videos will be here.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(c),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/tutorials/home');
                     },
                   ),
-                  ListTile(
-                    title: const Text('Manage Slider'),
-                    subtitle: const Text('Arrange featured slider videos'),
-                    onTap: () {
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Divider(height: 1, color: Colors.grey[300]),
+                  ),
+                  SizedBox(height: 20),
+                  _buildDrawerItem(
+                    7,
+                    'Settings',
+                    Icons.settings_rounded,
+                    _selectedDrawerIndex == 7,
+                    () {
+                      setState(() => _selectedDrawerIndex = 7);
                       Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (c) => AlertDialog(
-                          title: const Text('Manage Slider'),
-                          content: const Text(
-                            'Admin interface to manage slider will be here.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(c),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
                     },
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFD78FEE).withOpacity(0.1),
+                          Color(0xFFFDCFFA).withOpacity(0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Color(0xFFD78FEE).withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red.withOpacity(0.1),
+                        ),
+                        child: Icon(
+                          Icons.logout_rounded,
+                          color: Colors.red,
+                          size: 20,
+                        ),
+                      ),
+                      title: Text(
+                        'Logout',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red,
+                        ),
+                      ),
+                      onTap: () => authProvider.logout(),
+                    ),
                   ),
                 ],
-              ],
+              ),
             ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () => authProvider.logout(),
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.grey[50],
+              child: Text(
+                'ANEUSO v1.0.0',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User Info Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Welcome, ${user.fullName}!',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+            // Welcome Card with gradient
+            Container(
+              padding: const EdgeInsets.all(25),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF4E56C0).withOpacity(0.9),
+                    Color(0xFF9B5DE0).withOpacity(0.9),
+                    Color(0xFFD78FEE).withOpacity(0.9),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xFF4E56C0).withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome back,',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          user.fullName,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.email_rounded,
+                              size: 16,
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              user.email,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.8),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.phone_rounded,
+                              size: 16,
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              user.phoneNumber,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text('Email: ${user.email}'),
-                    Text('Phone: ${user.phoneNumber}'),
-                    Text('User Type: ${user.userType}'),
-                    Text('Status: ${user.isActive ? 'Active' : 'Inactive'}'),
-                  ],
+                    child: Center(
+                      child: Icon(
+                        Icons.recycling_rounded,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+
+            // Dashboard title
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Quick Actions',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF4E56C0),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
-            // Dashboard Content based on user type
-            Expanded(child: _buildDashboardContent(user)),
+            // Dashboard Content
+            Expanded(
+              child: _buildDashboardContent(user),
+            ),
           ],
         ),
       ),
@@ -298,93 +658,202 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case AppConstants.userTypeCitizen:
         return _buildCitizenDashboard();
       default:
-        return const Center(child: Text('Unknown user type'));
+        return Center(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Text(
+              'Unknown user type',
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFF4E56C0),
+              ),
+            ),
+          ),
+        );
     }
   }
 
   Widget _buildAdminDashboard() {
-    return GridView.count(
-      crossAxisCount: 2,
-      children: [
-        _dashboardItem('Users', Icons.people, Colors.blue),
-        _dashboardItem('Reports', Icons.analytics, Colors.green),
-        _dashboardItem(
-          'Product Management',
-          Icons.inventory,
-          Colors.teal,
-          onTap: () {
-            Navigator.pushNamed(context, '/admin/products');
-          },
-        ),
-        _dashboardItem('Settings', Icons.settings, Colors.orange),
-        _dashboardItem('Logs', Icons.history, Colors.purple),
-      ],
+    final cards = [
+      _dashboardCard('Users', Icons.people_rounded, Color(0xFF4E56C0), 'Manage all users'),
+      _dashboardCard('Reports', Icons.analytics_rounded, Color(0xFF9B5DE0), 'View analytics'),
+      _dashboardCard('Products', Icons.inventory_rounded, Color(0xFFD78FEE), 'Manage inventory'),
+      _dashboardCard('Settings', Icons.settings_rounded, Color(0xFFF15BB5), 'System settings'),
+      _dashboardCard('Logs', Icons.history_rounded, Color(0xFF00BBF9), 'View activity logs'),
+      _dashboardCard('Support', Icons.support_agent_rounded, Color(0xFF00F5D4), 'Help & support'),
+    ];
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.1,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+      ),
+      itemCount: cards.length,
+      itemBuilder: (context, index) => cards[index],
     );
   }
 
   Widget _buildIndustryDashboard() {
-    return GridView.count(
-      crossAxisCount: 2,
-      children: [
-        _dashboardItem('Waste Inventory', Icons.inventory, Colors.blue),
-        _dashboardItem('Schedule Pickup', Icons.calendar_today, Colors.green),
-        _dashboardItem('History', Icons.history, Colors.orange),
-        _dashboardItem('Profile', Icons.person, Colors.purple),
-      ],
+    final cards = [
+      _dashboardCard('Inventory', Icons.inventory_rounded, Color(0xFF4E56C0), 'Waste inventory'),
+      _dashboardCard('Schedule', Icons.calendar_today_rounded, Color(0xFF9B5DE0), 'Pickup schedule'),
+      _dashboardCard('History', Icons.history_rounded, Color(0xFFD78FEE), 'Past pickups'),
+      _dashboardCard('Profile', Icons.person_rounded, Color(0xFFF15BB5), 'My profile'),
+      _dashboardCard('Reports', Icons.assessment_rounded, Color(0xFF00BBF9), 'Generate reports'),
+      _dashboardCard('Support', Icons.support_rounded, Color(0xFF00F5D4), 'Get help'),
+    ];
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.1,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+      ),
+      itemCount: cards.length,
+      itemBuilder: (context, index) => cards[index],
     );
   }
 
   Widget _buildDriverDashboard() {
-    return GridView.count(
-      crossAxisCount: 2,
-      children: [
-        _dashboardItem('My Routes', Icons.route, Colors.blue),
-        _dashboardItem('Today\'s Pickups', Icons.checklist, Colors.green),
-        _dashboardItem('Vehicle Info', Icons.directions_car, Colors.orange),
-        _dashboardItem('Earnings', Icons.attach_money, Colors.purple),
-      ],
+    final cards = [
+      _dashboardCard('Routes', Icons.route_rounded, Color(0xFF4E56C0), 'My routes'),
+      _dashboardCard('Pickups', Icons.checklist_rounded, Color(0xFF9B5DE0), 'Today\'s tasks'),
+      _dashboardCard('Vehicle', Icons.directions_car_rounded, Color(0xFFD78FEE), 'Vehicle info'),
+      _dashboardCard('Earnings', Icons.attach_money_rounded, Color(0xFFF15BB5), 'My earnings'),
+      _dashboardCard('Schedule', Icons.schedule_rounded, Color(0xFF00BBF9), 'Weekly schedule'),
+      _dashboardCard('Support', Icons.help_rounded, Color(0xFF00F5D4), 'Help center'),
+    ];
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.1,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+      ),
+      itemCount: cards.length,
+      itemBuilder: (context, index) => cards[index],
     );
   }
 
   Widget _buildCitizenDashboard() {
-    return GridView.count(
-      crossAxisCount: 2,
-      children: [
-        _dashboardItem('Request Pickup', Icons.schedule, Colors.blue),
-        _dashboardItem('My Requests', Icons.list_alt, Colors.green),
-        _dashboardItem(
-          'Products',
-          Icons.shopping_bag,
-          Colors.orange,
-          onTap: () {
-            Navigator.pushNamed(context, '/products');
-          },
-        ),
-        _dashboardItem('Complaints', Icons.feedback, Colors.purple),
-      ],
+    final cards = [
+      _dashboardCard('Request', Icons.schedule_rounded, Color(0xFF4E56C0), 'Request pickup'),
+      _dashboardCard('My Requests', Icons.list_alt_rounded, Color(0xFF9B5DE0), 'View requests'),
+      _dashboardCard('Products', Icons.shopping_bag_rounded, Color(0xFFD78FEE), 'Browse products'),
+      _dashboardCard('Complaints', Icons.feedback_rounded, Color(0xFFF15BB5), 'Submit feedback'),
+      _dashboardCard('History', Icons.history_rounded, Color(0xFF00BBF9), 'Past activities'),
+      _dashboardCard('Profile', Icons.person_rounded, Color(0xFF00F5D4), 'My account'),
+    ];
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.1,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+      ),
+      itemCount: cards.length,
+      itemBuilder: (context, index) => cards[index],
     );
   }
 
-  Widget _dashboardItem(
-    String title,
-    IconData icon,
-    Color color, {
-    VoidCallback? onTap,
-  }) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: color),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+  Widget _dashboardCard(String title, IconData icon, Color color, String subtitle) {
+    return GestureDetector(
+      onTap: () {
+        // Handle card tap based on title
+        if (title == 'Products') {
+          Navigator.pushNamed(context, '/products');
+        } else if (title == 'Product Management') {
+          Navigator.pushNamed(context, '/admin/products');
+        }
+        // Add more navigation handlers as needed
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.1),
+              blurRadius: 15,
+              offset: Offset(0, 8),
             ),
           ],
+          border: Border.all(
+            color: color.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withOpacity(0.9),
+                      color.withOpacity(0.6),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF4E56C0),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 6),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
