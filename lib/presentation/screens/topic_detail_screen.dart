@@ -39,7 +39,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
       builder: (context, provider, _) {
         final filteredVideos = _getFilteredVideos(provider.videos);
         final activeCount = provider.videos.where((v) => v.isActive).length;
-        final inactiveCount = provider.videos.where((v) => !v.isActive).length;
+        final inactiveCount =
+            provider.videos.where((v) => !v.isActive).length;
         final totalCount = provider.videos.length;
 
         return Scaffold(
@@ -101,7 +102,10 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                           height: 80,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Color(0xFF9B5DE0), Color(0xFFD78FEE)],
+                              colors: [
+                                Color(0xFF9B5DE0),
+                                Color(0xFFD78FEE)
+                              ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
@@ -114,7 +118,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                             ],
                           ),
                           child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation(Colors.white),
                             strokeWidth: 3,
                           ),
                         ),
@@ -169,13 +174,15 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                         ),
                         SizedBox(height: 12),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 40),
                           child: Text(
                             'There are no videos in this topic yet.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 15,
-                              color: Color(0xFF9B5DE0).withOpacity(0.7),
+                              color:
+                                  Color(0xFF9B5DE0).withOpacity(0.7),
                             ),
                           ),
                         ),
@@ -240,13 +247,17 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               gradient: LinearGradient(
-                                colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                                colors: [
+                                  Color(0xFF4E56C0),
+                                  Color(0xFF9B5DE0)
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Color(0xFF4E56C0).withOpacity(0.2),
+                                  color: Color(0xFF4E56C0)
+                                      .withOpacity(0.2),
                                   blurRadius: 15,
                                   offset: Offset(0, 5),
                                 ),
@@ -260,8 +271,10 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                                     width: 60,
                                     height: 60,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white
+                                          .withOpacity(0.2),
+                                      borderRadius:
+                                          BorderRadius.circular(15),
                                     ),
                                     child: Icon(
                                       Icons.video_library_rounded,
@@ -280,9 +293,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                                         Text(
                                           'TOTAL VIDEOS',
                                           style: TextStyle(
-                                            color: Colors.white.withOpacity(
-                                              0.8,
-                                            ),
+                                            color: Colors.white
+                                                .withOpacity(0.8),
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.5,
@@ -312,13 +324,17 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               gradient: LinearGradient(
-                                colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
+                                colors: [
+                                  Color(0xFFD78FEE),
+                                  Color(0xFFFDCFFA)
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Color(0xFFD78FEE).withOpacity(0.2),
+                                  color: Color(0xFFD78FEE)
+                                      .withOpacity(0.2),
                                   blurRadius: 15,
                                   offset: Offset(0, 5),
                                 ),
@@ -332,8 +348,10 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                                     width: 60,
                                     height: 60,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white
+                                          .withOpacity(0.2),
+                                      borderRadius:
+                                          BorderRadius.circular(15),
                                     ),
                                     child: Icon(
                                       Icons.check_circle_rounded,
@@ -352,9 +370,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                                         Text(
                                           'ACTIVE VIDEOS',
                                           style: TextStyle(
-                                            color: Colors.white.withOpacity(
-                                              0.8,
-                                            ),
+                                            color: Colors.white
+                                                .withOpacity(0.8),
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.5,
@@ -385,7 +402,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
 
                     // Filter Section Header
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 24),
                       child: Text(
                         'Filter Videos',
                         style: TextStyle(
@@ -405,15 +423,14 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         children: [
-                          _buildFilterChip('All Videos', 'all', totalCount),
-                          SizedBox(width: 12),
-                          _buildFilterChip('Active', 'active', activeCount),
+                          _buildFilterChip(
+                              'All Videos', 'all', totalCount),
                           SizedBox(width: 12),
                           _buildFilterChip(
-                            'Inactive',
-                            'inactive',
-                            inactiveCount,
-                          ),
+                              'Active', 'active', activeCount),
+                          SizedBox(width: 12),
+                          _buildFilterChip(
+                              'Inactive', 'inactive', inactiveCount),
                         ],
                       ),
                     ),
@@ -422,9 +439,11 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
 
                     // Videos List Header
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 24),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Video List',
@@ -442,14 +461,18 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                             ),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
+                                colors: [
+                                  Color(0xFFD78FEE),
+                                  Color(0xFFFDCFFA)
+                                ],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ),
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Color(0xFFD78FEE).withOpacity(0.3),
+                                  color: Color(0xFFD78FEE)
+                                      .withOpacity(0.3),
                                   blurRadius: 10,
                                 ),
                               ],
@@ -469,16 +492,20 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
 
                     SizedBox(height: 16),
 
-                    // Videos List - FIXED WITH LIMITED HEIGHT
+                    // Videos List - now expands fully; outer scroll handles scrolling
                     Container(
-                      constraints: BoxConstraints(
-                        minHeight: 200,
-                        maxHeight: MediaQuery.of(context).size.height * 0.5,
-                      ),
+                      // REMOVED maxHeight so the list can grow freely  // CHANGED
+                      // constraints: BoxConstraints(
+                      //   minHeight: 200,
+                      //   maxHeight:
+                      //       MediaQuery.of(context).size.height * 0.5,
+                      // ),
                       child: ListView.builder(
                         shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        physics:
+                            const NeverScrollableScrollPhysics(), // CHANGED
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20),
                         itemCount: filteredVideos.length,
                         itemBuilder: (ctx, idx) {
                           final v = filteredVideos[idx];
@@ -511,12 +538,14 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
           color: isSelected ? Color(0xFF4E56C0) : Colors.white,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color: isSelected ? Color(0xFF4E56C0) : Color(0xFFD78FEE),
+            color:
+                isSelected ? Color(0xFF4E56C0) : Color(0xFFD78FEE),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFD78FEE).withOpacity(isSelected ? 0.3 : 0.1),
+              color: Color(0xFFD78FEE)
+                  .withOpacity(isSelected ? 0.3 : 0.1),
               blurRadius: 12,
               offset: Offset(0, 4),
             ),
@@ -528,14 +557,16 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Color(0xFF4E56C0),
+                color:
+                    isSelected ? Colors.white : Color(0xFF4E56C0),
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
             ),
             SizedBox(width: 8),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding:
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white.withOpacity(0.3)
@@ -545,7 +576,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
               child: Text(
                 '$count',
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Color(0xFF4E56C0),
+                  color:
+                      isSelected ? Colors.white : Color(0xFF4E56C0),
                   fontWeight: FontWeight.w800,
                   fontSize: 12,
                 ),
@@ -586,11 +618,12 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
           borderRadius: BorderRadius.circular(20),
           onTap: v.isActive
               ? () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => VideoDetailScreen(videoId: v.id),
-                  ),
-                )
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          VideoDetailScreen(videoId: v.id),
+                    ),
+                  )
               : null,
           child: Container(
             constraints: BoxConstraints(minHeight: 100),
@@ -632,7 +665,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                     // Content
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           Text(
                             v.title,
@@ -650,15 +684,18 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                           // Duration and Status
                           Row(
                             children: [
-                              if (v.duration != null && v.duration!.isNotEmpty)
+                              if (v.duration != null &&
+                                  v.duration!.isNotEmpty)
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white
+                                        .withOpacity(0.2),
+                                    borderRadius:
+                                        BorderRadius.circular(10),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -674,7 +711,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 12,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight:
+                                              FontWeight.w600,
                                         ),
                                       ),
                                     ],
@@ -690,7 +728,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius:
+                                        BorderRadius.circular(10),
                                   ),
                                   child: Text(
                                     'Inactive',
@@ -719,7 +758,8 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color:
+                                  Colors.black.withOpacity(0.2),
                               blurRadius: 10,
                             ),
                           ],
