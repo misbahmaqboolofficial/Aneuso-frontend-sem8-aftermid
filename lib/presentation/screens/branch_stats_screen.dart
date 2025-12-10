@@ -88,27 +88,27 @@ class _BranchStatsScreenState extends State<BranchStatsScreen> {
       if (key.toLowerCase().contains('company')) {
         if (value is String && value.contains('[{') && value.contains('}]')) {
           // Parse the JSON string
-          final cleanValue = value.replaceAllMapped(
-            RegExp(r'\[{(.*?)}\]'),
-            (match) {
-              final content = match.group(1);
-              final items = content!.split('}, {');
-              final companies = items.map((item) {
-                final cleanItem = item.replaceAll('{', '').replaceAll('}', '');
-                final pairs = cleanItem.split(', ');
-                Map<String, String> companyData = {};
-                for (var pair in pairs) {
-                  final keyValue = pair.split(': ');
-                  if (keyValue.length == 2) {
-                    companyData[keyValue[0].trim()] = keyValue[1].trim();
-                  }
-                }
-                return companyData;
-              }).toList();
+          // final cleanValue = value.replaceAllMapped(
+          //   RegExp(r'\[{(.*?)}\]'),
+          //   (match) {
+          //     final content = match.group(1);
+          //     final items = content!.split('}, {');
+          //     final companies = items.map((item) {
+          //       final cleanItem = item.replaceAll('{', '').replaceAll('}', '');
+          //       final pairs = cleanItem.split(', ');
+          //       Map<String, String> companyData = {};
+          //       for (var pair in pairs) {
+          //         final keyValue = pair.split(': ');
+          //         if (keyValue.length == 2) {
+          //           companyData[keyValue[0].trim()] = keyValue[1].trim();
+          //         }
+          //       }
+          //       return companyData;
+          //     }).toList();
 
-              return companies.length.toString();
-            },
-          );
+          //     return companies.length.toString();
+          //   },
+          // );
 
           return Container(
             width: double.infinity,
