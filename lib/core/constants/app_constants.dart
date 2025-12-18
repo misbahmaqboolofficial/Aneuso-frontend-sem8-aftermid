@@ -1,5 +1,6 @@
 class AppConstants {
-  static const String baseUrl = 'http://localhost:3000/api';
+  // static const String baseUrl = 'http://localhost:3000/api';
+  static const String baseUrl = 'http://aneusoapi.ashfaqalizardaristore.com/api';
   static const String tokenKey = 'auth_token';
   static const String userKey = 'user_data';
   static const int connectTimeout = 30000;

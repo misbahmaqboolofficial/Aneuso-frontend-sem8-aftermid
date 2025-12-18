@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,7 +15,7 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  YoutubePlayerController? _ytController;
+  // YoutubePlayerController? _ytController;
   VideoPlayerController? _videoController;
   ChewieController? _chewieController;
   String? _error;
@@ -28,9 +28,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         return null; // Indicate this is a placeholder
       }
 
-      // Try youtube_player_flutter's built-in method
-      final id = YoutubePlayer.convertUrlToId(url);
-      if (id != null && id.isNotEmpty && !id.contains('example')) return id;
+      // // Try youtube_player_flutter's built-in method
+      // final id = YoutubePlayer.convertUrlToId(url);
+      // if (id != null && id.isNotEmpty && !id.contains('example')) return id;
 
       // Fallback: manual extraction from common YouTube URL formats
       if (url.contains('youtube.com') || url.contains('youtu.be')) {
@@ -86,21 +86,21 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       final videoId = _extractYoutubeVideoId(widget.url);
       if (videoId != null && videoId.isNotEmpty) {
         try {
-          _ytController = YoutubePlayerController(
-            initialVideoId: videoId,
-            flags: const YoutubePlayerFlags(
-              autoPlay: false,
-              mute: false,
-              enableCaption: true,
-            ),
-          );
-          _ytController!.addListener(() {
-            if (_ytController!.value.isReady) {
-              setState(() {
-                _isInitializing = false;
-              });
-            }
-          });
+          // _ytController = YoutubePlayerController(
+          //   initialVideoId: videoId,
+          //   flags: const YoutubePlayerFlags(
+          //     autoPlay: false,
+          //     mute: false,
+          //     enableCaption: true,
+          //   ),
+          // );
+          // _ytController!.addListener(() {
+          //   if (_ytController!.value.isReady) {
+          //     setState(() {
+          //       _isInitializing = false;
+          //     });
+          //   }
+          // });
           Future.delayed(Duration(seconds: 2), () {
             if (mounted && _isInitializing) {
               setState(() {
@@ -153,7 +153,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
-    _ytController?.dispose();
+    // _ytController?.dispose();
     _chewieController?.dispose();
     _videoController?.dispose();
     super.dispose();
@@ -299,20 +299,21 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // YouTube Player - COMPLETELY UNCHANGED
-            if (isYoutube && _ytController != null) ...[
-              YoutubePlayer(
-                controller: _ytController!,
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Theme.of(context).colorScheme.primary,
-                onReady: () {
-                  if (mounted) setState(() {});
-                },
-                onEnded: (_) {},
-              ),
-            ] 
+            // if (isYoutube && _ytController != null) ...[
+            //   YoutubePlayer(
+            //     controller: _ytController!,
+            //     showVideoProgressIndicator: true,
+            //     progressIndicatorColor: Theme.of(context).colorScheme.primary,
+            //     onReady: () {
+            //       if (mounted) setState(() {});
+            //     },
+            //     onEnded: (_) {},
+            //   ),
+            // ] 
             
+            // else
             // Chewie Player - COMPLETELY UNCHANGED
-            else if (_chewieController != null && _videoController != null) ...[
+             if (_chewieController != null && _videoController != null) ...[
               AspectRatio(
                 aspectRatio: _videoController!.value.aspectRatio,
                 child: Chewie(controller: _chewieController!),
