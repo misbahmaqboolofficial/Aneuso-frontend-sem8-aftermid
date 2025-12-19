@@ -373,26 +373,135 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     _buildDrawerItem(
                       3,
-                      'Product Management',
-                      Icons.inventory_rounded,
+                      'Branch Management',
+                      Icons.account_tree_rounded,
                       _selectedDrawerIndex == 3,
                       () {
                         setState(() => _selectedDrawerIndex = 3);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/branches');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      4,
+                      'Product Management',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 4,
+                      () {
+                        setState(() => _selectedDrawerIndex = 4);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
+                    ),
+                    // _buildDrawerItem(
+                    //   8,
+                    //   'Send Notification',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 8,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 8);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                  ],
+
+                  // Industry-specific items
+                  if (user.isIndustry) ...[
+                    // _buildDrawerItem(
+                    //   9,
+                    //   'Biddings',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 9,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 9);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                    _buildDrawerItem(
+                      10,
+                      'Schedule Pickups',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 10,
+                      () {
+                        setState(() => _selectedDrawerIndex = 10);
                         Navigator.pop(context);
                         Navigator.pushNamed(context, '/admin/products');
                       },
                     ),
                     _buildDrawerItem(
-                      4,
-                      'Branch Management',
-                      Icons.account_tree_rounded,
-                      _selectedDrawerIndex == 4,
+                      11,
+                      'Service History',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 11,
                       () {
-                        setState(() => _selectedDrawerIndex = 4);
+                        setState(() => _selectedDrawerIndex = 11);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/branches');
+                        Navigator.pushNamed(context, '/admin/products');
                       },
                     ),
+                    // _buildDrawerItem(
+                    //   12,
+                    //   'Deal Management',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 12,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 12);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                    // _buildDrawerItem(
+                    //   13,
+                    //   'Ratings',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 13,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 13);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                  ],
+
+                  // Driver-specific items
+                  if (user.isDriver) ...[
+                    _buildDrawerItem(
+                      14,
+                      'Daily Tasks',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 14,
+                      () {
+                        setState(() => _selectedDrawerIndex = 14);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
+                    ),
+
+                    _buildDrawerItem(
+                      15,
+                      'Confirm Pickups',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 15,
+                      () {
+                        setState(() => _selectedDrawerIndex = 15);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
+                    ),
+
+                    // _buildDrawerItem(
+                    //   16,
+                    //   'Problem Reports',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 16,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 16);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
                   ],
 
                   // Citizen-specific items
@@ -408,19 +517,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Navigator.pushNamed(context, '/products');
                       },
                     ),
-                  ],
+                    _buildDrawerItem(
+                      17,
+                      'Report Garbage',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 17,
+                      () {
+                        setState(() => _selectedDrawerIndex = 17);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
+                    ),
+                    // _buildDrawerItem(
+                    //   18,
+                    //   'Collected Status',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 18,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 18);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
 
-                  _buildDrawerItem(
-                    6,
-                    'Tutorials',
-                    Icons.play_circle_fill_rounded,
-                    _selectedDrawerIndex == 6,
-                    () {
-                      setState(() => _selectedDrawerIndex = 6);
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, '/tutorials/home');
-                    },
-                  ),
+                    // _buildDrawerItem(
+                    //   19,
+                    //   'View Campaigns',
+                    //   Icons.play_circle_fill_rounded,
+                    //   _selectedDrawerIndex == 19,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 19);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/tutorials/home');
+                    //   },
+                    // ),
+                    _buildDrawerItem(
+                      20,
+                      'Fertilizer Catalog',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 20,
+                      () {
+                        setState(() => _selectedDrawerIndex = 20);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      21,
+                      'Orders',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 21,
+                      () {
+                        setState(() => _selectedDrawerIndex = 21);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/products');
+                      },
+                    ),
+                  ],
                   SizedBox(height: 20),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
