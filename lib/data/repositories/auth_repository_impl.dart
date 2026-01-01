@@ -65,6 +65,7 @@ class AuthRepositoryImpl implements AuthRepository {
           designationId: response.data!.user.designationId,
           activeStatus: response.data!.user.activeStatus,
           emailVerifiedAt: response.data!.user.emailVerifiedAt,
+          driverId: response.data!.user.driverId,
         ),
       );
     } catch (e) {

@@ -10,6 +10,7 @@ class UserModel {
   final int activeStatus;
   final bool emailVerified;
   final DateTime? emailVerifiedAt;
+  final int? driverId;
 
   UserModel({
     required this.id,
@@ -21,6 +22,7 @@ class UserModel {
     required this.emailVerified,
     this.emailVerifiedAt,
     required this.activeStatus,
+    this.driverId,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class UserModel {
       emailVerified: json['email_verified'],
       emailVerifiedAt: _parseDateTime(json['email_verified_at']),
       activeStatus: json['active_status'],
+      driverId: json['driver_id'],
     );
   }
 
@@ -48,6 +51,7 @@ class UserModel {
       'email_verified': emailVerified,
       'email_verified_at': emailVerifiedAt?.toIso8601String(),
       'active_status': activeStatus,
+      'driver_id': driverId,
     };
   }
 
