@@ -37,8 +37,8 @@ class _SchedulePickupState extends State<SchedulePickup> {
   String selectedTimeSlot = '09:00-12:00';
   int selectedWasteType = 2;
   int selectedPriority = 1;
-  double latitude = 24.8607;
-  double longitude = 67.0011;
+  double latitude = 0;
+  double longitude = 0;
 
   int? selectedBranch;
   Map<int, String> _branchesMap = {};
