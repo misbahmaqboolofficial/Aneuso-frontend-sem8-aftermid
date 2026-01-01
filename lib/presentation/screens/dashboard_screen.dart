@@ -428,7 +428,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       () {
                         setState(() => _selectedDrawerIndex = 10);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/industry/schedule_pickup');
+                        Navigator.pushNamed(
+                          context,
+                          '/industry/schedule_pickup',
+                        );
                       },
                     ),
                     _buildDrawerItem(
@@ -476,7 +479,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       () {
                         setState(() => _selectedDrawerIndex = 14);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
+                        Navigator.pushNamed(context, '/driver/driverdailytasks');
                       },
                     ),
 
@@ -488,7 +491,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       () {
                         setState(() => _selectedDrawerIndex = 15);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
+                        Navigator.pushNamed(context, '/driver/confirm_pickups');
                       },
                     ),
 
