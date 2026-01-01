@@ -686,7 +686,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          user.fullName + "${user.driverId}",
+                          user.fullName,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
