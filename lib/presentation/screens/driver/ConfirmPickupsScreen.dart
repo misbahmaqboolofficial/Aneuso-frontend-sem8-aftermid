@@ -17,12 +17,12 @@ class ConfirmPickupsScreen extends StatefulWidget {
 class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   final String baseUrl = AppConstants.baseUrl;
   int driverId = 0;
-  
+
   List<dynamic> tasks = [];
   bool isLoading = true;
   bool hasError = false;
   String errorMessage = '';
-  
+
   // Statistics
   int totalTasks = 0;
   int pendingTasks = 0;
@@ -42,7 +42,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
       isLoading = true;
       hasError = false;
     });
-    
+
     try {
       final token = StorageUtil.getToken();
       final response = await http.get(
@@ -53,9 +53,11 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
           if (token != null) 'Authorization': 'Bearer $token',
         },
       );
-      
-      await Future.delayed(const Duration(milliseconds: 500)); // Simulate loading
-      
+
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+      ); // Simulate loading
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
@@ -90,10 +92,13 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
 
   void calculateStatistics() {
     pendingTasks = tasks.where((task) => task['pickup_status_id'] == 1).length;
-    completedTasks = tasks.where((task) => task['pickup_status_id'] == 2).length;
-    
+    completedTasks = tasks
+        .where((task) => task['pickup_status_id'] == 2)
+        .length;
+
     totalWeight = tasks.fold(0.0, (sum, task) {
-      final weight = double.tryParse(task['estimated_weight_kg']?.toString() ?? '0') ?? 0;
+      final weight =
+          double.tryParse(task['estimated_weight_kg']?.toString() ?? '0') ?? 0;
       return sum + weight;
     });
   }
@@ -158,10 +163,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF4E56C0),
-                    const Color(0xFF9B5DE0),
-                  ],
+                  colors: [const Color(0xFF4E56C0), const Color(0xFF9B5DE0)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -173,6 +175,17 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/dashboard',
+                        (route) => false,
+                      );
+                    },
+                    color: Colors.white,
+                  ),
                   // Title and Refresh
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -180,7 +193,6 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                       const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          
                           Text(
                             'Confirm Pickups',
                             style: TextStyle(
@@ -218,7 +230,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Statistics Cards
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -316,19 +328,24 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                         child: isLoading
                             ? _buildLoadingState()
                             : hasError
-                                ? _buildErrorState()
-                                : tasks.isEmpty
-                                    ? _buildEmptyState()
-                                    : ListView.separated(
-                                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                                        itemCount: tasks.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 16),
-                                        itemBuilder: (context, index) {
-                                          final task = tasks[index];
-                                          return _buildTaskCard(task);
-                                        },
-                                      ),
+                            ? _buildErrorState()
+                            : tasks.isEmpty
+                            ? _buildEmptyState()
+                            : ListView.separated(
+                                padding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  0,
+                                  20,
+                                  20,
+                                ),
+                                itemCount: tasks.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 16),
+                                itemBuilder: (context, index) {
+                                  final task = tasks[index];
+                                  return _buildTaskCard(task);
+                                },
+                              ),
                       ),
                     ],
                   ),
@@ -359,10 +376,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 12),
@@ -449,8 +463,9 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: getPriorityColor(task['priority_level_id'])
-                            .withOpacity(0.1),
+                        color: getPriorityColor(
+                          task['priority_level_id'],
+                        ).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: getPriorityColor(task['priority_level_id']),
@@ -481,10 +496,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   task['branch_name'] ?? 'Unknown Branch',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 16),
 
@@ -618,10 +630,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
             const SizedBox(width: 6),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -664,7 +673,9 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                     height: 40,
                     child: CircularProgressIndicator(
                       strokeWidth: 4,
-                      valueColor: const AlwaysStoppedAnimation(Color(0xFF4E56C0)),
+                      valueColor: const AlwaysStoppedAnimation(
+                        Color(0xFF4E56C0),
+                      ),
                       backgroundColor: const Color(0xFF9B5DE0).withOpacity(0.2),
                     ),
                   ),
@@ -684,10 +695,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
           const SizedBox(height: 8),
           Text(
             'Please wait a moment',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
       ),
@@ -726,10 +734,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
             Text(
               errorMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -754,10 +759,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                   SizedBox(width: 10),
                   Text(
                     'Try Again',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -807,10 +809,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
             Text(
               'You have completed all your scheduled pickups.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
             OutlinedButton(
@@ -833,10 +832,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                   SizedBox(width: 10),
                   Text(
                     'Refresh',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
