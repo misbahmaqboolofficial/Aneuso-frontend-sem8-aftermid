@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:aneuso_app/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -427,7 +428,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       () {
                         setState(() => _selectedDrawerIndex = 10);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
+                        Navigator.pushNamed(context, '/industry/schedule_pickup');
                       },
                     ),
                     _buildDrawerItem(

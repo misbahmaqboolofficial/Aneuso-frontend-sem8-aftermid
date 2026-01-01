@@ -29,6 +29,13 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController = TextEditingController();
     _emailController.text = StorageUtil.getStringData("email") ?? "";
     _passwordController.text = StorageUtil.getStringData("password") ?? "";
+
+    // _emailController.text = "misbahmaqboolofficial@gmail.com"; // Admin User
+    _emailController.text = "misbahmaqbool54@gmail.com"; // Industry User
+    // _emailController.text = "ashfaqalizardariofficial247@gmail.com"; // Driver User
+    // _emailController.text = "ashfaqalizardariofficial@gmail.com"; // Citizen User
+
+    _passwordController.text = "password123";
   }
 
   @override

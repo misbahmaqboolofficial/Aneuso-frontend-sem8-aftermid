@@ -1,3 +1,4 @@
+import 'package:aneuso_app/presentation/screens/industry/schedule_pickup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -118,6 +119,7 @@ class MyApp extends StatelessWidget {
           '/industry-dashboard': (context) => const DashboardScreen(),
           '/driver-dashboard': (context) => const DashboardScreen(),
           '/citizen-dashboard': (context) => const DashboardScreen(),
+          '/industry/schedule_pickup': (context) => const SchedulePickup(),
         },
       ),
     );
