@@ -239,6 +239,7 @@ class AuthRepositoryImpl implements AuthRepository {
         designationId: user.designationId,
         activeStatus: user.activeStatus,
         emailVerifiedAt: user.emailVerifiedAt,
+        driverId: user.driverId,
       );
     }
     return null;

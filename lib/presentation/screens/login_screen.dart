@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
-  
+
   // Password visibility
   bool _isPasswordVisible = false;
 
@@ -47,18 +47,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login(AuthProvider authProvider) async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final success = await authProvider.login(
       email: _emailController.text.trim().toLowerCase(),
       password: _passwordController.text,
     );
-    
+
     await StorageUtil.setStringData(
       "email",
       _emailController.text.trim().toLowerCase(),
     );
     await StorageUtil.setStringData("password", _passwordController.text);
-    
+
     if (success && mounted) {
       _navigateToDashboard(authProvider.currentUser!);
     }
@@ -118,14 +118,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Animated Logo/Header with glass effect
                         _buildHeader(),
                         const SizedBox(height: 40),
-                        
+
                         // Login Card with glass effect
                         Container(
                           padding: const EdgeInsets.all(30),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(25),
-                            border: Border.all(color: Colors.white.withOpacity(0.3)),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -145,7 +147,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.white,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Color(0xFF4E56C0).withOpacity(0.1),
+                                        color: Color(
+                                          0xFF4E56C0,
+                                        ).withOpacity(0.1),
                                         blurRadius: 10,
                                         offset: Offset(0, 4),
                                       ),
@@ -160,7 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     decoration: InputDecoration(
                                       labelText: 'Email',
                                       labelStyle: TextStyle(
-                                        color: Color(0xFF9B5DE0).withOpacity(0.7),
+                                        color: Color(
+                                          0xFF9B5DE0,
+                                        ).withOpacity(0.7),
                                       ),
                                       prefixIcon: Icon(
                                         Icons.email_rounded,
@@ -172,12 +178,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                       fillColor: Colors.white,
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
-                                        borderSide: BorderSide(color: Colors.transparent),
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                        ),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
                                         borderSide: BorderSide(
-                                          color: Color(0xFF4E56C0).withOpacity(0.5),
+                                          color: Color(
+                                            0xFF4E56C0,
+                                          ).withOpacity(0.5),
                                           width: 2,
                                         ),
                                       ),
@@ -187,7 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter your email';
                                       }
-                                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                      if (!RegExp(
+                                        r'^[^@]+@[^@]+\.[^@]+',
+                                      ).hasMatch(value)) {
                                         return 'Please enter a valid email';
                                       }
                                       return null;
@@ -195,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                
+
                                 // Password Field
                                 Container(
                                   decoration: BoxDecoration(
@@ -203,7 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.white,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Color(0xFF4E56C0).withOpacity(0.1),
+                                        color: Color(
+                                          0xFF4E56C0,
+                                        ).withOpacity(0.1),
                                         blurRadius: 10,
                                         offset: Offset(0, 4),
                                       ),
@@ -218,7 +232,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     decoration: InputDecoration(
                                       labelText: 'Password',
                                       labelStyle: TextStyle(
-                                        color: Color(0xFF9B5DE0).withOpacity(0.7),
+                                        color: Color(
+                                          0xFF9B5DE0,
+                                        ).withOpacity(0.7),
                                       ),
                                       prefixIcon: Icon(
                                         Icons.lock_rounded,
@@ -233,7 +249,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            _isPasswordVisible = !_isPasswordVisible;
+                                            _isPasswordVisible =
+                                                !_isPasswordVisible;
                                           });
                                         },
                                       ),
@@ -243,12 +260,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                       fillColor: Colors.white,
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
-                                        borderSide: BorderSide(color: Colors.transparent),
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                        ),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
                                         borderSide: BorderSide(
-                                          color: Color(0xFF4E56C0).withOpacity(0.5),
+                                          color: Color(
+                                            0xFF4E56C0,
+                                          ).withOpacity(0.5),
                                           width: 2,
                                         ),
                                       ),
@@ -265,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                                   ),
                                 ),
-                                
+
                                 // Error Message
                                 if (authProvider.error != null) ...[
                                   const SizedBox(height: 20),
@@ -288,7 +309,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.error_outline_rounded, color: Colors.red),
+                                        Icon(
+                                          Icons.error_outline_rounded,
+                                          color: Colors.red,
+                                        ),
                                         SizedBox(width: 12),
                                         Expanded(
                                           child: Text(
@@ -303,9 +327,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ],
-                                
+
                                 const SizedBox(height: 30),
-                                
+
                                 // Login Button with gradient
                                 SizedBox(
                                   width: double.infinity,
@@ -334,7 +358,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                         borderRadius: BorderRadius.circular(15),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Color(0xFF4E56C0).withOpacity(0.4),
+                                            color: Color(
+                                              0xFF4E56C0,
+                                            ).withOpacity(0.4),
                                             blurRadius: 15,
                                             offset: Offset(0, 8),
                                           ),
@@ -343,7 +369,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: Container(
                                         alignment: Alignment.center,
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Icon(
                                               Icons.login_rounded,
@@ -365,9 +392,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
-                                
+
                                 const SizedBox(height: 25),
-                                
+
                                 // Register Link
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -383,11 +410,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onPressed: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const RegisterScreen(),
+                                          builder: (context) =>
+                                              const RegisterScreen(),
                                         ),
                                       ),
                                       style: TextButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(horizontal: 8),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
                                       ),
                                       child: Text(
                                         'Sign Up',
@@ -407,9 +437,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 30),
-                        
+
                         // Additional Info
                         Text(
                           'Secure Login • Privacy Protected',
@@ -419,7 +449,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        
+
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -476,15 +506,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 25),
-        
+
         // App Name with gradient text
         ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                Colors.white,
-                Color(0xFFFDCFFA),
-              ],
+              colors: [Colors.white, Color(0xFFFDCFFA)],
             ).createShader(bounds);
           },
           child: Text(
@@ -498,7 +525,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        
+
         Text(
           'WASTE MANAGEMENT SYSTEM',
           style: TextStyle(
@@ -509,7 +536,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 15),
-        
+
         Text(
           'Login to your secure account',
           style: TextStyle(
