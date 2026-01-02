@@ -1011,7 +1011,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
 
                   // Notes
                   _buildFormField(
-                    label: 'Notes (Optional)',
+                    label: 'Notes',
                     child: TextFormField(
                       controller: notesController,
                       maxLines: 3,
