@@ -289,4 +289,154 @@ class CartService {
       return false;
     }
   }
+
+  // Add these methods to CartService class
+  static Future<List<PaymentMethod>> getPaymentMethods() async {
+    try {
+      final token = await _getToken();
+      if (token == null) return [];
+
+      final response = await http.get(
+        Uri.parse('${AppConstants.baseUrl}/orders/types/payment-methods'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['success'] == true) {
+          final List data = jsonResponse['data'] ?? [];
+          return data.map((item) => PaymentMethod.fromJson(item)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      print('Error getting payment methods: $e');
+      return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>?> checkout({
+    required int paymentMethodId,
+    String? notes,
+    String? deliveryAddress,
+  }) async {
+    try {
+      final token = await _getToken();
+      final cart = await getCart();
+
+      if (token == null || cart == null) return null;
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/checkout'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'cart_id': cart.id,
+          'payment_method_id': paymentMethodId,
+          'notes': notes,
+          // 'delivery_address': deliveryAddress,
+          'shipping_address': deliveryAddress,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+      return jsonDecode(response.body);
+    } catch (e) {
+      print('Error during checkout: $e');
+      return null;
+    }
+  }
+}
+
+class PaymentMethod {
+  final int id;
+  final String name;
+  final String typeName;
+  final DateTime createdAt;
+  final int? groupId;
+
+  PaymentMethod({
+    required this.id,
+    required this.name,
+    required this.typeName,
+    required this.createdAt,
+    this.groupId,
+  });
+
+  factory PaymentMethod.fromJson(Map<String, dynamic> json) {
+    return PaymentMethod(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      typeName: json['type_name'] ?? '',
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      groupId: json['group_id'],
+    );
+  }
+
+  String get displayName {
+    switch (typeName) {
+      case 'method_bank_transfer':
+        return 'Bank Transfer';
+      case 'method_cash':
+        return 'Cash';
+      case 'method_cheque':
+        return 'Cheque';
+      default:
+        return name.replaceAll('method_', '').replaceAll('_', ' ').titleCase;
+    }
+  }
+}
+
+class CheckoutSummary {
+  final double subtotal;
+  final int totalItems;
+  final double? tax;
+  final double? shipping;
+  final double total;
+
+  CheckoutSummary({
+    required this.subtotal,
+    required this.totalItems,
+    this.tax = 0,
+    this.shipping = 0,
+    required this.total,
+  });
+
+  factory CheckoutSummary.fromJson(Map<String, dynamic> json) {
+    return CheckoutSummary(
+      subtotal: (json['subtotal'] ?? 0).toDouble(),
+      totalItems: json['total_items'] ?? 0,
+      tax: (json['tax'] ?? 0).toDouble(),
+      shipping: (json['shipping'] ?? 0).toDouble(),
+      total: (json['total'] ?? 0).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'subtotal': subtotal,
+      'total_items': totalItems,
+      'tax': tax,
+      'shipping': shipping,
+      'total': total,
+    };
+  }
+}
+
+extension StringExtension on String {
+  String get titleCase {
+    if (length <= 1) return toUpperCase();
+    return split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
+  }
 }

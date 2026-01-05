@@ -1,4 +1,5 @@
 import 'package:aneuso_app/presentation/screens/citizen/cart_screen.dart';
+import 'package:aneuso_app/presentation/screens/citizen/orders_screen.dart';
 import 'package:aneuso_app/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -988,6 +989,26 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
 
           SizedBox(width: 8),
+          IconButton(
+            icon: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Color(0xFF4E56C0).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.shopping_bag_rounded,
+                color: Color(0xFF4E56C0),
+                size: 22,
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OrdersScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: Consumer<AdminProductProvider>(

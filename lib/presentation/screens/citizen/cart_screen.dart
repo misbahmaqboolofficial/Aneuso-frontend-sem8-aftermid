@@ -1,3 +1,4 @@
+import 'package:aneuso_app/presentation/screens/citizen/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/cart_service.dart';
 
@@ -647,23 +648,82 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
               SizedBox(width: 15),
+              // Expanded(
+              //   child: Container(
+              //     height: 48,
+              //     child: ElevatedButton(
+              //       onPressed: () {
+              //         // Checkout functionality
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(
+              //             content: Text(
+              //               'Checkout functionality coming soon!',
+              //               style: TextStyle(fontWeight: FontWeight.w600),
+              //             ),
+              //             backgroundColor: Color(0xFF9B5DE0),
+              //             behavior: SnackBarBehavior.floating,
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       style: ElevatedButton.styleFrom(
+              //         backgroundColor: Colors.transparent,
+              //         elevation: 0,
+              //         shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(12),
+              //         ),
+              //         padding: EdgeInsets.zero,
+              //       ),
+              //       child: Ink(
+              //         decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(12),
+              //           boxShadow: [
+              //             BoxShadow(
+              //               color: Colors.white.withOpacity(0.4),
+              //               blurRadius: 10,
+              //               offset: Offset(0, 5),
+              //             ),
+              //           ],
+              //         ),
+              //         child: Container(
+              //           alignment: Alignment.center,
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               Icon(
+              //                 Icons.payment_rounded,
+              //                 color: Color(0xFF4E56C0),
+              //                 size: 20,
+              //               ),
+              //               SizedBox(width: 8),
+              //               Text(
+              //                 'Checkout',
+              //                 style: TextStyle(
+              //                   fontSize: 16,
+              //                   fontWeight: FontWeight.w700,
+              //                   color: Color(0xFF4E56C0),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 child: Container(
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Checkout functionality
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Checkout functionality coming soon!',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          backgroundColor: Color(0xFF9B5DE0),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          // builder: (context) => CheckoutScreen(cart: _cart!),
+                          builder: (context) => CheckoutScreen(),
                         ),
                       );
                     },
@@ -677,11 +737,17 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     child: Ink(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF4E56C0),
+                            Color(0xFF9B5DE0),
+                            Color(0xFFD78FEE),
+                          ],
+                        ),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Color(0xFF4E56C0).withOpacity(0.4),
                             blurRadius: 10,
                             offset: Offset(0, 5),
                           ),
@@ -694,16 +760,16 @@ class _CartScreenState extends State<CartScreen> {
                           children: [
                             Icon(
                               Icons.payment_rounded,
-                              color: Color(0xFF4E56C0),
+                              color: Colors.white,
                               size: 20,
                             ),
                             SizedBox(width: 8),
                             Text(
-                              'Checkout',
+                              'Proceed to Checkout',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF4E56C0),
+                                color: Colors.white,
                               ),
                             ),
                           ],
