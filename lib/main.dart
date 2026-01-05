@@ -1,5 +1,6 @@
 import 'package:aneuso_app/presentation/screens/driver/ConfirmPickupsScreen.dart';
 import 'package:aneuso_app/presentation/screens/driver/DailyTasksScreen.dart';
+import 'package:aneuso_app/presentation/screens/industry/ServiceHistoryScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/schedule_pickup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -125,6 +126,7 @@ class MyApp extends StatelessWidget {
 
           // Industry routes
           '/industry/schedule_pickup': (context) => const SchedulePickup(),
+          '/industry/service_history': (context) => ServiceHistoryScreen(),
 
           // Driver routes
           '/driver/driverdailytasks': (context) => const DriverTasksScreen(),

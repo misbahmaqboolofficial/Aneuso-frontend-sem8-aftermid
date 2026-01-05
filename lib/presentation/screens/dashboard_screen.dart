@@ -442,7 +442,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       () {
                         setState(() => _selectedDrawerIndex = 11);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
+                        Navigator.pushNamed(context, '/industry/service_history');
                       },
                     ),
                     // _buildDrawerItem(
