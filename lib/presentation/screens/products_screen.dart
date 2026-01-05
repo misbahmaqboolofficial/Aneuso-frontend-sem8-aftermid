@@ -1,3 +1,5 @@
+import 'package:aneuso_app/presentation/screens/citizen/cart_screen.dart';
+import 'package:aneuso_app/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aneuso_app/presentation/providers/admin_product_provider.dart';
@@ -19,6 +21,81 @@ class _ProductsScreenState extends State<ProductsScreen> {
     super.initState();
     provider = Provider.of<AdminProductProvider>(context, listen: false);
     provider.loadProducts();
+  }
+
+  Future<void> _addToCart(dynamic product) async {
+    try {
+      // Check if cart exists, if not create one
+      Cart? cart = await CartService.getCart();
+      if (cart == null) {
+        final created = await CartService.createCart();
+        if (!created) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Failed to create cart',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
+          }
+          return;
+        }
+        cart = await CartService.getCart();
+      }
+
+      final addedItem = await CartService.addToCart(product.id, 1);
+
+      if (addedItem != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${product.productName} added to cart!',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            action: SnackBarAction(
+              label: 'View Cart',
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartScreen()),
+                );
+              },
+            ),
+          ),
+        );
+      } else {
+        throw Exception('Failed to add to cart');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to add to cart: ${e.toString()}',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _showAddProductDialog(BuildContext context) async {
@@ -52,10 +129,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF4E56C0),
-                        Color(0xFF9B5DE0),
-                      ],
+                      colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                     ),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(25),
@@ -90,7 +164,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ],
                   ),
                 ),
-                
+
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(25),
@@ -121,7 +195,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             keyboardType: TextInputType.number,
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Required';
-                              if (double.tryParse(v) == null) return 'Invalid number';
+                              if (double.tryParse(v) == null)
+                                return 'Invalid number';
                               return null;
                             },
                           ),
@@ -133,7 +208,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             keyboardType: TextInputType.number,
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Required';
-                              if (int.tryParse(v) == null) return 'Invalid number';
+                              if (int.tryParse(v) == null)
+                                return 'Invalid number';
                               return null;
                             },
                           ),
@@ -142,7 +218,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ),
                   ),
                 ),
-                
+
                 // Dialog Actions
                 Container(
                   padding: EdgeInsets.all(20),
@@ -160,7 +236,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -180,12 +258,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
-                            
+
                             body['product_name'] = nameCtl.text.trim();
                             body['description'] = descriptionCtl.text.trim();
                             body['price'] = double.parse(priceCtl.text);
                             body['stock_quantity'] = int.parse(stockCtl.text);
-                            
+
                             final success = await provider.createProduct(body);
                             if (success != null && success.id > 0 && mounted) {
                               Navigator.pop(context);
@@ -193,7 +271,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                 SnackBar(
                                   content: Text(
                                     'Product created successfully!',
-                                    style: TextStyle(fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   backgroundColor: Colors.green,
                                   behavior: SnackBarBehavior.floating,
@@ -232,7 +312,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ),
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 12),
+                                horizontal: 25,
+                                vertical: 12,
+                              ),
                               child: Row(
                                 children: [
                                   Icon(
@@ -266,13 +348,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  Future<void> _showEditProductDialog(BuildContext context, dynamic prod) async {
+  Future<void> _showEditProductDialog(
+    BuildContext context,
+    dynamic prod,
+  ) async {
     final _formKey = GlobalKey<FormState>();
     final Map<String, dynamic> body = {};
     final nameCtl = TextEditingController(text: prod.productName);
     final priceCtl = TextEditingController(text: prod.price?.toString() ?? '');
     final descriptionCtl = TextEditingController(text: prod.description ?? '');
-    final stockCtl = TextEditingController(text: prod.stockQuantity?.toString() ?? '');
+    final stockCtl = TextEditingController(
+      text: prod.stockQuantity?.toString() ?? '',
+    );
 
     await showDialog(
       context: context,
@@ -296,10 +383,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF4E56C0),
-                        Color(0xFF9B5DE0),
-                      ],
+                      colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                     ),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(25),
@@ -334,7 +418,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ],
                   ),
                 ),
-                
+
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(25),
@@ -365,7 +449,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             keyboardType: TextInputType.number,
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Required';
-                              if (double.tryParse(v) == null) return 'Invalid number';
+                              if (double.tryParse(v) == null)
+                                return 'Invalid number';
                               return null;
                             },
                           ),
@@ -377,7 +462,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             keyboardType: TextInputType.number,
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Required';
-                              if (int.tryParse(v) == null) return 'Invalid number';
+                              if (int.tryParse(v) == null)
+                                return 'Invalid number';
                               return null;
                             },
                           ),
@@ -386,7 +472,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ),
                   ),
                 ),
-                
+
                 Container(
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -403,7 +489,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -423,20 +511,25 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
-                            
+
                             body['product_name'] = nameCtl.text.trim();
                             body['description'] = descriptionCtl.text.trim();
                             body['price'] = double.parse(priceCtl.text);
                             body['stock_quantity'] = int.parse(stockCtl.text);
-                            
-                            final success = await provider.updateProduct(prod.id, body);
+
+                            final success = await provider.updateProduct(
+                              prod.id,
+                              body,
+                            );
                             if (success != null && success.id > 0 && mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     'Product updated successfully!',
-                                    style: TextStyle(fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   backgroundColor: Colors.green,
                                   behavior: SnackBarBehavior.floating,
@@ -475,7 +568,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ),
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 12),
+                                horizontal: 25,
+                                vertical: 12,
+                              ),
                               child: Row(
                                 children: [
                                   Icon(
@@ -513,9 +608,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     await showDialog(
       context: context,
       builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         child: Container(
           padding: EdgeInsets.all(25),
           decoration: BoxDecoration(
@@ -532,10 +625,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF4E56C0),
-                          Color(0xFF9B5DE0),
-                        ],
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -617,10 +707,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF4E56C0),
-                          Color(0xFF9B5DE0),
-                        ],
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -649,9 +736,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         child: Container(
           padding: EdgeInsets.all(25),
           decoration: BoxDecoration(
@@ -687,10 +772,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               Text(
                 'Are you sure you want to delete "${prod.productName}"?',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
               SizedBox(height: 25),
               Row(
@@ -732,10 +814,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         child: Ink(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                Colors.red,
-                                Colors.redAccent,
-                              ],
+                              colors: [Colors.red, Colors.redAccent],
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -796,8 +875,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final isAdmin = authProvider.currentUser?.userTypeId == AppConstants.userTypeAdmin;
-    
+    final isAdmin =
+        authProvider.currentUser?.userTypeId == AppConstants.userTypeAdmin;
+
     return Scaffold(
       backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
       appBar: AppBar(
@@ -807,10 +887,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
@@ -837,26 +914,81 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: Container(
-        //       padding: EdgeInsets.all(8),
-        //       decoration: BoxDecoration(
-        //         color: Color(0xFF4E56C0).withOpacity(0.1),
-        //         shape: BoxShape.circle,
-        //       ),
-        //       child: Icon(
-        //         Icons.filter_list_rounded,
-        //         color: Color(0xFF4E56C0),
-        //         size: 22,
-        //       ),
-        //     ),
-        //     onPressed: () {
-        //       // Filter functionality
-        //     },
-        //   ),
-        //   SizedBox(width: 8),
-        // ],
+        actions: [
+          //   IconButton(
+          //     icon: Container(
+          //       padding: EdgeInsets.all(8),
+          //       decoration: BoxDecoration(
+          //         color: Color(0xFF4E56C0).withOpacity(0.1),
+          //         shape: BoxShape.circle,
+          //       ),
+          //       child: Icon(
+          //         Icons.filter_list_rounded,
+          //         color: Color(0xFF4E56C0),
+          //         size: 22,
+          //       ),
+          //     ),
+          //     onPressed: () {
+          //       // Filter functionality
+          //     },
+          //   ),
+          //   SizedBox(width: 8),
+          IconButton(
+            icon: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Color(0xFF4E56C0).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.shopping_cart_rounded,
+                color: Color(0xFF4E56C0),
+                size: 22,
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartScreen()),
+              );
+            },
+          ),
+          // Cart Item Count Badge
+          FutureBuilder<Cart?>(
+            future: CartService.getCart(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData &&
+                  snapshot.data != null &&
+                  snapshot.data!.totalItems > 0) {
+                return Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF9B5DE0),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    constraints: BoxConstraints(minWidth: 20, minHeight: 20),
+                    child: Text(
+                      snapshot.data!.totalItems.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            },
+          ),
+
+          SizedBox(width: 8),
+        ],
       ),
       body: Consumer<AdminProductProvider>(
         builder: (context, p, _) {
@@ -870,10 +1002,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF4E56C0),
-                          Color(0xFF9B5DE0),
-                        ],
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -895,9 +1024,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  CircularProgressIndicator(
-                    color: Color(0xFF4E56C0),
-                  ),
+                  CircularProgressIndicator(color: Color(0xFF4E56C0)),
                 ],
               ),
             );
@@ -950,10 +1077,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF4E56C0),
-                              Color(0xFF9B5DE0),
-                            ],
+                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
@@ -965,7 +1089,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           ],
                         ),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 25,
+                            vertical: 12,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -1027,10 +1154,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     child: Text(
                       'There are no products in the inventory yet. Check back later or add new products.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ),
                   if (isAdmin) ...[
@@ -1066,7 +1190,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ],
                           ),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 25,
+                              vertical: 12,
+                            ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -1141,7 +1268,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         ),
                         _buildStatItem(
                           'In Stock',
-                          p.products.where((prod) => prod.stockQuantity > 0).length.toString(),
+                          p.products
+                              .where((prod) => prod.stockQuantity > 0)
+                              .length
+                              .toString(),
                           Icons.check_circle_rounded,
                         ),
                         Container(
@@ -1206,10 +1336,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 height: 60,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF4E56C0),
-                      Color(0xFF9B5DE0),
-                    ],
+                    colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
@@ -1220,11 +1347,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ),
                   ],
                 ),
-                child: Icon(
-                  Icons.add_rounded,
-                  color: Colors.white,
-                  size: 28,
-                ),
+                child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
               ),
             )
           : null,
@@ -1234,11 +1357,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: Colors.white,
-          size: 22,
-        ),
+        Icon(icon, color: Colors.white, size: 22),
         SizedBox(height: 6),
         Text(
           value,
@@ -1251,10 +1370,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.white.withOpacity(0.9),
-          ),
+          style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.9)),
         ),
       ],
     );
@@ -1274,10 +1390,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               offset: Offset(0, 8),
             ),
           ],
-          border: Border.all(
-            color: Colors.grey.withOpacity(0.1),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
         ),
         child: Stack(
           children: [
@@ -1325,7 +1438,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 5),
-                      if (prod.description != null && prod.description!.isNotEmpty)
+                      if (prod.description != null &&
+                          prod.description!.isNotEmpty)
                         Text(
                           prod.description!,
                           style: TextStyle(
@@ -1340,23 +1454,32 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: prod.stockQuantity > 0
                                   ? Colors.green.withOpacity(0.1)
                                   : Colors.red.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: prod.stockQuantity > 0 ? Colors.green : Colors.red,
+                                color: prod.stockQuantity > 0
+                                    ? Colors.green
+                                    : Colors.red,
                                 width: 1,
                               ),
                             ),
                             child: Text(
-                              prod.stockQuantity > 0 ? 'In Stock' : 'Out of Stock',
+                              prod.stockQuantity > 0
+                                  ? 'In Stock'
+                                  : 'Out of Stock',
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: prod.stockQuantity > 0 ? Colors.green : Colors.red,
+                                color: prod.stockQuantity > 0
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
                             ),
                           ),
@@ -1367,6 +1490,106 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               fontWeight: FontWeight.w800,
                               color: Color(0xFF4E56C0),
                             ),
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: prod.stockQuantity > 0
+                                      ? Colors.green.withOpacity(0.1)
+                                      : Colors.red.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: prod.stockQuantity > 0
+                                        ? Colors.green
+                                        : Colors.red,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  prod.stockQuantity > 0
+                                      ? 'In Stock'
+                                      : 'Out of Stock',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: prod.stockQuantity > 0
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Rs ${prod.price ?? 0}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF4E56C0),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  // Add to Cart Button for non-admin users
+                                  if (!isAdmin && prod.stockQuantity > 0)
+                                    GestureDetector(
+                                      onTap: () => _addToCart(prod),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Color(0xFF4E56C0),
+                                              Color(0xFF9B5DE0),
+                                            ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(
+                                                0xFF4E56C0,
+                                              ).withOpacity(0.3),
+                                              blurRadius: 5,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.add_shopping_cart_rounded,
+                                              color: Colors.white,
+                                              size: 12,
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'Add',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -1466,10 +1689,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             SizedBox(width: 8),
                             Text(
                               'Delete',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.red,
-                              ),
+                              style: TextStyle(fontSize: 14, color: Colors.red),
                             ),
                           ],
                         ),
@@ -1503,28 +1723,17 @@ class _ProductsScreenState extends State<ProductsScreen> {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: TextFormField(
         controller: controller,
-        style: TextStyle(
-          color: Color(0xFF4E56C0),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xFF4E56C0), fontSize: 16),
         keyboardType: keyboardType,
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF9B5DE0).withOpacity(0.7),
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Color(0xFF9B5DE0),
-          ),
+          labelStyle: TextStyle(color: Color(0xFF9B5DE0).withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Color(0xFF9B5DE0)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(18),
           filled: true,
@@ -1552,11 +1761,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              size: 16,
-              color: Color(0xFF9B5DE0),
-            ),
+            Icon(icon, size: 16, color: Color(0xFF9B5DE0)),
             SizedBox(width: 8),
             Text(
               label,
@@ -1573,10 +1778,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           padding: const EdgeInsets.only(left: 24),
           child: Text(
             value,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[700],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
           ),
         ),
       ],

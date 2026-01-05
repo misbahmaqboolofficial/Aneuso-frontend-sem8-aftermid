@@ -33,9 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
     // _emailController.text = "misbahmaqboolofficial@gmail.com"; // Admin User (70)
     // _emailController.text = "misbahmaqbool54@gmail.com"; // Industry User (67)
     // _emailController.text = "ashfaqalizardariofficial247@gmail.com"; // Driver (12) User (32)
-    // _emailController.text = "ashfaqalizardariofficial@gmail.com"; // Citizen User (69)
+    _emailController.text = "ashfaqalizardariofficial@gmail.com"; // Citizen User (69)
 
-    // _passwordController.text = "password123";
+    _passwordController.text = "password123";
   }
 
   @override
