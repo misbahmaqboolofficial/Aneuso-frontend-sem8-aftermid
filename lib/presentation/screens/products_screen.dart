@@ -837,26 +837,26 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          IconButton(
-            icon: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Color(0xFF4E56C0).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.filter_list_rounded,
-                color: Color(0xFF4E56C0),
-                size: 22,
-              ),
-            ),
-            onPressed: () {
-              // Filter functionality
-            },
-          ),
-          SizedBox(width: 8),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Container(
+        //       padding: EdgeInsets.all(8),
+        //       decoration: BoxDecoration(
+        //         color: Color(0xFF4E56C0).withOpacity(0.1),
+        //         shape: BoxShape.circle,
+        //       ),
+        //       child: Icon(
+        //         Icons.filter_list_rounded,
+        //         color: Color(0xFF4E56C0),
+        //         size: 22,
+        //       ),
+        //     ),
+        //     onPressed: () {
+        //       // Filter functionality
+        //     },
+        //   ),
+        //   SizedBox(width: 8),
+        // ],
       ),
       body: Consumer<AdminProductProvider>(
         builder: (context, p, _) {

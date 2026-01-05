@@ -310,24 +310,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Color(0xFF4E56C0).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.notifications_none_rounded,
-                color: Color(0xFF4E56C0),
-                size: 22,
-              ),
-            ),
-            onPressed: () {},
-          ),
-          SizedBox(width: 8),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Container(
+        //       padding: EdgeInsets.all(8),
+        //       decoration: BoxDecoration(
+        //         color: Color(0xFF4E56C0).withOpacity(0.1),
+        //         shape: BoxShape.circle,
+        //       ),
+        //       child: Icon(
+        //         Icons.notifications_none_rounded,
+        //         color: Color(0xFF4E56C0),
+        //         size: 22,
+        //       ),
+        //     ),
+        //     onPressed: () {},
+        //   ),
+        //   SizedBox(width: 8),
+        // ],
       ),
       drawer: Drawer(
         child: Column(
@@ -442,7 +442,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       () {
                         setState(() => _selectedDrawerIndex = 11);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/industry/service_history');
+                        Navigator.pushNamed(
+                          context,
+                          '/industry/service_history',
+                        );
                       },
                     ),
                     // _buildDrawerItem(
@@ -474,12 +477,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     _buildDrawerItem(
                       14,
                       'Daily Tasks',
-                      Icons.inventory_rounded,
+                      Icons.schedule_rounded,
                       _selectedDrawerIndex == 14,
                       () {
                         setState(() => _selectedDrawerIndex = 14);
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/driver/driverdailytasks');
+                        Navigator.pushNamed(
+                          context,
+                          '/driver/driverdailytasks',
+                        );
                       },
                     ),
 
@@ -521,17 +527,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Navigator.pushNamed(context, '/products');
                       },
                     ),
-                    _buildDrawerItem(
-                      17,
-                      'Report Garbage',
-                      Icons.inventory_rounded,
-                      _selectedDrawerIndex == 17,
-                      () {
-                        setState(() => _selectedDrawerIndex = 17);
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
-                      },
-                    ),
+                    // Comment one
+                    // _buildDrawerItem(
+                    //   17,
+                    //   'Report Garbage',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 17,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 17);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                    // Comment one end
                     // _buildDrawerItem(
                     //   18,
                     //   'Collected Status',
@@ -555,28 +563,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     //     Navigator.pushNamed(context, '/tutorials/home');
                     //   },
                     // ),
-                    _buildDrawerItem(
-                      20,
-                      'Fertilizer Catalog',
-                      Icons.inventory_rounded,
-                      _selectedDrawerIndex == 20,
-                      () {
-                        setState(() => _selectedDrawerIndex = 20);
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
-                      },
-                    ),
-                    _buildDrawerItem(
-                      21,
-                      'Orders',
-                      Icons.inventory_rounded,
-                      _selectedDrawerIndex == 21,
-                      () {
-                        setState(() => _selectedDrawerIndex = 21);
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/admin/products');
-                      },
-                    ),
+
+                    // Comment one
+                    // _buildDrawerItem(
+                    //   20,
+                    //   'Fertilizer Catalog',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 20,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 20);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                    // _buildDrawerItem(
+                    //   21,
+                    //   'Orders',
+                    //   Icons.inventory_rounded,
+                    //   _selectedDrawerIndex == 21,
+                    //   () {
+                    //     setState(() => _selectedDrawerIndex = 21);
+                    //     Navigator.pop(context);
+                    //     Navigator.pushNamed(context, '/admin/products');
+                    //   },
+                    // ),
+                    // Comment one end
+
                   ],
                   SizedBox(height: 20),
                   Padding(
@@ -584,16 +596,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: Divider(height: 1, color: Colors.grey[300]),
                   ),
                   SizedBox(height: 20),
-                  _buildDrawerItem(
-                    7,
-                    'Settings',
-                    Icons.settings_rounded,
-                    _selectedDrawerIndex == 7,
-                    () {
-                      setState(() => _selectedDrawerIndex = 7);
-                      Navigator.pop(context);
-                    },
-                  ),
+                  // _buildDrawerItem(
+                  //   7,
+                  //   'Settings',
+                  //   Icons.settings_rounded,
+                  //   _selectedDrawerIndex == 7,
+                  //   () {
+                  //     setState(() => _selectedDrawerIndex = 7);
+                  //     Navigator.pop(context);
+                  //   },
+                  // ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
@@ -818,42 +830,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildAdminDashboard() {
     final cards = [
-      _dashboardCard(
-        'Users',
-        Icons.people_rounded,
-        Color(0xFF4E56C0),
-        'Manage all users',
-      ),
-      _dashboardCard(
-        'Reports',
-        Icons.analytics_rounded,
-        Color(0xFF9B5DE0),
-        'View analytics',
-      ),
+
+      // Comment One
+      // _dashboardCard(
+      //   'Users',
+      //   Icons.people_rounded,
+      //   Color(0xFF4E56C0),
+      //   'Manage all users',
+      // ),
+      // _dashboardCard(
+      //   'Reports',
+      //   Icons.analytics_rounded,
+      //   Color(0xFF9B5DE0),
+      //   'View analytics',
+      // ),
+      // Comment One end
       _dashboardCard(
         'Products',
         Icons.inventory_rounded,
         Color(0xFFD78FEE),
-        'Manage inventory',
+        'Manage Products',
       ),
       _dashboardCard(
-        'Settings',
-        Icons.settings_rounded,
-        Color(0xFFF15BB5),
-        'System settings',
+        'Profile',
+        Icons.person_rounded,
+        Color(0xFFD78FEE),
+        'Manage Profile',
       ),
       _dashboardCard(
-        'Logs',
-        Icons.history_rounded,
-        Color(0xFF00BBF9),
-        'View activity logs',
+        'Companies',
+        Icons.business_rounded,
+        Color(0xFFD78FEE),
+        'Manage Companies',
       ),
       _dashboardCard(
-        'Support',
-        Icons.support_agent_rounded,
-        Color(0xFF00F5D4),
-        'Help & support',
+        'Branches',
+        Icons.account_tree_rounded,
+        Color(0xFFD78FEE),
+        'Manage Branches',
       ),
+      // _dashboardCard(
+      //   'Settings',
+      //   Icons.settings_rounded,
+      //   Color(0xFFF15BB5),
+      //   'System settings',
+      // ),
+      // _dashboardCard(
+      //   'Logs',
+      //   Icons.history_rounded,
+      //   Color(0xFF00BBF9),
+      //   'View activity logs',
+      // ),
+      // _dashboardCard(
+      //   'Support',
+      //   Icons.support_agent_rounded,
+      //   Color(0xFF00F5D4),
+      //   'Help & support',
+      // ),
     ];
 
     return GridView.builder(
@@ -870,12 +903,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildIndustryDashboard() {
     final cards = [
-      _dashboardCard(
-        'Inventory',
-        Icons.inventory_rounded,
-        Color(0xFF4E56C0),
-        'Waste inventory',
-      ),
+      // _dashboardCard(
+      //   'Inventory',
+      //   Icons.inventory_rounded,
+      //   Color(0xFF4E56C0),
+      //   'Waste inventory',
+      // ),
       _dashboardCard(
         'Schedule',
         Icons.calendar_today_rounded,
@@ -894,18 +927,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Color(0xFFF15BB5),
         'My profile',
       ),
-      _dashboardCard(
-        'Reports',
-        Icons.assessment_rounded,
-        Color(0xFF00BBF9),
-        'Generate reports',
-      ),
-      _dashboardCard(
-        'Support',
-        Icons.support_rounded,
-        Color(0xFF00F5D4),
-        'Get help',
-      ),
+      // _dashboardCard(
+      //   'Reports',
+      //   Icons.assessment_rounded,
+      //   Color(0xFF00BBF9),
+      //   'Generate reports',
+      // ),
+      // _dashboardCard(
+      //   'Support',
+      //   Icons.support_rounded,
+      //   Color(0xFF00F5D4),
+      //   'Get help',
+      // ),
     ];
 
     return GridView.builder(
@@ -922,42 +955,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildDriverDashboard() {
     final cards = [
-      _dashboardCard(
-        'Routes',
-        Icons.route_rounded,
-        Color(0xFF4E56C0),
-        'My routes',
-      ),
-      _dashboardCard(
-        'Pickups',
-        Icons.checklist_rounded,
-        Color(0xFF9B5DE0),
-        'Today\'s tasks',
-      ),
-      _dashboardCard(
-        'Vehicle',
-        Icons.directions_car_rounded,
-        Color(0xFFD78FEE),
-        'Vehicle info',
-      ),
-      _dashboardCard(
-        'Earnings',
-        Icons.attach_money_rounded,
-        Color(0xFFF15BB5),
-        'My earnings',
-      ),
+      // _dashboardCard(
+      //   'Routes',
+      //   Icons.route_rounded,
+      //   Color(0xFF4E56C0),
+      //   'My routes',
+      // ),
       _dashboardCard(
         'Schedule',
         Icons.schedule_rounded,
+        Color(0xFF9B5DE0),
+        'Daily tasks',
+      ),
+      // _dashboardCard(
+      //   'Vehicle',
+      //   Icons.directions_car_rounded,
+      //   Color(0xFFD78FEE),
+      //   'Vehicle info',
+      // ),
+      // _dashboardCard(
+      //   'Earnings',
+      //   Icons.attach_money_rounded,
+      //   Color(0xFFF15BB5),
+      //   'My earnings',
+      // ),
+      _dashboardCard(
+        'Pickups',
+        Icons.checklist_rounded,
         Color(0xFF00BBF9),
-        'Weekly schedule',
+        'Confirm pickups',
       ),
       _dashboardCard(
-        'Support',
-        Icons.help_rounded,
+        'Profile',
+        Icons.person_rounded,
         Color(0xFF00F5D4),
-        'Help center',
+        'My profile',
       ),
+      // _dashboardCard(
+      //   'Support',
+      //   Icons.help_rounded,
+      //   Color(0xFF00F5D4),
+      //   'Help center',
+      // ),
     ];
 
     return GridView.builder(
@@ -974,36 +1013,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildCitizenDashboard() {
     final cards = [
-      _dashboardCard(
-        'Request',
-        Icons.schedule_rounded,
-        Color(0xFF4E56C0),
-        'Request pickup',
-      ),
-      _dashboardCard(
-        'My Requests',
-        Icons.list_alt_rounded,
-        Color(0xFF9B5DE0),
-        'View requests',
-      ),
+      // _dashboardCard(
+      //   'Request',
+      //   Icons.schedule_rounded,
+      //   Color(0xFF4E56C0),
+      //   'Request pickup',
+      // ),
+      // _dashboardCard(
+      //   'My Requests',
+      //   Icons.list_alt_rounded,
+      //   Color(0xFF9B5DE0),
+      //   'View requests',
+      // ),
       _dashboardCard(
         'Products',
         Icons.shopping_bag_rounded,
         Color(0xFFD78FEE),
         'Browse products',
       ),
-      _dashboardCard(
-        'Complaints',
-        Icons.feedback_rounded,
-        Color(0xFFF15BB5),
-        'Submit feedback',
-      ),
-      _dashboardCard(
-        'History',
-        Icons.history_rounded,
-        Color(0xFF00BBF9),
-        'Past activities',
-      ),
+      // _dashboardCard(
+      //   'Complaints',
+      //   Icons.feedback_rounded,
+      //   Color(0xFFF15BB5),
+      //   'Submit feedback',
+      // ),
+      // _dashboardCard(
+      //   'History',
+      //   Icons.history_rounded,
+      //   Color(0xFF00BBF9),
+      //   'Past activities',
+      // ),
       _dashboardCard(
         'Profile',
         Icons.person_rounded,
@@ -1033,12 +1072,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: () {
         // Handle card tap based on title
-        if (title == 'Products') {
+        if (subtitle == 'Products' || subtitle == 'Browse products') {
           Navigator.pushNamed(context, '/products');
-        } else if (title == 'Product Management') {
+        } else if (subtitle == 'Manage Products') {
           Navigator.pushNamed(context, '/admin/products');
+        } else if (subtitle == 'Schedule') {
+          Navigator.pushNamed(context, '/industry/schedule_pickup');
+        } else if (subtitle == 'History') {
+          Navigator.pushNamed(context, '/industry/service_history');
+        } else if (subtitle == 'My profile' || subtitle == 'My account') {
+          Navigator.pushNamed(context, '/profile');
+        } else if (subtitle == 'Manage Companies') {
+          Navigator.pushNamed(context, '/companies');
+        } else if (subtitle == 'Manage Branches') {
+          Navigator.pushNamed(context, '/branches');
+        } else if (subtitle == 'Daily tasks') {
+          Navigator.pushNamed(context, '/driver/driverdailytasks');
+        } else if (subtitle == 'Confirm pickups') {
+          Navigator.pushNamed(context, '/driver/confirm_pickups');
         }
-        // Add more navigation handlers as needed
       },
       child: Container(
         decoration: BoxDecoration(

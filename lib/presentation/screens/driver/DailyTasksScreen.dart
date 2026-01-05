@@ -204,7 +204,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            'Your pickup schedule for today',
+                            'Your pickup schedule',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white70,
@@ -295,7 +295,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Today\'s Pickups',
+                              'Pickups',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -798,7 +798,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
             ),
             const SizedBox(height: 24),
             const Text(
-              'No Tasks Today!',
+              'No Tasks!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -807,7 +807,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'You have completed all your scheduled pickups for today.',
+              'You have completed all your scheduled pickups.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),

@@ -74,9 +74,6 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
           '/profile': (context) => const ProfileScreen(),
-          '/companies': (context) => const CompanyListScreen(),
-          '/branches': (context) => const BranchListScreen(),
-          '/branches/stats': (context) => const BranchStatsScreen(),
           '/tutorials': (context) => const TopicsListScreen(),
           '/tutorials/home': (context) => const TutorialsHomeScreen(),
           '/tutorials/topic': (context) {
@@ -110,7 +107,12 @@ class MyApp extends StatelessWidget {
             );
           },
           '/dashboard': (context) => const DashboardScreen(),
-          '/products': (context) => const ProductsScreen(),
+          '/admin-dashboard': (context) => const DashboardScreen(),
+          '/industry-dashboard': (context) => const DashboardScreen(),
+          '/driver-dashboard': (context) => const DashboardScreen(),
+          '/citizen-dashboard': (context) => const DashboardScreen(),
+
+          // Admin routes
           '/admin/products': (context) => const AdminProductsScreen(),
           '/admin/product/form': (context) {
             final args =
@@ -118,11 +120,9 @@ class MyApp extends StatelessWidget {
                     as Map<String, dynamic>?;
             return ProductFormScreen(productId: args?['id'] as int?);
           },
-          '/admin-dashboard': (context) => const DashboardScreen(),
-          '/industry-dashboard': (context) => const DashboardScreen(),
-          '/driver-dashboard': (context) => const DashboardScreen(),
-          '/citizen-dashboard': (context) => const DashboardScreen(),
-
+          '/companies': (context) => const CompanyListScreen(),
+          '/branches': (context) => const BranchListScreen(),
+          '/branches/stats': (context) => const BranchStatsScreen(),
 
           // Industry routes
           '/industry/schedule_pickup': (context) => const SchedulePickup(),
@@ -131,6 +131,10 @@ class MyApp extends StatelessWidget {
           // Driver routes
           '/driver/driverdailytasks': (context) => const DriverTasksScreen(),
           '/driver/confirm_pickups': (context) => const ConfirmPickupsScreen(),
+
+          // Citizen routes
+          '/products': (context) => const ProductsScreen(),
+
         },
       ),
     );
