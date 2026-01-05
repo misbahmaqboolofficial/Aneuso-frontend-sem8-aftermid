@@ -552,17 +552,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     //   },
                     // ),
 
-                    // _buildDrawerItem(
-                    //   19,
-                    //   'View Campaigns',
-                    //   Icons.play_circle_fill_rounded,
-                    //   _selectedDrawerIndex == 19,
-                    //   () {
-                    //     setState(() => _selectedDrawerIndex = 19);
-                    //     Navigator.pop(context);
-                    //     Navigator.pushNamed(context, '/tutorials/home');
-                    //   },
-                    // ),
+                    _buildDrawerItem(
+                      19,
+                      'Tutorials',
+                      Icons.play_circle_fill_rounded,
+                      _selectedDrawerIndex == 19,
+                      () {
+                        setState(() => _selectedDrawerIndex = 19);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/tutorials/home');
+                      },
+                    ),
 
                     // Comment one
                     // _buildDrawerItem(
