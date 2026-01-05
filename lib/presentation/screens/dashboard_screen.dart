@@ -1031,6 +1031,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Color(0xFFD78FEE),
         'Browse products',
       ),
+      _dashboardCard(
+        'Tutorials',
+        Icons.play_circle_fill_rounded,
+        Color(0xFFD78FEE),
+        'Browse tutorials',
+      ),
       // _dashboardCard(
       //   'Complaints',
       //   Icons.feedback_rounded,
@@ -1090,6 +1096,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/driver/driverdailytasks');
         } else if (subtitle == 'Confirm pickups') {
           Navigator.pushNamed(context, '/driver/confirm_pickups');
+        } else if (subtitle == 'Browse tutorials') {
+          Navigator.pushNamed(context, '/tutorials/home');
         }
       },
       child: Container(
