@@ -448,6 +448,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         );
                       },
                     ),
+                    _buildDrawerItem(
+                      19,
+                      'Tutorials',
+                      Icons.play_circle_fill_rounded,
+                      _selectedDrawerIndex == 19,
+                      () {
+                        setState(() => _selectedDrawerIndex = 19);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/tutorials/home');
+                      },
+                    ),
                     // _buildDrawerItem(
                     //   12,
                     //   'Deal Management',
@@ -527,6 +538,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Navigator.pushNamed(context, '/products');
                       },
                     ),
+
                     // Comment one
                     // _buildDrawerItem(
                     //   17,
@@ -551,7 +563,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     //     Navigator.pushNamed(context, '/admin/products');
                     //   },
                     // ),
-
                     _buildDrawerItem(
                       19,
                       'Tutorials',
@@ -588,7 +599,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     //   },
                     // ),
                     // Comment one end
-
                   ],
                   SizedBox(height: 20),
                   Padding(
@@ -830,7 +840,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildAdminDashboard() {
     final cards = [
-
       // Comment One
       // _dashboardCard(
       //   'Users',
@@ -1086,7 +1095,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/industry/schedule_pickup');
         } else if (subtitle == 'History') {
           Navigator.pushNamed(context, '/industry/service_history');
-        } else if (subtitle == 'My profile' || subtitle == 'My account') {
+        } else if (subtitle == 'My profile' ||
+            subtitle == 'My account' ||
+            subtitle.toLowerCase() == 'MANAge Profile'.toLowerCase()) {
           Navigator.pushNamed(context, '/profile');
         } else if (subtitle == 'Manage Companies') {
           Navigator.pushNamed(context, '/companies');
