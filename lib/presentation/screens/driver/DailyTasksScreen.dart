@@ -93,7 +93,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
   void calculateStatistics() {
     pendingTasks = tasks.where((task) => task['pickup_status_id'] == 1).length;
     completedTasks = tasks
-        .where((task) => task['pickup_status_id'] == 2)
+        .where((task) => task['pickup_status_id'] == 3)
         .length;
 
     totalWeight = tasks.fold(0.0, (sum, task) {
@@ -117,9 +117,9 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
       case 1: // industry/pending
         return const Color(0xFFFF9800);
       case 2: // completed
-        return const Color(0xFF4CAF50);
       case 3: // in-progress
-        return const Color(0xFF2196F3);
+        return const Color(0xFF4CAF50);
+      // return const Color(0xFF2196F3);
       default:
         return const Color(0xFF9E9E9E);
     }
@@ -130,9 +130,9 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
       case 1:
         return 'Pending';
       case 2:
-        return 'Completed';
       case 3:
-        return 'In Progress';
+        return 'Completed';
+      // return 'In Progress';
       default:
         return 'Unknown';
     }
@@ -427,7 +427,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
         child: InkWell(
           onTap: () {
             // Handle task tap
-            _showTaskDetails(task);
+            // _showTaskDetails(task);
           },
           borderRadius: BorderRadius.circular(20),
           child: Padding(
@@ -457,29 +457,29 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: getPriorityColor(
-                          task['priority_level_id'],
-                        ).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: getPriorityColor(task['priority_level_id']),
-                        ),
-                      ),
-                      child: Text(
-                        task['priority_level_name'] ?? 'Standard',
-                        style: TextStyle(
-                          color: getPriorityColor(task['priority_level_id']),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(
+                    //     horizontal: 16,
+                    //     vertical: 8,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     color: getPriorityColor(
+                    //       task['priority_level_id'],
+                    //     ).withOpacity(0.1),
+                    //     borderRadius: BorderRadius.circular(20),
+                    //     border: Border.all(
+                    //       color: getPriorityColor(task['priority_level_id']),
+                    //     ),
+                    //   ),
+                    //   child: Text(
+                    //     task['priority_level_name'] ?? 'Standard',
+                    //     style: TextStyle(
+                    //       color: getPriorityColor(task['priority_level_id']),
+                    //       fontSize: 12,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 16),
