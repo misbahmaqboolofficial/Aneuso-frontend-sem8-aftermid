@@ -1220,7 +1220,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
         border: Border.all(color: Colors.grey[200]!, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: isMobile ? 6 : 10,
             offset: const Offset(0, 4),
           ),
@@ -1229,55 +1229,55 @@ class _SchedulePickupState extends State<SchedulePickup> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(pickup['pickup_status_id']),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    pickup['status_name'] ?? 'Scheduled',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isMobile ? 10 : 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getPriorityColor(pickup['priority_level_id']),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    pickup['priority_name'] ?? 'Medium',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isMobile ? 10 : 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Flexible(
+          //       child: Container(
+          //         padding: const EdgeInsets.symmetric(
+          //           horizontal: 8,
+          //           vertical: 4,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           color: _getStatusColor(pickup['pickup_status_id']),
+          //           borderRadius: BorderRadius.circular(12),
+          //         ),
+          //         child: Text(
+          //           pickup['status_name'] ?? 'Scheduled',
+          //           style: TextStyle(
+          //             color: Colors.white,
+          //             fontSize: isMobile ? 10 : 12,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //           overflow: TextOverflow.ellipsis,
+          //         ),
+          //       ),
+          //     ),
+          //     const SizedBox(width: 8),
+          //     Flexible(
+          //       child: Container(
+          //         padding: const EdgeInsets.symmetric(
+          //           horizontal: 8,
+          //           vertical: 4,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           color: _getPriorityColor(pickup['priority_level_id']),
+          //           borderRadius: BorderRadius.circular(12),
+          //         ),
+          //         child: Text(
+          //           pickup['priority_name'] ?? 'Medium',
+          //           style: TextStyle(
+          //             color: Colors.white,
+          //             fontSize: isMobile ? 10 : 12,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //           overflow: TextOverflow.ellipsis,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 12),
           Text(
             pickup['branch_name'] ?? 'N/A',
             style: TextStyle(
@@ -1345,7 +1345,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
               _buildInfoChip(
                 Icons.scale,
                 '${pickup['estimated_weight_kg'] ?? '0'} kg',
-                const Color(0xFFFDCFFA),
+                const Color(0xFFD78FEE),
                 isMobile: isMobile,
               ),
               _buildInfoChip(
