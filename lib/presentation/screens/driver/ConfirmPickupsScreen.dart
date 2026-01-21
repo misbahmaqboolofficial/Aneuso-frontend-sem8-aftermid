@@ -121,7 +121,10 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   void calculateStatistics() {
     pendingTasks = tasks.where((task) => task['pickup_status_id'] == 1).length;
     completedTasks = tasks
-        .where((task) => task['pickup_status_id'] == 2 || task['pickup_status_id'] == 3)
+        .where(
+          (task) =>
+              task['pickup_status_id'] == 2 || task['pickup_status_id'] == 3,
+        )
         .length;
 
     totalWeight = tasks.fold(0.0, (sum, task) {
@@ -143,11 +146,14 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   Color getStatusColor(int statusId) {
     switch (statusId) {
       case 1: // industry/pending
-        return const Color(0xFFFF9800);
+        // return const Color(0xFFFF9800);
+        return const Color(0xFFD78FEE);
       case 2: // completed
-        return const Color(0xFF4CAF50);
+        // return const Color(0xFF4CAF50);
+        return const Color(0xFF9B5DE0);
       case 3: // in-progress
-        return const Color(0xFF2196F3);
+        // return const Color(0xFF2196F3);
+        return const Color(0xFF4E56C0);
       default:
         return const Color(0xFF9E9E9E);
     }
@@ -171,9 +177,9 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   Color getPriorityColor(int priorityId) {
     switch (priorityId) {
       case 1: // high
-        return const Color(0xFFFF5252);
+        return const Color(0xFF9E9E9E);
       case 2: // medium
-        return const Color(0xFFFF9800);
+        return const Color(0xFFD78FEE);
       case 3: // low/citizen
         return const Color(0xFF4E56C0);
       default:
@@ -972,114 +978,114 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                            // Header
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Confirm Pickup',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF333333),
-                                  ),
+                          // Header
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Confirm Pickup',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF333333),
                                 ),
-                                if (selectedTask != null)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
+                              ),
+                              if (selectedTask != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: getStatusColor(
+                                      selectedTask!['pickup_status_id'],
+                                    ).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
                                       color: getStatusColor(
                                         selectedTask!['pickup_status_id'],
-                                      ).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: getStatusColor(
-                                          selectedTask!['pickup_status_id'],
-                                        ),
                                       ),
                                     ),
-                                    child: Text(
-                                      getStatusText(
+                                  ),
+                                  child: Text(
+                                    getStatusText(
+                                      selectedTask!['pickup_status_id'],
+                                    ),
+                                    style: TextStyle(
+                                      color: getStatusColor(
                                         selectedTask!['pickup_status_id'],
                                       ),
-                                      style: TextStyle(
-                                        color: getStatusColor(
-                                          selectedTask!['pickup_status_id'],
-                                        ),
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            selectedTask?['company_name'] ?? '',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Task Details Card
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8F9FF),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.grey[100]!),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildDetailRow(
+                                  'Branch',
+                                  selectedTask?['branch_name'] ?? 'N/A',
+                                  Icons.business,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildDetailRow(
+                                  'Location',
+                                  selectedTask?['location_address'] ?? 'N/A',
+                                  Icons.location_on,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildDetailRow(
+                                  'Scheduled',
+                                  formatDate(
+                                    selectedTask?['scheduled_date'] ?? '',
+                                  ),
+                                  Icons.calendar_today,
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildDetailRow(
+                                        'Estimated Weight',
+                                        '${selectedTask?['estimated_weight_kg']} kg',
+                                        Icons.scale,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 20),
+                                    Expanded(
+                                      child: _buildDetailRow(
+                                        'Waste Type',
+                                        selectedTask?['waste_type_name'] ??
+                                            'N/A',
+                                        Icons.category,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              selectedTask?['company_name'] ?? '',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-
-                            // Task Details Card
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF8F9FF),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey[100]!),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildDetailRow(
-                                    'Branch',
-                                    selectedTask?['branch_name'] ?? 'N/A',
-                                    Icons.business,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _buildDetailRow(
-                                    'Location',
-                                    selectedTask?['location_address'] ?? 'N/A',
-                                    Icons.location_on,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _buildDetailRow(
-                                    'Scheduled',
-                                    formatDate(
-                                      selectedTask?['scheduled_date'] ?? '',
-                                    ),
-                                    Icons.calendar_today,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: _buildDetailRow(
-                                          'Estimated Weight',
-                                          '${selectedTask?['estimated_weight_kg']} kg',
-                                          Icons.scale,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                        child: _buildDetailRow(
-                                          'Waste Type',
-                                          selectedTask?['waste_type_name'] ??
-                                              'N/A',
-                                          Icons.category,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
+                          ),
+                          const SizedBox(height: 24),
 
                           if (selectedTask!['pickup_status_id'] != 3) ...[
                             // Confirmation Form
