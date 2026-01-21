@@ -114,10 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             body: Center(
               child: Text(
                 'No user data',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Color(0xFF4E56C0),
-                ),
+                style: TextStyle(fontSize: 18, color: Color(0xFF4E56C0)),
               ),
             ),
           );
@@ -132,18 +129,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: ShaderMask(
               shaderCallback: (bounds) {
                 return LinearGradient(
-                  colors: [
-                    Color(0xFF4E56C0),
-                    Color(0xFF9B5DE0),
-                  ],
+                  colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                 ).createShader(bounds);
               },
               child: Text(
                 'My Profile',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
               ),
             ),
             leading: IconButton(
@@ -218,10 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
-                              colors: [
-                                Colors.white,
-                                Color(0xFFFDCFFA),
-                              ],
+                              colors: [Colors.white, Color(0xFFFDCFFA)],
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -337,13 +325,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'Status',
                           user.isActive ? 'Active' : 'Inactive',
                           Icons.circle_rounded,
-                          user.isActive ? Colors.green : Colors.red,
+                          user.isActive ? Color(0xFF4E56C0) : Color(0xFF9B5DE0),
                         ),
                         _buildInfoItem(
                           'Email Verified',
                           user.isEmailVerified ? 'Verified' : 'Pending',
                           Icons.verified_rounded,
-                          user.isEmailVerified ? Colors.green : Colors.orange,
+                          user.isEmailVerified
+                              ? Color(0xFF4E56C0)
+                              : Color(0xFF9B5DE0),
                         ),
                       ],
                     ),
@@ -426,7 +416,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
-                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                              if (!RegExp(
+                                r'^[^@]+@[^@]+\.[^@]+',
+                              ).hasMatch(value)) {
                                 return 'Please enter a valid email';
                               }
                               return null;
@@ -463,7 +455,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fillColor: Colors.white,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
@@ -522,7 +516,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -601,7 +596,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               isVisible: _isNewPasswordVisible,
                               onVisibilityChanged: () {
                                 setState(() {
-                                  _isNewPasswordVisible = !_isNewPasswordVisible;
+                                  _isNewPasswordVisible =
+                                      !_isNewPasswordVisible;
                                 });
                               },
                               validator: (value) {
@@ -628,7 +624,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               isVisible: _isConfirmPasswordVisible,
                               onVisibilityChanged: () {
                                 setState(() {
-                                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
                                 });
                               },
                               validator: (value) {
@@ -750,7 +747,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildInfoItem(String title, String value, IconData icon, Color color) {
+  Widget _buildInfoItem(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Container(
@@ -760,22 +762,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             shape: BoxShape.circle,
             color: color.withOpacity(0.1),
           ),
-          child: Center(
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
-          ),
+          child: Center(child: Icon(icon, color: color, size: 24)),
         ),
         SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         SizedBox(height: 4),
         Text(
           value,
@@ -810,32 +800,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: TextFormField(
         controller: controller,
-        style: TextStyle(
-          color: Color(0xFF4E56C0),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xFF4E56C0), fontSize: 16),
         keyboardType: keyboardType,
         obscureText: isPassword && !isVisible,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF9B5DE0).withOpacity(0.7),
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Color(0xFF9B5DE0),
-          ),
+          labelStyle: TextStyle(color: Color(0xFF9B5DE0).withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Color(0xFF9B5DE0)),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
-                    isVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+                    isVisible
+                        ? Icons.visibility_rounded
+                        : Icons.visibility_off_rounded,
                     color: Color(0xFFD78FEE),
                   ),
                   onPressed: onVisibilityChanged,
