@@ -539,6 +539,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
 
+                    _buildDrawerItem(
+                      20,
+                      'My Cart',
+                      Icons.shopping_cart_rounded,
+                      _selectedDrawerIndex == 20,
+                      () {
+                        setState(() => _selectedDrawerIndex = 20);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/citizen/mycart');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      21,
+                      'My Orders',
+                      Icons.shopping_bag_rounded,
+                      _selectedDrawerIndex == 21,
+                      () {
+                        setState(() => _selectedDrawerIndex = 21);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/citizen/myorders');
+                      },
+                    ),
+
                     // Comment one
                     // _buildDrawerItem(
                     //   17,
