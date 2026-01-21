@@ -78,7 +78,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       } else {
-        throw Exception('Failed to add to cart');
+        // throw Exception('Failed to add to cart');
       }
     } catch (e) {
       if (mounted) {
@@ -1516,47 +1516,47 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: prod.stockQuantity > 0
-                                      ? Colors.green.withOpacity(0.1)
-                                      : Colors.red.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: prod.stockQuantity > 0
-                                        ? Colors.green
-                                        : Colors.red,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  prod.stockQuantity > 0
-                                      ? 'In Stock'
-                                      : 'Out of Stock',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: prod.stockQuantity > 0
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                                ),
-                              ),
+                              // Container(
+                              //   padding: EdgeInsets.symmetric(
+                              //     horizontal: 10,
+                              //     vertical: 4,
+                              //   ),
+                              //   decoration: BoxDecoration(
+                              //     color: prod.stockQuantity > 0
+                              //         ? Colors.green.withOpacity(0.1)
+                              //         : Colors.red.withOpacity(0.1),
+                              //     borderRadius: BorderRadius.circular(20),
+                              //     border: Border.all(
+                              //       color: prod.stockQuantity > 0
+                              //           ? Colors.green
+                              //           : Colors.red,
+                              //       width: 1,
+                              //     ),
+                              //   ),
+                              //   child: Text(
+                              //     prod.stockQuantity > 0
+                              //         ? 'In Stock'
+                              //         : 'Out of Stock',
+                              //     style: TextStyle(
+                              //       fontSize: 10,
+                              //       fontWeight: FontWeight.w600,
+                              //       color: prod.stockQuantity > 0
+                              //           ? Colors.green
+                              //           : Colors.red,
+                              //     ),
+                              //   ),
+                              // ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Text(
-                                    'Rs ${prod.price ?? 0}',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFF4E56C0),
-                                    ),
-                                  ),
+                                  // Text(
+                                  //   'Rs ${prod.price ?? 0}',
+                                  //   style: TextStyle(
+                                  //     fontSize: 18,
+                                  //     fontWeight: FontWeight.w800,
+                                  //     color: Color(0xFF4E56C0),
+                                  //   ),
+                                  // ),
                                   SizedBox(height: 4),
                                   // Add to Cart Button for non-admin users
                                   if (!isAdmin && prod.stockQuantity > 0)

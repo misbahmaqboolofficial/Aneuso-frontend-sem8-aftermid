@@ -64,7 +64,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         margin: EdgeInsets.only(bottom: 15),
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color(0xFFf2eefb),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(

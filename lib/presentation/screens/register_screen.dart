@@ -328,6 +328,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter your email';
                                       }
+                                      //check __@___.___
                                       if (!RegExp(
                                         r'^[^@]+@[^@]+\.[^@]+',
                                       ).hasMatch(value)) {

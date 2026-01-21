@@ -185,7 +185,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withOpacity(0.3),
             blurRadius: 10,
             offset: Offset(0, 5),
           ),
@@ -222,102 +222,101 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           SizedBox(height: 20),
 
           // Status Badges
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(
-                          _order!.orderStatusName,
-                        ).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color: _getStatusColor(_order!.orderStatusName),
-                          width: 2,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.shopping_bag_rounded,
-                            color: _getStatusColor(_order!.orderStatusName),
-                            size: 24,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            _order!.orderStatusName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: _getStatusColor(_order!.orderStatusName),
-                            ),
-                          ),
-                          Text(
-                            'Order Status',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: Column(
+          //         children: [
+          //           Container(
+          //             padding: EdgeInsets.all(12),
+          //             decoration: BoxDecoration(
+          //               color: _getStatusColor(
+          //                 _order!.orderStatusName,
+          //               ).withOpacity(0.1),
+          //               borderRadius: BorderRadius.circular(15),
+          //               border: Border.all(
+          //                 color: _getStatusColor(_order!.orderStatusName),
+          //                 width: 2,
+          //               ),
+          //             ),
+          //             child: Column(
+          //               children: [
+          //                 Icon(
+          //                   Icons.shopping_bag_rounded,
+          //                   color: _getStatusColor(_order!.orderStatusName),
+          //                   size: 24,
+          //                 ),
+          //                 SizedBox(height: 8),
+          //                 Text(
+          //                   _order!.orderStatusName,
+          //                   style: TextStyle(
+          //                     fontSize: 14,
+          //                     fontWeight: FontWeight.w700,
+          //                     color: _getStatusColor(_order!.orderStatusName),
+          //                   ),
+          //                 ),
+          //                 Text(
+          //                   'Order Status',
+          //                   style: TextStyle(
+          //                     fontSize: 10,
+          //                     color: Colors.grey[600],
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
 
-              SizedBox(width: 15),
+          //     SizedBox(width: 15),
 
-              Expanded(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(
-                          _order!.paymentStatusName,
-                        ).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color: _getStatusColor(_order!.paymentStatusName),
-                          width: 2,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.payment_rounded,
-                            color: _getStatusColor(_order!.paymentStatusName),
-                            size: 24,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            _order!.paymentStatusName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: _getStatusColor(_order!.paymentStatusName),
-                            ),
-                          ),
-                          Text(
-                            'Payment Status',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
+          //     Expanded(
+          //       child: Column(
+          //         children: [
+          //           Container(
+          //             padding: EdgeInsets.all(12),
+          //             decoration: BoxDecoration(
+          //               color: _getStatusColor(
+          //                 _order!.paymentStatusName,
+          //               ).withOpacity(0.1),
+          //               borderRadius: BorderRadius.circular(15),
+          //               border: Border.all(
+          //                 color: _getStatusColor(_order!.paymentStatusName),
+          //                 width: 2,
+          //               ),
+          //             ),
+          //             child: Column(
+          //               children: [
+          //                 Icon(
+          //                   Icons.payment_rounded,
+          //                   color: _getStatusColor(_order!.paymentStatusName),
+          //                   size: 24,
+          //                 ),
+          //                 SizedBox(height: 8),
+          //                 Text(
+          //                   _order!.paymentStatusName,
+          //                   style: TextStyle(
+          //                     fontSize: 14,
+          //                     fontWeight: FontWeight.w700,
+          //                     color: _getStatusColor(_order!.paymentStatusName),
+          //                   ),
+          //                 ),
+          //                 Text(
+          //                   'Payment Status',
+          //                   style: TextStyle(
+          //                     fontSize: 10,
+          //                     color: Colors.grey[600],
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
           SizedBox(height: 20),
 
           // Address Information
@@ -799,7 +798,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withOpacity(0.4),
                             blurRadius: 10,
                             offset: Offset(0, 5),
                           ),
