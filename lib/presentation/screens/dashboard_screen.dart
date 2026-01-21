@@ -1114,9 +1114,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/products');
         } else if (subtitle == 'Manage Products') {
           Navigator.pushNamed(context, '/admin/products');
-        } else if (subtitle == 'Schedule') {
+        } else if (subtitle == 'Pickup schedule') {
           Navigator.pushNamed(context, '/industry/schedule_pickup');
-        } else if (subtitle == 'History') {
+        } else if (subtitle == 'Past pickups') {
           Navigator.pushNamed(context, '/industry/service_history');
         } else if (subtitle == 'My profile' ||
             subtitle == 'My account' ||
