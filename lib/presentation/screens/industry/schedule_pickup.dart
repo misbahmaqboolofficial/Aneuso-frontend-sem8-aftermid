@@ -316,7 +316,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                             color: Colors.white,
                           ),
                           Text(
-                            'Pickup Manager',
+                            'Schedule Pickup',
                             style: TextStyle(
                               fontSize: isMobile ? 22 : 28,
                               fontWeight: FontWeight.bold,
@@ -326,7 +326,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Schedule & Manage Waste Pickups',
+                            'Schedule Waste Pickups',
                             style: TextStyle(
                               fontSize: isMobile ? 12 : 14,
                               color: Colors.white70,
