@@ -64,11 +64,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
               ),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: Icon(icon, color: Colors.white, size: 24),
           ),
           SizedBox(width: 16),
           Expanded(
@@ -171,10 +167,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.arrow_back_rounded, color: Colors.white),
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -188,10 +181,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Icon(
-                      Icons.refresh_rounded,
-                      color: Colors.white,
-                    ),
+                    child: Icon(Icons.refresh_rounded, color: Colors.white),
                   ),
                   onPressed: _load,
                   tooltip: 'Refresh',
@@ -255,7 +245,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                         gradient: LinearGradient(
                           colors: [
                             Color(0xFFFDCFFA).withOpacity(0.1),
-                            Color(0xFFD78FEE).withOpacity(0.1)
+                            Color(0xFFD78FEE).withOpacity(0.1),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -283,10 +273,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       child: Text(
                         _error ?? 'Unknown error occurred',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.red[700],
-                        ),
+                        style: TextStyle(fontSize: 15, color: Colors.red[700]),
                       ),
                     ),
                     SizedBox(height: 30),
@@ -307,8 +294,11 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.refresh_rounded,
-                              color: Colors.white, size: 20),
+                          Icon(
+                            Icons.refresh_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           SizedBox(width: 10),
                           Text(
                             'Try Again',
@@ -339,7 +329,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                         gradient: LinearGradient(
                           colors: [
                             Color(0xFFFDCFFA).withOpacity(0.1),
-                            Color(0xFFD78FEE).withOpacity(0.1)
+                            Color(0xFFD78FEE).withOpacity(0.1),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -533,7 +523,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                               '/tutorials/video/player',
                               arguments: {
                                 'url': url,
-                                'title': _video?.title ?? 'Video'
+                                'title': _video?.title ?? 'Video',
                               },
                             );
                           } else {
@@ -651,7 +641,6 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                   //       ],
                   //     ),
                   //   ),
-
                   SizedBox(height: 40),
                 ]),
               ),

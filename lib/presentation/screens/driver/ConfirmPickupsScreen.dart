@@ -1238,140 +1238,140 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            // const SizedBox(height: 16),
 
-                            // Photos Section
-                            Card(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                side: BorderSide(
-                                  color: Colors.grey[200]!,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      children: [
-                                        Icon(
-                                          Icons.photo_library,
-                                          color: Color(0xFF4E56C0),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          'Add Photos (Optional)',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xFF333333),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      'Take photos of the collected waste for verification',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
+                            // // Photos Section
+                            // Card(
+                            //   elevation: 0,
+                            //   shape: RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(15),
+                            //     side: BorderSide(
+                            //       color: Colors.grey[200]!,
+                            //       width: 1,
+                            //     ),
+                            //   ),
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(16),
+                            //     child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         const Row(
+                            //           children: [
+                            //             Icon(
+                            //               Icons.photo_library,
+                            //               color: Color(0xFF4E56C0),
+                            //             ),
+                            //             SizedBox(width: 8),
+                            //             Text(
+                            //               'Add Photos (Optional)',
+                            //               style: TextStyle(
+                            //                 fontWeight: FontWeight.w600,
+                            //                 color: Color(0xFF333333),
+                            //               ),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //         const SizedBox(height: 12),
+                            //         Text(
+                            //           'Take photos of the collected waste for verification',
+                            //           style: TextStyle(
+                            //             color: Colors.grey[600],
+                            //             fontSize: 14,
+                            //           ),
+                            //         ),
+                            //         const SizedBox(height: 16),
 
-                                    // Photos Grid
-                                    if (selectedPhotos.isNotEmpty)
-                                      GridView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 3,
-                                              crossAxisSpacing: 8,
-                                              mainAxisSpacing: 8,
-                                            ),
-                                        itemCount: selectedPhotos.length,
-                                        itemBuilder: (context, index) {
-                                          return Stack(
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  image: DecorationImage(
-                                                    image: FileImage(
-                                                      selectedPhotos[index],
-                                                    ),
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                top: 4,
-                                                right: 4,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    setSheetState(() {
-                                                      selectedPhotos.removeAt(
-                                                        index,
-                                                      );
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(4),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black54,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: const Icon(
-                                                      Icons.close,
-                                                      size: 16,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
+                            //         // Photos Grid
+                            //         if (selectedPhotos.isNotEmpty)
+                            //           GridView.builder(
+                            //             shrinkWrap: true,
+                            //             physics:
+                            //                 const NeverScrollableScrollPhysics(),
+                            //             gridDelegate:
+                            //                 const SliverGridDelegateWithFixedCrossAxisCount(
+                            //                   crossAxisCount: 3,
+                            //                   crossAxisSpacing: 8,
+                            //                   mainAxisSpacing: 8,
+                            //                 ),
+                            //             itemCount: selectedPhotos.length,
+                            //             itemBuilder: (context, index) {
+                            //               return Stack(
+                            //                 children: [
+                            //                   Container(
+                            //                     decoration: BoxDecoration(
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(12),
+                            //                       image: DecorationImage(
+                            //                         image: FileImage(
+                            //                           selectedPhotos[index],
+                            //                         ),
+                            //                         fit: BoxFit.cover,
+                            //                       ),
+                            //                     ),
+                            //                   ),
+                            //                   Positioned(
+                            //                     top: 4,
+                            //                     right: 4,
+                            //                     child: GestureDetector(
+                            //                       onTap: () {
+                            //                         setSheetState(() {
+                            //                           selectedPhotos.removeAt(
+                            //                             index,
+                            //                           );
+                            //                         });
+                            //                       },
+                            //                       child: Container(
+                            //                         padding:
+                            //                             const EdgeInsets.all(4),
+                            //                         decoration: BoxDecoration(
+                            //                           color: Colors.black54,
+                            //                           shape: BoxShape.circle,
+                            //                         ),
+                            //                         child: const Icon(
+                            //                           Icons.close,
+                            //                           size: 16,
+                            //                           color: Colors.white,
+                            //                         ),
+                            //                       ),
+                            //                     ),
+                            //                   ),
+                            //                 ],
+                            //               );
+                            //             },
+                            //           ),
 
-                                    const SizedBox(height: 16),
+                            //         const SizedBox(height: 16),
 
-                                    // Add Photo Button
-                                    OutlinedButton.icon(
-                                      onPressed: () =>
-                                          _pickImage(setSheetState),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: const Color(
-                                          0xFF4E56C0,
-                                        ),
-                                        side: const BorderSide(
-                                          color: Color(0xFFD78FEE),
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
-                                          horizontal: 20,
-                                        ),
-                                      ),
-                                      icon: const Icon(
-                                        Icons.add_photo_alternate,
-                                      ),
-                                      label: const Text('Add Photo'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            //         // Add Photo Button
+                            //         OutlinedButton.icon(
+                            //           onPressed: () =>
+                            //               _pickImage(setSheetState),
+                            //           style: OutlinedButton.styleFrom(
+                            //             foregroundColor: const Color(
+                            //               0xFF4E56C0,
+                            //             ),
+                            //             side: const BorderSide(
+                            //               color: Color(0xFFD78FEE),
+                            //             ),
+                            //             shape: RoundedRectangleBorder(
+                            //               borderRadius: BorderRadius.circular(
+                            //                 12,
+                            //               ),
+                            //             ),
+                            //             padding: const EdgeInsets.symmetric(
+                            //               vertical: 16,
+                            //               horizontal: 20,
+                            //             ),
+                            //           ),
+                            //           icon: const Icon(
+                            //             Icons.add_photo_alternate,
+                            //           ),
+                            //           label: const Text('Add Photo'),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                             const SizedBox(height: 24),
 
                             // Submit Button

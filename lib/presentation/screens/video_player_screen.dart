@@ -6,7 +6,7 @@ class VideoPlayerScreen extends StatelessWidget {
   final String? title;
 
   const VideoPlayerScreen({Key? key, required this.url, this.title})
-      : super(key: key);
+    : super(key: key);
 
   static Route route({required String url, String? title}) {
     return MaterialPageRoute(
@@ -17,26 +17,21 @@ class VideoPlayerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title ?? 'Video Player')),
+      appBar: AppBar(title: Text((title ?? '') + " - Video Player")),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
               // makes the whole page scroll instead of overflowing
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Let the player size itself; no Expanded here
-                      VideoPlayerWidget(
-                        url: url,
-                        title: title,
-                      ),
+                      VideoPlayerWidget(url: url, title: title),
                       const SizedBox(height: 10),
                       if ((title ?? '').isNotEmpty)
                         Text(

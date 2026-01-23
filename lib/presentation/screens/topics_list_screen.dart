@@ -5,6 +5,7 @@ import '../providers/tutorial_provider.dart';
 import 'topic_detail_screen.dart';
 import '../widgets/tutorial_slider_widget.dart';
 
+// in fyp-2 (continue working)
 class TopicsListScreen extends StatefulWidget {
   const TopicsListScreen({Key? key}) : super(key: key);
 
@@ -22,7 +23,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
     final provider = Provider.of<TutorialProvider>(context, listen: false);
     provider.fetchSlider();
     provider.fetchTopics(refresh: true);
-    
+
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text;
@@ -49,7 +50,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
     return Consumer<TutorialProvider>(
       builder: (context, provider, _) {
         final filteredTopics = _filterTopics(provider.topics, _searchQuery);
-        
+
         return Scaffold(
           backgroundColor: Color(0xFFF8F9FF),
           appBar: AppBar(
@@ -100,11 +101,14 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                     child: TutorialSliderWidget(),
                   ),
                 ),
-                
+
                 // Search Section
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -182,11 +186,14 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                     ),
                   ),
                 ),
-                
+
                 // Header with count
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -200,7 +207,10 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
@@ -228,7 +238,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                     ),
                   ),
                 ),
-                
+
                 // Loading State
                 if (provider.isLoading)
                   SliverFillRemaining(
@@ -359,7 +369,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                               gradient: LinearGradient(
                                 colors: [
                                   Color(0xFFD78FEE).withOpacity(0.1),
-                                  Color(0xFFFDCFFA).withOpacity(0.1)
+                                  Color(0xFFFDCFFA).withOpacity(0.1),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -402,13 +412,10 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                   SliverPadding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final topic = filteredTopics[index];
-                          return _buildTopicCard(context, topic, index);
-                        },
-                        childCount: filteredTopics.length,
-                      ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final topic = filteredTopics[index];
+                        return _buildTopicCard(context, topic, index);
+                      }, childCount: filteredTopics.length),
                     ),
                   ),
               ],

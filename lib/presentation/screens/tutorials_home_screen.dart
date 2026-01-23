@@ -41,11 +41,11 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
       backgroundColor: Color(0xFFF8F9FF),
       appBar: AppBar(
         title: const Text(
-          'Tutorials',
+          'Tutorials Home',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 24,
-            color: Colors.white
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -103,7 +103,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
-            colors: [Color(0xFFD78FEE).withOpacity(0.2), Color(0xFFFDCFFA).withOpacity(0.2)],
+            colors: [
+              Color(0xFFD78FEE).withOpacity(0.2),
+              Color(0xFFFDCFFA).withOpacity(0.2),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -220,7 +223,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                                       gradient: LinearGradient(
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
-                                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                                        colors: [
+                                          Color(0xFF4E56C0),
+                                          Color(0xFF9B5DE0),
+                                        ],
                                       ),
                                     ),
                                     child: Icon(
@@ -239,7 +245,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                             gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.7),
+                              ],
                             ),
                           ),
                         ),
@@ -247,7 +256,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                           top: 20,
                           left: 20,
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: Color(0xFFFDCFFA).withOpacity(0.9),
                               borderRadius: BorderRadius.circular(20),
@@ -255,7 +267,11 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.play_arrow, size: 14, color: Color(0xFF4E56C0)),
+                                Icon(
+                                  Icons.play_arrow,
+                                  size: 14,
+                                  color: Color(0xFF4E56C0),
+                                ),
                                 SizedBox(width: 4),
                                 Text(
                                   'WATCH',
@@ -292,11 +308,16 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                               Row(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Color(0xFFD78FEE).withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.2),
+                                      ),
                                     ),
                                     child: Text(
                                       video.duration ?? '—',
@@ -356,12 +377,14 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                       ? Color(0xFF4E56C0)
                       : Color(0xFFD78FEE).withOpacity(0.5),
                   borderRadius: BorderRadius.circular(4),
-                  boxShadow: _currentSlideIndex == index ? [
-                    BoxShadow(
-                      color: Color(0xFF4E56C0).withOpacity(0.5),
-                      blurRadius: 8,
-                    ),
-                  ] : null,
+                  boxShadow: _currentSlideIndex == index
+                      ? [
+                          BoxShadow(
+                            color: Color(0xFF4E56C0).withOpacity(0.5),
+                            blurRadius: 8,
+                          ),
+                        ]
+                      : null,
                 ),
               ),
             ),
@@ -382,7 +405,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
-              colors: [Color(0xFFFDCFFA).withOpacity(0.1), Color(0xFFD78FEE).withOpacity(0.1)],
+              colors: [
+                Color(0xFFFDCFFA).withOpacity(0.1),
+                Color(0xFFD78FEE).withOpacity(0.1),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -579,7 +605,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
-              colors: [Color(0xFFFDCFFA).withOpacity(0.1), Color(0xFFD78FEE).withOpacity(0.1)],
+              colors: [
+                Color(0xFFFDCFFA).withOpacity(0.1),
+                Color(0xFFD78FEE).withOpacity(0.1),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -661,7 +690,11 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
     );
   }
 
-  Widget _buildVideoListItem(BuildContext context, TutorialVideoEntity video, int index) {
+  Widget _buildVideoListItem(
+    BuildContext context,
+    TutorialVideoEntity video,
+    int index,
+  ) {
     final videoId = YoutubeUtils.extractVideoId(video.youtubeLink);
     final thumbnailUrl = videoId != null
         ? YoutubeUtils.getThumbnailUrl(videoId)
@@ -745,7 +778,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                     Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Color(0xFFFDCFFA).withOpacity(0.3),
                             borderRadius: BorderRadius.circular(8),
@@ -819,7 +855,10 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
+                                  colors: [
+                                    Color(0xFFD78FEE),
+                                    Color(0xFFFDCFFA),
+                                  ],
                                 ),
                               ),
                               child: Icon(

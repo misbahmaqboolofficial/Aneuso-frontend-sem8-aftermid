@@ -20,7 +20,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
     super.initState();
     provider = Provider.of<AdminProductProvider>(context, listen: false);
     provider.loadProducts();
-    
+
     // Listen to search controller changes
     _searchController.addListener(() {
       _performSearch(_searchController.text);
@@ -30,7 +30,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
   void _performSearch(String query) {
     setState(() {
       _searchQuery = query.trim();
-      
+
       if (_searchQuery.isEmpty) {
         _filteredProducts = provider.products;
       } else {
@@ -39,10 +39,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           final name = product.productName.toLowerCase();
           final code = product.productCode?.toLowerCase() ?? '';
           final desc = product.description?.toLowerCase() ?? '';
-          
+
           return name.contains(searchLower) ||
-                 code.contains(searchLower) ||
-                 desc.contains(searchLower);
+              code.contains(searchLower) ||
+              desc.contains(searchLower);
         }).toList();
       }
     });
@@ -60,13 +60,14 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
     super.dispose();
   }
 
-  Future<void> _showDeleteConfirmation(BuildContext context, dynamic prod) async {
+  Future<void> _showDeleteConfirmation(
+    BuildContext context,
+    dynamic prod,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         child: Container(
           padding: EdgeInsets.all(25),
           decoration: BoxDecoration(
@@ -102,10 +103,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               Text(
                 'Are you sure you want to delete "${prod.productName}"?',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
               SizedBox(height: 10),
               Text(
@@ -157,10 +155,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                         child: Ink(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                Colors.red,
-                                Colors.redAccent,
-                              ],
+                              colors: [Colors.red, Colors.redAccent],
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -224,9 +219,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
     showDialog(
       context: context,
       builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         child: Container(
           padding: EdgeInsets.all(25),
           decoration: BoxDecoration(
@@ -243,10 +236,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF4E56C0),
-                          Color(0xFF9B5DE0),
-                        ],
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -328,10 +318,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF4E56C0),
-                          Color(0xFF9B5DE0),
-                        ],
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -367,10 +354,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
@@ -404,8 +388,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           if (_filteredProducts.isEmpty && p.products.isNotEmpty) {
             _filteredProducts = p.products;
           }
-          
-          final displayProducts = _searchQuery.isEmpty ? p.products : _filteredProducts;
+
+          final displayProducts = _searchQuery.isEmpty
+              ? p.products
+              : _filteredProducts;
           final isSearching = _searchQuery.isNotEmpty;
 
           if (p.isLoading && p.products.isEmpty) {
@@ -418,10 +404,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF4E56C0),
-                          Color(0xFF9B5DE0),
-                        ],
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -443,9 +426,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  CircularProgressIndicator(
-                    color: Color(0xFF4E56C0),
-                  ),
+                  CircularProgressIndicator(color: Color(0xFF4E56C0)),
                 ],
               ),
             );
@@ -498,10 +479,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF4E56C0),
-                              Color(0xFF9B5DE0),
-                            ],
+                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
@@ -513,7 +491,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           ],
                         ),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 25,
+                            vertical: 12,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -575,10 +556,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     child: Text(
                       'Start managing your inventory by adding new products',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ),
                   SizedBox(height: 30),
@@ -615,7 +593,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           ],
                         ),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 25,
+                            vertical: 12,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -679,9 +660,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Search products...',
-                              hintStyle: TextStyle(
-                                color: Colors.grey[500],
-                              ),
+                              hintStyle: TextStyle(color: Colors.grey[500]),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(20),
                               prefixIcon: Container(
@@ -727,7 +706,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                         ),
                         SizedBox(width: 10),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Color(0xFF4E56C0).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -784,7 +766,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           ),
                           _buildStatItem(
                             'In Stock',
-                            displayProducts.where((prod) => prod.stockQuantity > 0).length.toString(),
+                            displayProducts
+                                .where((prod) => prod.stockQuantity > 0)
+                                .length
+                                .toString(),
                             Icons.check_circle_rounded,
                           ),
                           Container(
@@ -800,7 +785,8 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                         ],
                       ),
                     ),
-                  if (!isSearching && displayProducts.isNotEmpty) SizedBox(height: 20),
+                  if (!isSearching && displayProducts.isNotEmpty)
+                    SizedBox(height: 20),
 
                   // Products List Title
                   if (!isSearching && displayProducts.isNotEmpty)
@@ -847,7 +833,9 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             ),
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 40),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 40,
+                              ),
                               child: Text(
                                 'No products found for "${_searchQuery}"',
                                 textAlign: TextAlign.center,
@@ -887,7 +875,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                     ],
                                   ),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                      vertical: 12,
+                                    ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -1008,23 +999,32 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                   ),
                                   SizedBox(height: 8),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: prod.stockQuantity > 0
                                           ? Colors.green.withOpacity(0.1)
                                           : Colors.red.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                        color: prod.stockQuantity > 0 ? Colors.green : Colors.red,
+                                        color: prod.stockQuantity > 0
+                                            ? Colors.green
+                                            : Colors.red,
                                         width: 1,
                                       ),
                                     ),
                                     child: Text(
-                                      prod.stockQuantity > 0 ? 'In Stock' : 'Out of Stock',
+                                      prod.stockQuantity > 0
+                                          ? 'In Stock'
+                                          : 'Out of Stock',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
-                                        color: prod.stockQuantity > 0 ? Colors.green : Colors.red,
+                                        color: prod.stockQuantity > 0
+                                            ? Colors.green
+                                            : Colors.red,
                                       ),
                                     ),
                                   ),
@@ -1055,7 +1055,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                         arguments: {'id': prod.id},
                                       );
                                     } else if (value == 'delete') {
-                                      await _showDeleteConfirmation(context, prod);
+                                      await _showDeleteConfirmation(
+                                        context,
+                                        prod,
+                                      );
                                     }
                                   },
                                   itemBuilder: (_) => [
@@ -1140,18 +1143,13 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
         },
         backgroundColor: Color(0xFF4E56C0),
         elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Container(
           width: 60,
           height: 60,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ),
             shape: BoxShape.circle,
             boxShadow: [
@@ -1162,11 +1160,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               ),
             ],
           ),
-          child: Icon(
-            Icons.add_rounded,
-            color: Colors.white,
-            size: 28,
-          ),
+          child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
         ),
       ),
     );
@@ -1175,11 +1169,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: Colors.white,
-          size: 22,
-        ),
+        Icon(icon, color: Colors.white, size: 22),
         SizedBox(height: 6),
         Text(
           value,
@@ -1192,10 +1182,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
         SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.white.withOpacity(0.9),
-          ),
+          style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.9)),
         ),
       ],
     );
@@ -1207,11 +1194,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              size: 16,
-              color: Color(0xFF9B5DE0),
-            ),
+            Icon(icon, size: 16, color: Color(0xFF9B5DE0)),
             SizedBox(width: 8),
             Text(
               label,
@@ -1228,10 +1211,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           padding: const EdgeInsets.only(left: 24),
           child: Text(
             value,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[700],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
           ),
         ),
       ],

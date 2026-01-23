@@ -7,6 +7,7 @@ import 'package:aneuso_app/presentation/providers/admin_product_provider.dart';
 import 'package:aneuso_app/presentation/providers/auth_provider.dart';
 import 'package:aneuso_app/core/constants/app_constants.dart';
 
+// Citizen screen
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({Key? key}) : super(key: key);
 
