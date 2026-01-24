@@ -306,118 +306,117 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                             ),
                           ),
 
-                          // Active Videos Card
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient: LinearGradient(
-                                colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xFFD78FEE).withOpacity(0.2),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Icon(
-                                      Icons.check_circle_rounded,
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'ACTIVE VIDEOS',
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(
-                                              0.8,
-                                            ),
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.5,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          '$activeCount',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.w800,
-                                            height: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          // // Active Videos Card
+                          // Container(
+                          //   width: MediaQuery.of(context).size.width * 0.6,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(20),
+                          //     gradient: LinearGradient(
+                          //       colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
+                          //       begin: Alignment.topLeft,
+                          //       end: Alignment.bottomRight,
+                          //     ),
+                          //     boxShadow: [
+                          //       BoxShadow(
+                          //         color: Color(0xFFD78FEE).withOpacity(0.2),
+                          //         blurRadius: 15,
+                          //         offset: Offset(0, 5),
+                          //       ),
+                          //     ],
+                          //   ),
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.all(16),
+                          //     child: Row(
+                          //       children: [
+                          //         Container(
+                          //           width: 60,
+                          //           height: 60,
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.white.withOpacity(0.2),
+                          //             borderRadius: BorderRadius.circular(15),
+                          //           ),
+                          //           child: Icon(
+                          //             Icons.check_circle_rounded,
+                          //             color: Colors.white,
+                          //             size: 30,
+                          //           ),
+                          //         ),
+                          //         SizedBox(width: 16),
+                          //         Expanded(
+                          //           child: Column(
+                          //             crossAxisAlignment:
+                          //                 CrossAxisAlignment.start,
+                          //             mainAxisAlignment:
+                          //                 MainAxisAlignment.center,
+                          //             children: [
+                          //               Text(
+                          //                 'ACTIVE VIDEOS',
+                          //                 style: TextStyle(
+                          //                   color: Colors.white.withOpacity(
+                          //                     0.8,
+                          //                   ),
+                          //                   fontSize: 12,
+                          //                   fontWeight: FontWeight.w600,
+                          //                   letterSpacing: 0.5,
+                          //                 ),
+                          //               ),
+                          //               SizedBox(height: 4),
+                          //               Text(
+                          //                 '$activeCount',
+                          //                 style: TextStyle(
+                          //                   color: Colors.white,
+                          //                   fontSize: 32,
+                          //                   fontWeight: FontWeight.w800,
+                          //                   height: 1,
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
 
-                    SizedBox(height: 24),
+                    // SizedBox(height: 24),
 
-                    // Filter Section Header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(
-                        'Filter Videos',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF4E56C0),
-                        ),
-                      ),
-                    ),
+                    // // Filter Section Header
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 24),
+                    //   child: Text(
+                    //     'Filter Videos',
+                    //     style: TextStyle(
+                    //       fontSize: 18,
+                    //       fontWeight: FontWeight.w700,
+                    //       color: Color(0xFF4E56C0),
+                    //     ),
+                    //   ),
+                    // ),
 
-                    SizedBox(height: 12),
+                    // SizedBox(height: 12),
 
-                    // Filter Chips - SCROLLABLE HORIZONTAL
-                    Container(
-                      height: 50,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        children: [
-                          _buildFilterChip('All Videos', 'all', totalCount),
-                          SizedBox(width: 12),
-                          _buildFilterChip('Active', 'active', activeCount),
-                          SizedBox(width: 12),
-                          _buildFilterChip(
-                            'Inactive',
-                            'inactive',
-                            inactiveCount,
-                          ),
-                        ],
-                      ),
-                    ),
-
+                    // // Filter Chips - SCROLLABLE HORIZONTAL
+                    // Container(
+                    //   height: 50,
+                    //   child: ListView(
+                    //     scrollDirection: Axis.horizontal,
+                    //     padding: EdgeInsets.symmetric(horizontal: 20),
+                    //     children: [
+                    //       _buildFilterChip('All Videos', 'all', totalCount),
+                    //       SizedBox(width: 12),
+                    //       _buildFilterChip('Active', 'active', activeCount),
+                    //       SizedBox(width: 12),
+                    //       _buildFilterChip(
+                    //         'Inactive',
+                    //         'inactive',
+                    //         inactiveCount,
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     SizedBox(height: 24),
 
                     // Videos List Header
