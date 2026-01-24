@@ -13,7 +13,7 @@ class TutorialProvider with ChangeNotifier {
   bool _isLoading = false;
   // bool _isLoadingMore = false;
   int _page = 1;
-  int _limit = 20;
+  int _limit = 9999;
 
   List<TutorialTopicEntity> get topics => _topics;
   List<TutorialVideoEntity> get videos => _videos;
