@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:aneuso_app/presentation/providers/admin_product_provider.dart';
 
@@ -22,11 +26,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   bool _isSubmitting = false;
   int _selectedCategoryId = 1;
   int _selectedStatusId = 1;
+  List<Map<String, dynamic>> _categories = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     final provider = Provider.of<AdminProductProvider>(context, listen: false);
+
     if (widget.productId != null) {
       _isEdit = true;
       final p = provider.products.firstWhere((e) => e.id == widget.productId);
@@ -38,13 +45,43 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       _selectedCategoryId = p.categoryId;
       _selectedStatusId = p.statusId;
     }
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final response = await http.get(
+        Uri.parse(AppConstants.baseUrl + '/product-categories'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        if (responseData['success'] == true) {
+          setState(() {
+            _categories = List<Map<String, dynamic>>.from(responseData['data']);
+            if (_categories.isNotEmpty) {
+              _selectedCategoryId = _selectedCategoryId <= 0
+                  ? int.parse(_categories[0]['id'])
+                  : _selectedCategoryId;
+            }
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AdminProductProvider>(context);
     final error = provider.error;
-    
+
     return Scaffold(
       backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
       appBar: AppBar(
@@ -54,10 +91,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
@@ -143,7 +177,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                           ),
                           SizedBox(height: 5),
                           Text(
-                            _isEdit 
+                            _isEdit
                                 ? 'Modify product details below'
                                 : 'Fill in the product information',
                             style: TextStyle(
@@ -167,9 +201,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      color: Colors.red.withOpacity(0.3),
-                    ),
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.red.withOpacity(0.1),
@@ -223,7 +255,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                         controller: _nameCtrl,
                         label: 'Product Name',
                         icon: Icons.shopping_bag_rounded,
-                        validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                        validator: (v) =>
+                            v == null || v.isEmpty ? 'Required' : null,
                       ),
                       SizedBox(height: 20),
 
@@ -265,37 +298,63 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                       // Category and Status Row
                       Row(
                         children: [
+                          // Expanded(
+                          //   child: _buildStyledDropdown(
+                          //     value: _selectedCategoryId,
+                          //     items: const [
+                          //       DropdownMenuItem(
+                          //         value: 1,
+                          //         child: Text(
+                          //           'Fertilizer',
+                          //           style: TextStyle(color: Color(0xFF4E56C0)),
+                          //         ),
+                          //       ),
+                          //       DropdownMenuItem(
+                          //         value: 2,
+                          //         child: Text(
+                          //           'Pesticide',
+                          //           style: TextStyle(color: Color(0xFF4E56C0)),
+                          //         ),
+                          //       ),
+                          //       DropdownMenuItem(
+                          //         value: 3,
+                          //         child: Text(
+                          //           'Seeds',
+                          //           style: TextStyle(color: Color(0xFF4E56C0)),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //     label: 'Category',
+                          //     icon: Icons.category_rounded,
+                          //     onChanged: (v) =>
+                          //         setState(() => _selectedCategoryId = v ?? 1),
+                          //   ),
+                          // ),
                           Expanded(
-                            child: _buildStyledDropdown(
-                              value: _selectedCategoryId,
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 1,
-                                  child: Text(
-                                    'Fertilizer',
-                                    style: TextStyle(color: Color(0xFF4E56C0)),
+                            child: _isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : _buildStyledDropdown(
+                                    value: _selectedCategoryId,
+                                    items: _categories.map((category) {
+                                      return DropdownMenuItem<int>(
+                                        value: category['id'],
+                                        child: Text(
+                                          category['category_name'] ??
+                                              'Unknown',
+                                          style: const TextStyle(
+                                            color: Color(0xFF4E56C0),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    label: 'Category',
+                                    icon: Icons.category_rounded,
+                                    onChanged: (v) => setState(
+                                      () => _selectedCategoryId = v ?? 1,
+                                    ),
                                   ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 2,
-                                  child: Text(
-                                    'Pesticide',
-                                    style: TextStyle(color: Color(0xFF4E56C0)),
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 3,
-                                  child: Text(
-                                    'Seeds',
-                                    style: TextStyle(color: Color(0xFF4E56C0)),
-                                  ),
-                                ),
-                              ],
-                              label: 'Category',
-                              icon: Icons.category_rounded,
-                              onChanged: (v) =>
-                                  setState(() => _selectedCategoryId = v ?? 1),
-                            ),
                           ),
                           SizedBox(width: 15),
                           Expanded(
@@ -310,7 +369,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                                   ),
                                 ),
                                 DropdownMenuItem(
-                                  value: 0,
+                                  value: 2,
                                   child: Text(
                                     'Inactive',
                                     style: TextStyle(color: Color(0xFF4E56C0)),
@@ -335,89 +394,112 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                           onPressed: _isSubmitting
                               ? null
                               : () async {
-                                  if (!_formKey.currentState!.validate()) return;
+                                  if (!_formKey.currentState!.validate())
+                                    return;
                                   setState(() => _isSubmitting = true);
                                   final body = {
                                     'product_name': _nameCtrl.text,
                                     'product_code': _codeCtrl.text,
                                     'description': _descriptionCtrl.text,
-                                    'price': double.tryParse(_priceCtrl.text) ?? 0,
+                                    'price':
+                                        double.tryParse(_priceCtrl.text) ?? 0,
                                     'stock_quantity':
                                         int.tryParse(_stockCtrl.text) ?? 0,
                                     'category_id': _selectedCategoryId,
                                     'status_id': _selectedStatusId,
                                   };
                                   if (_isEdit) {
-                                    final updated = await provider.updateProduct(
-                                      widget.productId!,
-                                      body,
-                                    );
+                                    final updated = await provider
+                                        .updateProduct(widget.productId!, body);
                                     if (updated != null) {
                                       if (mounted) {
                                         Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               'Product updated successfully!',
-                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                             backgroundColor: Colors.green,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                           ),
                                         );
                                       }
                                     } else {
-                                      final msg = provider.error ?? 'Update failed';
+                                      final msg =
+                                          provider.error ?? 'Update failed';
                                       if (mounted)
                                         ScaffoldMessenger.of(
                                           context,
-                                        ).showSnackBar(SnackBar(
-                                          content: Text(msg),
-                                          backgroundColor: Colors.red,
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(msg),
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                           ),
-                                        ));
+                                        );
                                     }
                                   } else {
-                                    final created = await provider.createProduct(body);
+                                    final created = await provider
+                                        .createProduct(body);
                                     if (created != null) {
                                       if (mounted) {
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        Navigator.pushReplacementNamed(
+                                          context,
+                                          '/admin/products',
+                                        );
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               'Product created successfully!',
-                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                             backgroundColor: Colors.green,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                           ),
                                         );
                                       }
                                     } else {
-                                      final msg = provider.error ?? 'Create failed';
+                                      final msg =
+                                          provider.error ?? 'Create failed';
                                       if (mounted)
                                         ScaffoldMessenger.of(
                                           context,
-                                        ).showSnackBar(SnackBar(
-                                          content: Text(msg),
-                                          backgroundColor: Colors.red,
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(msg),
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                           ),
-                                        ));
+                                        );
                                     }
                                   }
-                                  if (mounted) setState(() => _isSubmitting = false);
+                                  if (mounted)
+                                    setState(() => _isSubmitting = false);
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
@@ -426,7 +508,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             padding: EdgeInsets.zero,
-                            disabledBackgroundColor: Colors.grey.withOpacity(0.3),
+                            disabledBackgroundColor: Colors.grey.withOpacity(
+                              0.3,
+                            ),
                           ),
                           child: Ink(
                             decoration: BoxDecoration(
@@ -444,7 +528,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                                   ? null
                                   : [
                                       BoxShadow(
-                                        color: Color(0xFF4E56C0).withOpacity(0.4),
+                                        color: Color(
+                                          0xFF4E56C0,
+                                        ).withOpacity(0.4),
                                         blurRadius: 15,
                                         offset: Offset(0, 8),
                                       ),
@@ -458,21 +544,27 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                                       height: 24,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 3,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white,
-                                        ),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
                                     )
                                   : Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(
-                                          _isEdit ? Icons.save_rounded : Icons.add_rounded,
+                                          _isEdit
+                                              ? Icons.save_rounded
+                                              : Icons.add_rounded,
                                           color: Colors.white,
                                         ),
                                         SizedBox(width: 10),
                                         Text(
-                                          _isEdit ? 'UPDATE PRODUCT' : 'CREATE PRODUCT',
+                                          _isEdit
+                                              ? 'UPDATE PRODUCT'
+                                              : 'CREATE PRODUCT',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w700,
@@ -550,28 +642,17 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: TextFormField(
         controller: controller,
-        style: TextStyle(
-          color: Color(0xFF4E56C0),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xFF4E56C0), fontSize: 16),
         keyboardType: keyboardType,
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF9B5DE0).withOpacity(0.7),
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Color(0xFF9B5DE0),
-          ),
+          labelStyle: TextStyle(color: Color(0xFF9B5DE0).withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Color(0xFF9B5DE0)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(18),
           filled: true,
@@ -625,23 +706,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: DropdownButtonFormField<int>(
         value: value,
         items: items,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF9B5DE0).withOpacity(0.7),
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Color(0xFF9B5DE0),
-          ),
+          labelStyle: TextStyle(color: Color(0xFF9B5DE0).withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Color(0xFF9B5DE0)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(18),
           filled: true,
@@ -658,10 +731,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             ),
           ),
         ),
-        style: TextStyle(
-          color: Color(0xFF4E56C0),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xFF4E56C0), fontSize: 16),
         dropdownColor: Colors.white,
         onChanged: onChanged,
       ),

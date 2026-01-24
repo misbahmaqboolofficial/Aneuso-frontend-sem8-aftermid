@@ -12,7 +12,10 @@ import '../data/models/product_model.dart';
 class ProductService {
   final ApiService _api = ApiService();
 
-  Future<List<ProductModel>> getProducts({int page = 1, int limit = 50}) async {
+  Future<List<ProductModel>> getProducts({
+    int page = 1,
+    int limit = 9999,
+  }) async {
     final response = await _api.get('/products?page=$page&limit=$limit');
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
