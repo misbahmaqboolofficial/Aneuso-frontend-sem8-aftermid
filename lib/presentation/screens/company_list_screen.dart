@@ -13,7 +13,7 @@ class CompanyListScreen extends StatefulWidget {
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
   final TextEditingController _searchController = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -69,10 +69,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                           padding: EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                Color(0xFF4E56C0),
-                                Color(0xFF9B5DE0),
-                              ],
+                              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                             ),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(25),
@@ -107,7 +104,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                             ],
                           ),
                         ),
-                        
+
                         Expanded(
                           child: SingleChildScrollView(
                             padding: const EdgeInsets.all(25),
@@ -120,8 +117,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     controller: nameCtl,
                                     label: 'Company Name',
                                     icon: Icons.business_rounded,
-                                    validator: (v) =>
-                                        (v == null || v.isEmpty) ? 'Required' : null,
+                                    validator: (v) => (v == null || v.isEmpty)
+                                        ? 'Required'
+                                        : null,
                                   ),
                                   SizedBox(height: 15),
                                   _buildStyledTextField(
@@ -129,8 +127,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     label: 'Contact Email',
                                     icon: Icons.email_rounded,
                                     keyboardType: TextInputType.emailAddress,
-                                    validator: (v) =>
-                                        (v == null || v.isEmpty) ? 'Required' : null,
+                                    validator: (v) => (v == null || v.isEmpty)
+                                        ? 'Required'
+                                        : null,
                                   ),
                                   SizedBox(height: 15),
                                   _buildStyledTextField(
@@ -138,8 +137,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     label: 'Contact Phone',
                                     icon: Icons.phone_rounded,
                                     keyboardType: TextInputType.phone,
-                                    validator: (v) =>
-                                        (v == null || v.isEmpty) ? 'Required' : null,
+                                    validator: (v) => (v == null || v.isEmpty)
+                                        ? 'Required'
+                                        : null,
                                   ),
                                   SizedBox(height: 15),
                                   _buildStyledTextField(
@@ -166,9 +166,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                         .toList(),
                                     label: 'Company Type',
                                     icon: Icons.category_rounded,
-                                    onChanged: (v) =>
-                                        setState(() => selectedCompanyTypeId = v),
-                                    validator: (v) => v == null ? 'Required' : null,
+                                    onChanged: (v) => setState(
+                                      () => selectedCompanyTypeId = v,
+                                    ),
+                                    validator: (v) =>
+                                        v == null ? 'Required' : null,
                                   ),
                                   SizedBox(height: 15),
                                   // Business Type Dropdown
@@ -189,9 +191,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                         .toList(),
                                     label: 'Business Type',
                                     icon: Icons.work_rounded,
-                                    onChanged: (v) =>
-                                        setState(() => selectedBusinessTypeId = v),
-                                    validator: (v) => v == null ? 'Required' : null,
+                                    onChanged: (v) => setState(
+                                      () => selectedBusinessTypeId = v,
+                                    ),
+                                    validator: (v) =>
+                                        v == null ? 'Required' : null,
                                   ),
                                   SizedBox(height: 15),
                                   // Waste Type Dropdown
@@ -214,14 +218,15 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     icon: Icons.delete_rounded,
                                     onChanged: (v) =>
                                         setState(() => selectedWasteTypeId = v),
-                                    validator: (v) => v == null ? 'Required' : null,
+                                    validator: (v) =>
+                                        v == null ? 'Required' : null,
                                   ),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        
+
                         // Dialog Actions
                         Container(
                           padding: EdgeInsets.all(20),
@@ -239,7 +244,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 onPressed: () => Navigator.pop(context),
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 12),
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -258,39 +265,54 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 height: 48,
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    if (!_formKey.currentState!.validate()) return;
+                                    if (!_formKey.currentState!.validate())
+                                      return;
                                     body['company_name'] = nameCtl.text.trim();
-                                    body['contact_email'] = emailCtl.text.trim();
-                                    body['contact_phone_number'] = phoneCtl.text.trim();
-                                    body['company_address'] = addressCtl.text.trim();
+                                    body['contact_email'] = emailCtl.text
+                                        .trim();
+                                    body['contact_phone_number'] = phoneCtl.text
+                                        .trim();
+                                    body['company_address'] = addressCtl.text
+                                        .trim();
                                     body['is_headquarter'] = true;
 
-                                    body['company_type_id'] = selectedCompanyTypeId ?? 1;
-                                    body['business_type_id'] = selectedBusinessTypeId ?? 1;
-                                    body['waste_type'] = (selectedWasteTypeId != null)
+                                    body['company_type_id'] =
+                                        selectedCompanyTypeId ?? 1;
+                                    body['business_type_id'] =
+                                        selectedBusinessTypeId ?? 1;
+                                    body['waste_type'] =
+                                        (selectedWasteTypeId != null)
                                         ? provider.wasteTypes
-                                            .firstWhere(
-                                              (w) => w.id == selectedWasteTypeId,
-                                            )
-                                            .typeName
+                                              .firstWhere(
+                                                (w) =>
+                                                    w.id == selectedWasteTypeId,
+                                              )
+                                              .typeName
                                         : '';
 
-                                    final created = await Provider.of<CompanyProvider>(
-                                      context,
-                                      listen: false,
-                                    ).createCompany(body);
+                                    final created =
+                                        await Provider.of<CompanyProvider>(
+                                          context,
+                                          listen: false,
+                                        ).createCompany(body);
                                     if (created && mounted) {
                                       Navigator.pop(context);
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: Text(
                                             'Company created successfully!',
-                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                           backgroundColor: Colors.green,
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                         ),
                                       );
@@ -316,7 +338,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Color(0xFF4E56C0).withOpacity(0.4),
+                                          color: Color(
+                                            0xFF4E56C0,
+                                          ).withOpacity(0.4),
                                           blurRadius: 10,
                                           offset: Offset(0, 5),
                                         ),
@@ -324,7 +348,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 25, vertical: 12),
+                                        horizontal: 25,
+                                        vertical: 12,
+                                      ),
                                       child: Row(
                                         children: [
                                           Icon(
@@ -362,7 +388,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     );
   }
 
-  Future<void> _showEditDialog(BuildContext context, dynamic c, CompanyProvider provider) async {
+  Future<void> _showEditDialog(
+    BuildContext context,
+    dynamic c,
+    CompanyProvider provider,
+  ) async {
     final _formKey = GlobalKey<FormState>();
     final Map<String, dynamic> body = {};
     final nameCtl = TextEditingController(text: c.companyName);
@@ -373,7 +403,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     int? selectedCompanyTypeId = c.companyTypeId;
     int? selectedBusinessTypeId = c.businessTypeId;
     int? selectedWasteTypeId;
-    
+
     // derive waste type id from name if available
     if (provider.wasteTypes.isNotEmpty) {
       final match = provider.wasteTypes.firstWhere(
@@ -408,10 +438,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF4E56C0),
-                            Color(0xFF9B5DE0),
-                          ],
+                          colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                         ),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(25),
@@ -446,7 +473,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                         ],
                       ),
                     ),
-                    
+
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.all(25),
@@ -459,8 +486,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 controller: nameCtl,
                                 label: 'Company Name',
                                 icon: Icons.business_rounded,
-                                validator: (v) =>
-                                    (v == null || v.isEmpty) ? 'Required' : null,
+                                validator: (v) => (v == null || v.isEmpty)
+                                    ? 'Required'
+                                    : null,
                               ),
                               SizedBox(height: 15),
                               _buildStyledTextField(
@@ -468,8 +496,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 label: 'Contact Email',
                                 icon: Icons.email_rounded,
                                 keyboardType: TextInputType.emailAddress,
-                                validator: (v) =>
-                                    (v == null || v.isEmpty) ? 'Required' : null,
+                                validator: (v) => (v == null || v.isEmpty)
+                                    ? 'Required'
+                                    : null,
                               ),
                               SizedBox(height: 15),
                               _buildStyledTextField(
@@ -477,8 +506,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 label: 'Contact Phone',
                                 icon: Icons.phone_rounded,
                                 keyboardType: TextInputType.phone,
-                                validator: (v) =>
-                                    (v == null || v.isEmpty) ? 'Required' : null,
+                                validator: (v) => (v == null || v.isEmpty)
+                                    ? 'Required'
+                                    : null,
                               ),
                               SizedBox(height: 15),
                               _buildStyledTextField(
@@ -560,7 +590,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                         ),
                       ),
                     ),
-                    
+
                     // Dialog Actions
                     Container(
                       padding: EdgeInsets.all(20),
@@ -578,7 +608,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                             onPressed: () => Navigator.pop(context),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -600,30 +632,37 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 if (!_formKey.currentState!.validate()) return;
                                 body['company_name'] = nameCtl.text.trim();
                                 body['contact_email'] = emailCtl.text.trim();
-                                body['contact_phone_number'] = phoneCtl.text.trim();
-                                body['company_address'] = addressCtl.text.trim();
+                                body['contact_phone_number'] = phoneCtl.text
+                                    .trim();
+                                body['company_address'] = addressCtl.text
+                                    .trim();
                                 body['is_headquarter'] = true;
-                                body['company_type_id'] = selectedCompanyTypeId ?? c.companyTypeId;
-                                body['business_type_id'] = selectedBusinessTypeId ?? c.businessTypeId;
+                                body['company_type_id'] =
+                                    selectedCompanyTypeId ?? c.companyTypeId;
+                                body['business_type_id'] =
+                                    selectedBusinessTypeId ?? c.businessTypeId;
                                 body['waste_type'] = selectedWasteTypeId != null
                                     ? provider.wasteTypes
-                                        .firstWhere(
-                                          (w) => w.id == selectedWasteTypeId,
-                                        )
-                                        .typeName
+                                          .firstWhere(
+                                            (w) => w.id == selectedWasteTypeId,
+                                          )
+                                          .typeName
                                     : c.wasteType;
 
-                                final updated = await Provider.of<CompanyProvider>(
-                                  context,
-                                  listen: false,
-                                ).updateCompany(c.id, body);
+                                final updated =
+                                    await Provider.of<CompanyProvider>(
+                                      context,
+                                      listen: false,
+                                    ).updateCompany(c.id, body);
                                 if (updated && mounted) {
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
                                         'Company updated successfully!',
-                                        style: TextStyle(fontWeight: FontWeight.w600),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                       backgroundColor: Colors.green,
                                       behavior: SnackBarBehavior.floating,
@@ -662,7 +701,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 ),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 25, vertical: 12),
+                                    horizontal: 25,
+                                    vertical: 12,
+                                  ),
                                   child: Row(
                                     children: [
                                       Icon(
@@ -709,18 +750,12 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
             'Company Management',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
           ),
         ),
         leading: IconButton(
@@ -771,9 +806,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Search companies...',
-                              hintStyle: TextStyle(
-                                color: Colors.grey[500],
-                              ),
+                              hintStyle: TextStyle(color: Colors.grey[500]),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(20),
                               prefixIcon: Container(
@@ -840,21 +873,21 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                             width: 1,
                             color: Colors.white.withOpacity(0.3),
                           ),
-                          _buildStatItem(
-                            'Active',
-                            '${provider.companies.where((c) => c.activeStatus == 1).length}',
-                            Icons.check_circle_rounded,
-                          ),
-                          Container(
-                            height: 40,
-                            width: 1,
-                            color: Colors.white.withOpacity(0.3),
-                          ),
-                          _buildStatItem(
-                            'Inactive',
-                            '${provider.companies.where((c) => c.activeStatus == 0).length}',
-                            Icons.pause_circle_rounded,
-                          ),
+                          // _buildStatItem(
+                          //   'Active',
+                          //   '${provider.companies.where((c) => c.activeStatus == 1).length}',
+                          //   Icons.check_circle_rounded,
+                          // ),
+                          // Container(
+                          //   height: 40,
+                          //   width: 1,
+                          //   color: Colors.white.withOpacity(0.3),
+                          // ),
+                          // _buildStatItem(
+                          //   'Inactive',
+                          //   '${provider.companies.where((c) => c.activeStatus == 0).length}',
+                          //   Icons.pause_circle_rounded,
+                          // ),
                         ],
                       ),
                     ),
@@ -872,7 +905,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                             physics: const AlwaysScrollableScrollPhysics(),
                             children: [
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.4,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -881,7 +915,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                         width: 100,
                                         height: 100,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFFDCFFA).withOpacity(0.2),
+                                          color: Color(
+                                            0xFFFDCFFA,
+                                          ).withOpacity(0.2),
                                           shape: BoxShape.circle,
                                         ),
                                         child: Icon(
@@ -918,12 +954,15 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                         : ListView.builder(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             itemCount:
-                                provider.companies.length + (provider.hasMore ? 1 : 0),
+                                provider.companies.length +
+                                (provider.hasMore ? 1 : 0),
                             itemBuilder: (context, index) {
                               if (index >= provider.companies.length) {
                                 if (provider.isLoading) {
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 20),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 20,
+                                    ),
                                     child: Center(
                                       child: CircularProgressIndicator(
                                         color: Color(0xFF4E56C0),
@@ -932,7 +971,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                   );
                                 }
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
                                   child: Container(
                                     height: 48,
                                     child: ElevatedButton(
@@ -941,21 +982,29 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                         backgroundColor: Colors.transparent,
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         padding: EdgeInsets.zero,
                                       ),
                                       child: Ink(
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                           border: Border.all(
-                                            color: Color(0xFF4E56C0).withOpacity(0.2),
+                                            color: Color(
+                                              0xFF4E56C0,
+                                            ).withOpacity(0.2),
                                             width: 1,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.grey.withOpacity(0.1),
+                                              color: Colors.grey.withOpacity(
+                                                0.1,
+                                              ),
                                               blurRadius: 10,
                                               offset: Offset(0, 5),
                                             ),
@@ -1032,7 +1081,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     ),
                                   ),
                                   subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(height: 5),
                                       Row(
@@ -1073,33 +1123,39 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: c.activeStatus == 1
-                                              ? Colors.green.withOpacity(0.1)
-                                              : Colors.red.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(20),
-                                          border: Border.all(
-                                            color: c.activeStatus == 1
-                                                ? Colors.green
-                                                : Colors.red,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          c.activeStatus == 1 ? 'Active' : 'Inactive',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: c.activeStatus == 1
-                                                ? Colors.green
-                                                : Colors.red,
-                                          ),
-                                        ),
-                                      ),
+                                      // SizedBox(height: 8),
+                                      // Container(
+                                      //   padding: EdgeInsets.symmetric(
+                                      //     horizontal: 10,
+                                      //     vertical: 4,
+                                      //   ),
+                                      //   decoration: BoxDecoration(
+                                      //     color: c.activeStatus == 1
+                                      //         ? Colors.green.withOpacity(0.1)
+                                      //         : Colors.red.withOpacity(0.1),
+                                      //     borderRadius: BorderRadius.circular(
+                                      //       20,
+                                      //     ),
+                                      //     border: Border.all(
+                                      //       color: c.activeStatus == 1
+                                      //           ? Colors.green
+                                      //           : Colors.red,
+                                      //       width: 1,
+                                      //     ),
+                                      //   ),
+                                      //   child: Text(
+                                      //     c.activeStatus == 1
+                                      //         ? 'Active'
+                                      //         : 'Inactive',
+                                      //     style: TextStyle(
+                                      //       fontSize: 12,
+                                      //       fontWeight: FontWeight.w600,
+                                      //       color: c.activeStatus == 1
+                                      //           ? Colors.green
+                                      //           : Colors.red,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                   trailing: Container(
@@ -1120,26 +1176,31 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                             context: context,
                                             builder: (ctx) => Dialog(
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(25),
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
                                               ),
                                               child: Container(
                                                 padding: EdgeInsets.all(25),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(25),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
                                                 ),
                                                 child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
                                                     Container(
                                                       width: 60,
                                                       height: 60,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.red.withOpacity(0.1),
+                                                        color: Colors.red
+                                                            .withOpacity(0.1),
                                                         shape: BoxShape.circle,
                                                       ),
                                                       child: Icon(
-                                                        Icons.warning_amber_rounded,
+                                                        Icons
+                                                            .warning_amber_rounded,
                                                         color: Colors.red,
                                                         size: 30,
                                                       ),
@@ -1149,14 +1210,18 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                       'Confirm Delete',
                                                       style: TextStyle(
                                                         fontSize: 22,
-                                                        fontWeight: FontWeight.w800,
-                                                        color: Color(0xFF4E56C0),
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        color: Color(
+                                                          0xFF4E56C0,
+                                                        ),
                                                       ),
                                                     ),
                                                     SizedBox(height: 10),
                                                     Text(
                                                       'Are you sure you want to delete ${c.companyName}?',
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.grey[700],
@@ -1164,23 +1229,39 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                     ),
                                                     SizedBox(height: 25),
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
                                                         Expanded(
                                                           child: TextButton(
-                                                            onPressed: () => Navigator.pop(ctx, false),
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                  ctx,
+                                                                  false,
+                                                                ),
                                                             style: TextButton.styleFrom(
-                                                              padding: EdgeInsets.symmetric(vertical: 15),
+                                                              padding:
+                                                                  EdgeInsets.symmetric(
+                                                                    vertical:
+                                                                        15,
+                                                                  ),
                                                               shape: RoundedRectangleBorder(
-                                                                borderRadius: BorderRadius.circular(12),
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      12,
+                                                                    ),
                                                               ),
                                                             ),
                                                             child: Text(
                                                               'Cancel',
                                                               style: TextStyle(
                                                                 fontSize: 16,
-                                                                color: Colors.grey[700],
-                                                                fontWeight: FontWeight.w600,
+                                                                color: Colors
+                                                                    .grey[700],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
                                                               ),
                                                             ),
                                                           ),
@@ -1190,42 +1271,71 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                           child: Container(
                                                             height: 48,
                                                             child: ElevatedButton(
-                                                              onPressed: () => Navigator.pop(ctx, true),
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                    ctx,
+                                                                    true,
+                                                                  ),
                                                               style: ElevatedButton.styleFrom(
-                                                                backgroundColor: Colors.transparent,
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
                                                                 elevation: 0,
                                                                 shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(12),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        12,
+                                                                      ),
                                                                 ),
-                                                                padding: EdgeInsets.zero,
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero,
                                                               ),
                                                               child: Ink(
                                                                 decoration: BoxDecoration(
                                                                   gradient: LinearGradient(
                                                                     colors: [
-                                                                      Colors.red,
-                                                                      Colors.redAccent,
+                                                                      Colors
+                                                                          .red,
+                                                                      Colors
+                                                                          .redAccent,
                                                                     ],
                                                                   ),
-                                                                  borderRadius: BorderRadius.circular(12),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        12,
+                                                                      ),
                                                                 ),
                                                                 child: Container(
-                                                                  alignment: Alignment.center,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       Icon(
-                                                                        Icons.delete_rounded,
-                                                                        color: Colors.white,
-                                                                        size: 20,
+                                                                        Icons
+                                                                            .delete_rounded,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        size:
+                                                                            20,
                                                                       ),
-                                                                      SizedBox(width: 8),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            8,
+                                                                      ),
                                                                       Text(
                                                                         'Delete',
                                                                         style: TextStyle(
-                                                                          fontSize: 16,
-                                                                          fontWeight: FontWeight.w700,
-                                                                          color: Colors.white,
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              Colors.white,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -1250,16 +1360,19 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                             context: context,
                                             builder: (_) => Dialog(
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(25),
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
                                               ),
                                               child: Container(
                                                 padding: EdgeInsets.all(25),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(25),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
                                                 ),
                                                 child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
                                                     Row(
                                                       children: [
@@ -1267,23 +1380,34 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                           width: 50,
                                                           height: 50,
                                                           decoration: BoxDecoration(
-                                                            gradient: LinearGradient(
-                                                              colors: [
-                                                                Color(0xFF4E56C0),
-                                                                Color(0xFF9B5DE0),
-                                                              ],
-                                                            ),
-                                                            shape: BoxShape.circle,
+                                                            gradient:
+                                                                LinearGradient(
+                                                                  colors: [
+                                                                    Color(
+                                                                      0xFF4E56C0,
+                                                                    ),
+                                                                    Color(
+                                                                      0xFF9B5DE0,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                            shape:
+                                                                BoxShape.circle,
                                                           ),
                                                           child: Center(
                                                             child: Text(
-                                                              c.companyName.isNotEmpty
+                                                              c
+                                                                      .companyName
+                                                                      .isNotEmpty
                                                                   ? c.companyName[0]
                                                                   : 'C',
                                                               style: TextStyle(
                                                                 fontSize: 20,
-                                                                fontWeight: FontWeight.w800,
-                                                                color: Colors.white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800,
+                                                                color: Colors
+                                                                    .white,
                                                               ),
                                                             ),
                                                           ),
@@ -1294,8 +1418,12 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                             c.companyName,
                                                             style: TextStyle(
                                                               fontSize: 22,
-                                                              fontWeight: FontWeight.w800,
-                                                              color: Color(0xFF4E56C0),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                              color: Color(
+                                                                0xFF4E56C0,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -1330,33 +1458,54 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                       height: 48,
                                                       width: double.infinity,
                                                       child: ElevatedButton(
-                                                        onPressed: () => Navigator.pop(context),
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              context,
+                                                            ),
                                                         style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Colors.transparent,
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .transparent,
                                                           elevation: 0,
                                                           shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(12),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  12,
+                                                                ),
                                                           ),
-                                                          padding: EdgeInsets.zero,
+                                                          padding:
+                                                              EdgeInsets.zero,
                                                         ),
                                                         child: Ink(
                                                           decoration: BoxDecoration(
-                                                            gradient: LinearGradient(
-                                                              colors: [
-                                                                Color(0xFF4E56C0),
-                                                                Color(0xFF9B5DE0),
-                                                              ],
-                                                            ),
-                                                            borderRadius: BorderRadius.circular(12),
+                                                            gradient:
+                                                                LinearGradient(
+                                                                  colors: [
+                                                                    Color(
+                                                                      0xFF4E56C0,
+                                                                    ),
+                                                                    Color(
+                                                                      0xFF9B5DE0,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  12,
+                                                                ),
                                                           ),
                                                           child: Container(
-                                                            alignment: Alignment.center,
+                                                            alignment: Alignment
+                                                                .center,
                                                             child: Text(
                                                               'Close',
                                                               style: TextStyle(
                                                                 fontSize: 16,
-                                                                fontWeight: FontWeight.w700,
-                                                                color: Colors.white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: Colors
+                                                                    .white,
                                                               ),
                                                             ),
                                                           ),
@@ -1369,7 +1518,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                             ),
                                           );
                                         } else if (value == 'edit') {
-                                          await _showEditDialog(context, c, provider);
+                                          await _showEditDialog(
+                                            context,
+                                            c,
+                                            provider,
+                                          );
                                         }
                                       },
                                       itemBuilder: (_) => [
@@ -1448,18 +1601,13 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         onPressed: () => _showCreateDialog(context),
         backgroundColor: Color(0xFF4E56C0),
         elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Container(
           width: 60,
           height: 60,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF4E56C0),
-                Color(0xFF9B5DE0),
-              ],
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
             ),
             shape: BoxShape.circle,
             boxShadow: [
@@ -1470,11 +1618,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
               ),
             ],
           ),
-          child: Icon(
-            Icons.add_rounded,
-            color: Colors.white,
-            size: 28,
-          ),
+          child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
         ),
       ),
     );
@@ -1483,11 +1627,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: Colors.white,
-          size: 24,
-        ),
+        Icon(icon, color: Colors.white, size: 24),
         SizedBox(height: 8),
         Text(
           value,
@@ -1500,10 +1640,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.white.withOpacity(0.9),
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.9)),
         ),
       ],
     );
@@ -1527,27 +1664,16 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: TextFormField(
         controller: controller,
-        style: TextStyle(
-          color: Color(0xFF4E56C0),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xFF4E56C0), fontSize: 16),
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF9B5DE0).withOpacity(0.7),
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Color(0xFF9B5DE0),
-          ),
+          labelStyle: TextStyle(color: Color(0xFF9B5DE0).withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Color(0xFF9B5DE0)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(18),
           filled: true,
@@ -1588,23 +1714,15 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: DropdownButtonFormField<int>(
         value: value,
         items: items,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF9B5DE0).withOpacity(0.7),
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Color(0xFF9B5DE0),
-          ),
+          labelStyle: TextStyle(color: Color(0xFF9B5DE0).withOpacity(0.7)),
+          prefixIcon: Icon(icon, color: Color(0xFF9B5DE0)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(18),
           filled: true,
@@ -1621,10 +1739,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
             ),
           ),
         ),
-        style: TextStyle(
-          color: Color(0xFF4E56C0),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xFF4E56C0), fontSize: 16),
         dropdownColor: Colors.white,
         onChanged: onChanged,
         validator: validator,
@@ -1638,11 +1753,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              size: 16,
-              color: Color(0xFF9B5DE0),
-            ),
+            Icon(icon, size: 16, color: Color(0xFF9B5DE0)),
             SizedBox(width: 8),
             Text(
               label,
@@ -1659,10 +1770,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           padding: const EdgeInsets.only(left: 24),
           child: Text(
             value.isNotEmpty ? value : 'Not provided',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[700],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
           ),
         ),
       ],
