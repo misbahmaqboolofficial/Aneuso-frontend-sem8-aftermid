@@ -35,7 +35,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
 
   // Form values
   String selectedTimeSlot = '09:00-12:00';
-  int selectedWasteType = 2;
+  int selectedWasteType = 1;
   int selectedPriority = 1;
   double latitude = 0;
   double longitude = 0;
@@ -253,10 +253,13 @@ class _SchedulePickupState extends State<SchedulePickup> {
     estimatedWeightController.clear();
     notesController.clear();
     locationAddressController.clear();
-    selectedTimeSlot = '09:00-12:00';
-    selectedWasteType = 2;
-    selectedPriority = 1;
-    selectedBranch = 1;
+    setState(() {
+      selectedTimeSlot = '09:00-12:00';
+      selectedWasteType = 1;
+      // selectedBranch = value;
+      selectedPriority = 1;
+      selectedBranch = null;
+    });
   }
 
   void showSnackBar(String message) {
