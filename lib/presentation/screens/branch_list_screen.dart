@@ -52,9 +52,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
     await showDialog(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         elevation: 0,
         backgroundColor: Colors.transparent,
         child: Container(
@@ -97,7 +95,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
                         color: Colors.white.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.add_business, color: Colors.white),
+                      child: const Icon(
+                        Icons.add_business,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(width: 15),
                     const Expanded(
@@ -150,7 +151,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                 gradient: LinearGradient(
                                   colors: [
                                     Colors.white,
-                                    _lightColor.withOpacity(0.1)
+                                    _lightColor.withOpacity(0.1),
                                   ],
                                 ),
                                 border: Border.all(
@@ -159,7 +160,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                 ),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
                                 child: DropdownButtonFormField<int?>(
                                   isExpanded: true,
                                   value: companyId,
@@ -180,7 +183,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                     return DropdownMenuItem<int?>(
                                       value: c['id'] as int?,
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8,
+                                        ),
                                         child: Text(
                                           c['company_name'] ??
                                               c['name'] ??
@@ -195,9 +200,11 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                       ),
                                     );
                                   }).toList(),
-                                  onChanged: (v) => setState(() => companyId = v),
-                                  validator: (v) =>
-                                      v == null ? 'Please select company' : null,
+                                  onChanged: (v) =>
+                                      setState(() => companyId = v),
+                                  validator: (v) => v == null
+                                      ? 'Please select company'
+                                      : null,
                                   style: const TextStyle(color: Colors.black87),
                                 ),
                               ),
@@ -283,7 +290,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                             setState(() => isMainBranch = v),
                                         activeColor: _secondaryColor,
                                         activeTrackColor: _lightColor,
-                                        thumbColor: MaterialStateProperty.all(Colors.white),
+                                        thumbColor: MaterialStateProperty.all(
+                                          Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -298,7 +307,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: 15,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -355,7 +367,8 @@ class _BranchListScreenState extends State<BranchListScreen> {
                         ),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (!(_formKey.currentState?.validate() ?? false)) return;
+                            if (!(_formKey.currentState?.validate() ?? false))
+                              return;
                             final body = {
                               'branch_code': codeCtrl.text.trim(),
                               'branch_name': nameCtrl.text.trim(),
@@ -376,12 +389,14 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                   setState(() {
                                     codeError =
                                         resp['errors']?['branch_code'] != null
-                                            ? resp['errors']['branch_code'][0].toString()
-                                            : null;
+                                        ? resp['errors']['branch_code'][0]
+                                              .toString()
+                                        : null;
                                     nameError =
                                         resp['errors']?['branch_name'] != null
-                                            ? resp['errors']['branch_name'][0].toString()
-                                            : null;
+                                        ? resp['errors']['branch_name'][0]
+                                              .toString()
+                                        : null;
                                   });
                                 } catch (_) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -389,9 +404,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                   );
                                 }
                               } else {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(SnackBar(content: Text(e.toString())));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())),
+                                );
                               }
                             }
                           },
@@ -464,7 +479,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
           borderRadius: BorderRadius.circular(15),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 18,
+          horizontal: 15,
+        ),
       ),
       validator: validator,
       style: const TextStyle(
@@ -492,9 +510,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
     await showDialog(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         elevation: 0,
         backgroundColor: Colors.transparent,
         child: Container(
@@ -590,7 +606,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                 gradient: LinearGradient(
                                   colors: [
                                     Colors.white,
-                                    _lightColor.withOpacity(0.1)
+                                    _lightColor.withOpacity(0.1),
                                   ],
                                 ),
                                 border: Border.all(
@@ -599,7 +615,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                 ),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
                                 child: DropdownButtonFormField<int?>(
                                   isExpanded: true,
                                   value: companyId,
@@ -620,7 +638,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                     return DropdownMenuItem<int?>(
                                       value: c['id'] as int?,
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8,
+                                        ),
                                         child: Text(
                                           c['company_name'] ??
                                               c['name'] ??
@@ -635,9 +655,11 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                       ),
                                     );
                                   }).toList(),
-                                  onChanged: (v) => setState(() => companyId = v),
-                                  validator: (v) =>
-                                      v == null ? 'Please select company' : null,
+                                  onChanged: (v) =>
+                                      setState(() => companyId = v),
+                                  validator: (v) => v == null
+                                      ? 'Please select company'
+                                      : null,
                                   style: const TextStyle(color: Colors.black87),
                                 ),
                               ),
@@ -723,7 +745,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                             setState(() => isMainBranch = v),
                                         activeColor: _secondaryColor,
                                         activeTrackColor: _lightColor,
-                                        thumbColor: MaterialStateProperty.all(Colors.white),
+                                        thumbColor: MaterialStateProperty.all(
+                                          Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -738,7 +762,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: 15,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -795,7 +822,8 @@ class _BranchListScreenState extends State<BranchListScreen> {
                         ),
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (!(_formKey.currentState?.validate() ?? false)) return;
+                            if (!(_formKey.currentState?.validate() ?? false))
+                              return;
                             final body = {
                               'branch_code': codeCtrl.text.trim(),
                               'branch_name': nameCtrl.text.trim(),
@@ -816,12 +844,14 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                   setState(() {
                                     codeError =
                                         resp['errors']?['branch_code'] != null
-                                            ? resp['errors']['branch_code'][0].toString()
-                                            : null;
+                                        ? resp['errors']['branch_code'][0]
+                                              .toString()
+                                        : null;
                                     nameError =
                                         resp['errors']?['branch_name'] != null
-                                            ? resp['errors']['branch_name'][0].toString()
-                                            : null;
+                                        ? resp['errors']['branch_name'][0]
+                                              .toString()
+                                        : null;
                                   });
                                 } catch (_) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -829,9 +859,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                   );
                                 }
                               } else {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(SnackBar(content: Text(e.toString())));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())),
+                                );
                               }
                             }
                           },
@@ -876,9 +906,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
     await showDialog(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         elevation: 0,
         backgroundColor: Colors.transparent,
         child: Container(
@@ -922,7 +950,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
                         color: Colors.white.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.info_outline, color: Colors.white),
+                      child: const Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(width: 15),
                     Expanded(
@@ -978,7 +1009,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
                       ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [_primaryColor.withOpacity(0.1), _secondaryColor.withOpacity(0.1)],
+                          colors: [
+                            _primaryColor.withOpacity(0.1),
+                            _secondaryColor.withOpacity(0.1),
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -1062,7 +1096,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: 15,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -1144,7 +1181,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
         ],
       ),
       child: Row(
-        crossAxisAlignment: multiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment: multiLine
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
@@ -1342,10 +1381,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         gradient: LinearGradient(
-                          colors: [
-                            Colors.white,
-                            _lightColor.withOpacity(0.4),
-                          ],
+                          colors: [Colors.white, _lightColor.withOpacity(0.4)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -1425,7 +1461,9 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                         width: 280,
                                         padding: const EdgeInsets.all(20),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                           gradient: LinearGradient(
                                             colors: [
                                               Colors.white,
@@ -1478,14 +1516,17 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                 gradient: LinearGradient(
                                                   colors: [
                                                     Colors.white,
-                                                    _lightColor.withOpacity(0.1)
+                                                    _lightColor.withOpacity(
+                                                      0.1,
+                                                    ),
                                                   ],
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 15,
+                                                    ),
                                                 child: DropdownButton<int?>(
                                                   isExpanded: true,
                                                   value: provider.companyFilter,
@@ -1494,12 +1535,15 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                     DropdownMenuItem<int?>(
                                                       value: null,
                                                       child: Padding(
-                                                        padding: const EdgeInsets
-                                                            .symmetric(vertical: 10),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              vertical: 10,
+                                                            ),
                                                         child: Text(
                                                           'All Companies',
                                                           style: TextStyle(
-                                                            color: _secondaryColor,
+                                                            color:
+                                                                _secondaryColor,
                                                             fontWeight:
                                                                 FontWeight.w600,
                                                           ),
@@ -1507,22 +1551,28 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                       ),
                                                     ),
                                                     ...provider.companies.map(
-                                                      (c) => DropdownMenuItem<int?>(
+                                                      (
+                                                        c,
+                                                      ) => DropdownMenuItem<int?>(
                                                         value: c['id'] as int?,
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets.symmetric(
-                                                                  vertical: 10),
+                                                                vertical: 10,
+                                                              ),
                                                           child: Text(
                                                             c['company_name'] ??
                                                                 c['name'] ??
                                                                 c['title'] ??
                                                                 '',
-                                                            style: const TextStyle(
-                                                              color: Colors.black87,
-                                                              fontWeight:
-                                                                  FontWeight.w500,
-                                                            ),
+                                                            style:
+                                                                const TextStyle(
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
                                                           ),
                                                         ),
                                                       ),
@@ -1539,67 +1589,67 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 20),
-                                            Container(
-                                              padding: const EdgeInsets.all(15),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    _lightColor.withOpacity(0.2),
-                                                    Colors.white,
-                                                  ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                border: Border.all(
-                                                  color: _accentColor,
-                                                  width: 1.5,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star_rate_rounded,
-                                                    color: _secondaryColor,
-                                                    size: 24,
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Text(
-                                                      'Main Branch Only',
-                                                      style: TextStyle(
-                                                        color: _primaryColor,
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Transform.scale(
-                                                    scale: 1,
-                                                    child: Switch(
-                                                      value: provider
-                                                              .isMainFilter ??
-                                                          false,
-                                                      onChanged: (v) {
-                                                        Navigator.pop(context);
-                                                        _applyFilters(
-                                                          provider,
-                                                          provider.companyFilter,
-                                                          v == true ? true : null,
-                                                        );
-                                                      },
-                                                      activeColor: _secondaryColor,
-                                                      activeTrackColor: _lightColor,
-                                                      thumbColor:
-                                                          MaterialStateProperty.all(
-                                                              Colors.white),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                            // const SizedBox(height: 20),
+                                            // Container(
+                                            //   padding: const EdgeInsets.all(15),
+                                            //   decoration: BoxDecoration(
+                                            //     gradient: LinearGradient(
+                                            //       colors: [
+                                            //         _lightColor.withOpacity(0.2),
+                                            //         Colors.white,
+                                            //       ],
+                                            //       begin: Alignment.topLeft,
+                                            //       end: Alignment.bottomRight,
+                                            //     ),
+                                            //     borderRadius:
+                                            //         BorderRadius.circular(15),
+                                            //     border: Border.all(
+                                            //       color: _accentColor,
+                                            //       width: 1.5,
+                                            //     ),
+                                            //   ),
+                                            //   child: Row(
+                                            //     children: [
+                                            //       Icon(
+                                            //         Icons.star_rate_rounded,
+                                            //         color: _secondaryColor,
+                                            //         size: 24,
+                                            //       ),
+                                            //       const SizedBox(width: 12),
+                                            //       Expanded(
+                                            //         child: Text(
+                                            //           'Main Branch Only',
+                                            //           style: TextStyle(
+                                            //             color: _primaryColor,
+                                            //             fontSize: 15,
+                                            //             fontWeight: FontWeight.w600,
+                                            //           ),
+                                            //         ),
+                                            //       ),
+                                            //       Transform.scale(
+                                            //         scale: 1,
+                                            //         child: Switch(
+                                            //           value: provider
+                                            //                   .isMainFilter ??
+                                            //               false,
+                                            //           onChanged: (v) {
+                                            //             Navigator.pop(context);
+                                            //             _applyFilters(
+                                            //               provider,
+                                            //               provider.companyFilter,
+                                            //               v == true ? true : null,
+                                            //             );
+                                            //           },
+                                            //           activeColor: _secondaryColor,
+                                            //           activeTrackColor: _lightColor,
+                                            //           thumbColor:
+                                            //               MaterialStateProperty.all(
+                                            //                   Colors.white),
+                                            //         ),
+                                            //       ),
+                                            //     ],
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ),
@@ -1630,192 +1680,217 @@ class _BranchListScreenState extends State<BranchListScreen> {
               ),
               // Branch List
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, idx) {
-                    if (idx >= provider.branches.length) {
-                      provider.loadNextPage();
-                      return Container(
-                        padding: const EdgeInsets.all(40),
-                        child: Center(
-                          child: SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                              color: _secondaryColor,
-                              backgroundColor: _lightColor.withOpacity(0.3),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-
-                    final b = provider.branches[idx];
+                delegate: SliverChildBuilderDelegate((context, idx) {
+                  if (idx >= provider.branches.length) {
+                    provider.loadNextPage();
                     return Container(
-                      margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.white,
-                            b.isMainBranch
-                                ? _secondaryColor.withOpacity(0.08)
-                                : _lightColor.withOpacity(0.15),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(b.isMainBranch ? 0.15 : 0.1),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
+                      padding: const EdgeInsets.all(40),
+                      child: Center(
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: _secondaryColor,
+                            backgroundColor: _lightColor.withOpacity(0.3),
                           ),
-                          BoxShadow(
-                            color: _primaryColor.withOpacity(0.05),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                        border: Border.all(
-                          color: b.isMainBranch
-                              ? _secondaryColor.withOpacity(0.3)
-                              : _accentColor.withOpacity(0.2),
-                          width: b.isMainBranch ? 2 : 1.5,
                         ),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => _openViewDetailsDialog(provider, b),
-                          borderRadius: BorderRadius.circular(20),
-                          splashColor: _accentColor.withOpacity(0.2),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                // Avatar with gradient
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: b.isMainBranch
-                                          ? [_secondaryColor, _primaryColor]
-                                          : [_primaryColor, _accentColor],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: _primaryColor.withOpacity(0.3),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
+                    );
+                  }
+
+                  final b = provider.branches[idx];
+                  return Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.white,
+                          b.isMainBranch
+                              ? _secondaryColor.withOpacity(0.08)
+                              : _lightColor.withOpacity(0.15),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(
+                            b.isMainBranch ? 0.15 : 0.1,
+                          ),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                        BoxShadow(
+                          color: _primaryColor.withOpacity(0.05),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                      border: Border.all(
+                        color: b.isMainBranch
+                            ? _secondaryColor.withOpacity(0.3)
+                            : _accentColor.withOpacity(0.2),
+                        width: b.isMainBranch ? 2 : 1.5,
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => _openViewDetailsDialog(provider, b),
+                        borderRadius: BorderRadius.circular(20),
+                        splashColor: _accentColor.withOpacity(0.2),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            children: [
+                              // Avatar with gradient
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: b.isMainBranch
+                                        ? [_secondaryColor, _primaryColor]
+                                        : [_primaryColor, _accentColor],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      b.branchCode.substring(0, 2).toUpperCase(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        letterSpacing: 0.5,
-                                      ),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: _primaryColor.withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    b.branchCode.substring(0, 2).toUpperCase(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      letterSpacing: 0.5,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 15),
-                                // Branch Info
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
+                              ),
+                              const SizedBox(width: 15),
+                              // Branch Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            b.branchName,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        if (b.isMainBranch)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 5,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  _secondaryColor,
+                                                  _primaryColor,
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: _secondaryColor
+                                                      .withOpacity(0.3),
+                                                  blurRadius: 5,
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.star,
+                                                  color: Colors.yellow[100],
+                                                  size: 16,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  'Main',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'Code: ${b.branchCode}',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    if (b.contactPhoneNumber.isNotEmpty)
                                       Row(
                                         children: [
+                                          Icon(
+                                            Icons.phone_outlined,
+                                            size: 16,
+                                            color: _primaryColor,
+                                          ),
+                                          const SizedBox(width: 6),
                                           Expanded(
                                             child: Text(
-                                              b.branchName,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                color: Colors.black87,
+                                              b.contactPhoneNumber,
+                                              style: TextStyle(
+                                                color: Colors.grey[700],
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          if (b.isMainBranch)
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 5,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    _secondaryColor,
-                                                    _primaryColor,
-                                                  ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color:
-                                                        _secondaryColor.withOpacity(0.3),
-                                                    blurRadius: 5,
-                                                    offset: const Offset(0, 2),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.yellow[100],
-                                                    size: 16,
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  Text(
-                                                    'Main',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
                                         ],
                                       ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        'Code: ${b.branchCode}',
-                                        style: TextStyle(
-                                          color: Colors.grey[700],
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      if (b.contactPhoneNumber.isNotEmpty)
-                                        Row(
+                                    if (b.contactEmail.isNotEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 4),
+                                        child: Row(
                                           children: [
                                             Icon(
-                                              Icons.phone_outlined,
+                                              Icons.email_outlined,
                                               size: 16,
-                                              color: _primaryColor,
+                                              color: _secondaryColor,
                                             ),
                                             const SizedBox(width: 6),
                                             Expanded(
                                               child: Text(
-                                                b.contactPhoneNumber,
+                                                b.contactEmail,
                                                 style: TextStyle(
                                                   color: Colors.grey[700],
                                                   fontSize: 14,
@@ -1826,380 +1901,421 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                             ),
                                           ],
                                         ),
-                                      if (b.contactEmail.isNotEmpty)
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 4),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.email_outlined,
-                                                size: 16,
-                                                color: _secondaryColor,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              // Action Menu
+                              PopupMenuButton<String>(
+                                icon: Icon(
+                                  Icons.more_vert_rounded,
+                                  color: _primaryColor,
+                                  size: 24,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                onSelected: (v) async {
+                                  if (v == 'view') {
+                                    return _openViewDetailsDialog(provider, b);
+                                  }
+                                  if (v == 'edit')
+                                    return _openEditDialog(provider, b);
+                                  if (v == 'delete') {
+                                    final ok = await showDialog<bool>(
+                                      context: context,
+                                      builder: (c) => Dialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            25,
+                                          ),
+                                        ),
+                                        elevation: 0,
+                                        backgroundColor: Colors.transparent,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.white,
+                                                _lightColor.withOpacity(0.3),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              25,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: _secondaryColor
+                                                    .withOpacity(0.2),
+                                                blurRadius: 30,
+                                                spreadRadius: 5,
                                               ),
-                                              const SizedBox(width: 6),
-                                              Expanded(
-                                                child: Text(
-                                                  b.contactEmail,
-                                                  style: TextStyle(
-                                                    color: Colors.grey[700],
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
+                                            ],
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  20,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      _primaryColor,
+                                                      _secondaryColor,
+                                                    ],
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(25),
+                                                        topRight:
+                                                            Radius.circular(25),
+                                                      ),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            8,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white
+                                                            .withOpacity(0.2),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.warning,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 15),
+                                                    const Expanded(
+                                                      child: Text(
+                                                        'Confirm Delete',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 22,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  25,
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Container(
+                                                      width: 80,
+                                                      height: 80,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.red
+                                                            .withOpacity(0.1),
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: Colors.red
+                                                              .withOpacity(0.3),
+                                                          width: 2,
+                                                        ),
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.delete_forever,
+                                                        color: Colors.red,
+                                                        size: 40,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                    const Text(
+                                                      'Are you sure you want to delete this branch?',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.black87,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      b.branchName,
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: _primaryColor,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    Text(
+                                                      'This action cannot be undone.',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey[600],
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 25,
+                                                      vertical: 15,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(25),
+                                                        bottomRight:
+                                                            Radius.circular(25),
+                                                      ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.1),
+                                                      blurRadius: 20,
+                                                      spreadRadius: 2,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: OutlinedButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              c,
+                                                              false,
+                                                            ),
+                                                        style: OutlinedButton.styleFrom(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 16,
+                                                              ),
+                                                          side: BorderSide(
+                                                            color:
+                                                                _primaryColor,
+                                                            width: 2,
+                                                          ),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  15,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          'Cancel',
+                                                          style: TextStyle(
+                                                            color:
+                                                                _primaryColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 15),
+                                                    Expanded(
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          gradient:
+                                                              LinearGradient(
+                                                                colors: [
+                                                                  Colors.red,
+                                                                  Colors
+                                                                      .redAccent,
+                                                                ],
+                                                              ),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                15,
+                                                              ),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.red
+                                                                  .withOpacity(
+                                                                    0.4,
+                                                                  ),
+                                                              blurRadius: 10,
+                                                              offset:
+                                                                  const Offset(
+                                                                    0,
+                                                                    4,
+                                                                  ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: ElevatedButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                c,
+                                                                true,
+                                                              ),
+                                                          style: ElevatedButton.styleFrom(
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  vertical: 16,
+                                                                ),
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            shadowColor: Colors
+                                                                .transparent,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    15,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          child: const Text(
+                                                            'Delete',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                ),
-                                // Action Menu
-                                PopupMenuButton<String>(
-                                  icon: Icon(
-                                    Icons.more_vert_rounded,
-                                    color: _primaryColor,
-                                    size: 24,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  onSelected: (v) async {
-                                    if (v == 'view') {
-                                      return _openViewDetailsDialog(provider, b);
-                                    }
-                                    if (v == 'edit') return _openEditDialog(provider, b);
-                                    if (v == 'delete') {
-                                      final ok = await showDialog<bool>(
-                                        context: context,
-                                        builder: (c) => Dialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(25),
-                                          ),
-                                          elevation: 0,
-                                          backgroundColor: Colors.transparent,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  Colors.white,
-                                                  _lightColor.withOpacity(0.3)
-                                                ],
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                              ),
-                                              borderRadius: BorderRadius.circular(25),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color:
-                                                      _secondaryColor.withOpacity(0.2),
-                                                  blurRadius: 30,
-                                                  spreadRadius: 5,
-                                                ),
-                                              ],
+                                      ),
+                                    );
+                                    if (ok == true) {
+                                      try {
+                                        await provider.deleteBranch(b.id);
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: const Text(
+                                              'Branch deleted successfully',
                                             ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets.all(20),
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      colors: [_primaryColor, _secondaryColor],
-                                                      begin: Alignment.topLeft,
-                                                      end: Alignment.bottomRight,
-                                                    ),
-                                                    borderRadius: const BorderRadius.only(
-                                                      topLeft: Radius.circular(25),
-                                                      topRight: Radius.circular(25),
-                                                    ),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        padding: const EdgeInsets.all(8),
-                                                        decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.white.withOpacity(0.2),
-                                                          shape: BoxShape.circle,
-                                                        ),
-                                                        child: const Icon(
-                                                          Icons.warning,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 15),
-                                                      const Expanded(
-                                                        child: Text(
-                                                          'Confirm Delete',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight: FontWeight.bold,
-                                                            fontSize: 22,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(25),
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        width: 80,
-                                                        height: 80,
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.red.withOpacity(0.1),
-                                                          shape: BoxShape.circle,
-                                                          border: Border.all(
-                                                            color: Colors.red.withOpacity(0.3),
-                                                            width: 2,
-                                                          ),
-                                                        ),
-                                                        child: Icon(
-                                                          Icons.delete_forever,
-                                                          color: Colors.red,
-                                                          size: 40,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 20),
-                                                      const Text(
-                                                        'Are you sure you want to delete this branch?',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight: FontWeight.w600,
-                                                          color: Colors.black87,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        b.branchName,
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: _primaryColor,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      Text(
-                                                        'This action cannot be undone.',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.grey[600],
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 25,
-                                                    vertical: 15,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: const BorderRadius.only(
-                                                      bottomLeft: Radius.circular(25),
-                                                      bottomRight: Radius.circular(25),
-                                                    ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.grey.withOpacity(0.1),
-                                                        blurRadius: 20,
-                                                        spreadRadius: 2,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: OutlinedButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(c, false),
-                                                          style: OutlinedButton.styleFrom(
-                                                            padding: const EdgeInsets.symmetric(
-                                                              vertical: 16,
-                                                            ),
-                                                            side: BorderSide(
-                                                              color: _primaryColor,
-                                                              width: 2,
-                                                            ),
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(15),
-                                                            ),
-                                                          ),
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                              color: _primaryColor,
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 16,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 15),
-                                                      Expanded(
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                            gradient: LinearGradient(
-                                                              colors: [
-                                                                Colors.red,
-                                                                Colors.redAccent,
-                                                              ],
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius.circular(15),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors.red
-                                                                    .withOpacity(0.4),
-                                                                blurRadius: 10,
-                                                                offset: const Offset(0, 4),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          child: ElevatedButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(c, true),
-                                                            style: ElevatedButton.styleFrom(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                vertical: 16,
-                                                              ),
-                                                              backgroundColor:
-                                                                  Colors.transparent,
-                                                              shadowColor:
-                                                                  Colors.transparent,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(15),
-                                                              ),
-                                                            ),
-                                                            child: const Text(
-                                                              'Delete',
-                                                              style: TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 16,
-                                                                color: Colors.white,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
+                                            backgroundColor: _secondaryColor,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                            ),
+                                            duration: const Duration(
+                                              seconds: 2,
                                             ),
                                           ),
-                                        ),
-                                      );
-                                      if (ok == true) {
-                                        try {
-                                          await provider.deleteBranch(b.id);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: const Text(
-                                                'Branch deleted successfully',
-                                              ),
-                                              backgroundColor: _secondaryColor,
-                                              behavior: SnackBarBehavior.floating,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(15),
-                                              ),
-                                              duration: const Duration(seconds: 2),
+                                        );
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(e.toString()),
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
                                             ),
-                                          );
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(e.toString()),
-                                              backgroundColor: Colors.red,
-                                              behavior: SnackBarBehavior.floating,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(15),
-                                              ),
-                                            ),
-                                          );
-                                        }
+                                          ),
+                                        );
                                       }
                                     }
-                                  },
-                                  itemBuilder: (_) => [
-                                    PopupMenuItem(
-                                      value: 'view',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.visibility,
-                                            color: _primaryColor,
-                                            size: 22,
+                                  }
+                                },
+                                itemBuilder: (_) => [
+                                  PopupMenuItem(
+                                    value: 'view',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.visibility,
+                                          color: _primaryColor,
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Text(
+                                          'View Details',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                          const SizedBox(width: 12),
-                                          const Text(
-                                            'View Details',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 'edit',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.edit,
-                                            color: _secondaryColor,
-                                            size: 22,
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'edit',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.edit,
+                                          color: _secondaryColor,
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Text(
+                                          'Edit',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                          const SizedBox(width: 12),
-                                          const Text(
-                                            'Edit',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 'delete',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                            size: 22,
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'delete',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Text(
+                                          'Delete',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                          const SizedBox(width: 12),
-                                          const Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    );
-                  },
-                  childCount: provider.branches.length + (provider.hasMore ? 1 : 0),
-                ),
+                    ),
+                  );
+                }, childCount: provider.branches.length + (provider.hasMore ? 1 : 0)),
               ),
             ],
           ),
