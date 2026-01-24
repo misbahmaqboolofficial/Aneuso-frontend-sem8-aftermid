@@ -18,7 +18,7 @@ class BranchService {
 
   Future<Map<String, dynamic>> getBranches({
     int page = 1,
-    int limit = 10,
+    int limit = 9999,
     int? companyId,
     bool? isMain,
     String? search,
