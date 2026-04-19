@@ -358,6 +358,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.pushNamed(context, '/profile');
                     },
                   ),
+                  _buildDrawerItem(
+                    22,
+                    'Public Garbage',
+                    Icons.report_problem_rounded,
+                    _selectedDrawerIndex == 22,
+                    () {
+                      setState(() => _selectedDrawerIndex = 22);
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/garbage-reports');
+                    },
+                  ),
 
                   // Admin-specific items
                   if (user.isAdmin) ...[
@@ -1088,6 +1099,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         'Report garbage',
       ),
       _dashboardCard(
+        'Reports',
+        Icons.report_problem_rounded,
+        Color(0xFFF15BB5),
+        'Public Garbage',
+      ),
+      _dashboardCard(
         'Profile',
         Icons.person_rounded,
         Color(0xFF00F5D4),
@@ -1140,6 +1157,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/tutorials/home');
         } else if (subtitle == 'Report garbage') {
           Navigator.pushNamed(context, '/citizen/report-garbage');
+        } else if (subtitle == 'Public Garbage') {
+          Navigator.pushNamed(context, '/garbage-reports');
         }
       },
       child: Container(

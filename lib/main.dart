@@ -5,6 +5,7 @@ import 'package:aneuso_app/presentation/screens/driver/ConfirmPickupsScreen.dart
 import 'package:aneuso_app/presentation/screens/driver/DailyTasksScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/ServiceHistoryScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/schedule_pickup.dart';
+import 'package:aneuso_app/presentation/screens/public_garbage_reports_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -114,6 +115,7 @@ class MyApp extends StatelessWidget {
           '/industry-dashboard': (context) => const DashboardScreen(),
           '/driver-dashboard': (context) => const DashboardScreen(),
           '/citizen-dashboard': (context) => const DashboardScreen(),
+          '/garbage-reports': (context) => const PublicGarbageReportsScreen(),
 
           // Admin routes
           '/admin/products': (context) => const AdminProductsScreen(),
