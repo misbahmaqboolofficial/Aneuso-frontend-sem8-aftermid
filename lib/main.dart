@@ -1,5 +1,6 @@
 import 'package:aneuso_app/presentation/screens/citizen/cart_screen.dart';
 import 'package:aneuso_app/presentation/screens/citizen/orders_screen.dart';
+import 'package:aneuso_app/presentation/screens/citizen/report_garbage_screen.dart';
 import 'package:aneuso_app/presentation/screens/driver/ConfirmPickupsScreen.dart';
 import 'package:aneuso_app/presentation/screens/driver/DailyTasksScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/ServiceHistoryScreen.dart';
@@ -138,6 +139,7 @@ class MyApp extends StatelessWidget {
           '/products': (context) => const ProductsScreen(),
           '/citizen/mycart': (context) => const CartScreen(),
           '/citizen/myorders': (context) => const OrdersScreen(),
+          '/citizen/report-garbage': (context) => const ReportGarbageScreen(),
         },
       ),
     );

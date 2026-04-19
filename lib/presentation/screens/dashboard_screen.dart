@@ -563,17 +563,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
 
                     // Comment one
-                    // _buildDrawerItem(
-                    //   17,
-                    //   'Report Garbage',
-                    //   Icons.inventory_rounded,
-                    //   _selectedDrawerIndex == 17,
-                    //   () {
-                    //     setState(() => _selectedDrawerIndex = 17);
-                    //     Navigator.pop(context);
-                    //     Navigator.pushNamed(context, '/admin/products');
-                    //   },
-                    // ),
+                    _buildDrawerItem(
+                      17,
+                      'Report Garbage',
+                      Icons.inventory_rounded,
+                      _selectedDrawerIndex == 17,
+                      () {
+                        setState(() => _selectedDrawerIndex = 17);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/citizen/report-garbage');
+                      },
+                    ),
                     // Comment one end
                     // _buildDrawerItem(
                     //   18,
@@ -1082,6 +1082,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       //   'Past activities',
       // ),
       _dashboardCard(
+        'Report',
+        Icons.inventory_rounded,
+        Color(0xFF00BBF9),
+        'Report garbage',
+      ),
+      _dashboardCard(
         'Profile',
         Icons.person_rounded,
         Color(0xFF00F5D4),
@@ -1132,6 +1138,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/driver/confirm_pickups');
         } else if (subtitle == 'Browse tutorials') {
           Navigator.pushNamed(context, '/tutorials/home');
+        } else if (subtitle == 'Report garbage') {
+          Navigator.pushNamed(context, '/citizen/report-garbage');
         }
       },
       child: Container(
