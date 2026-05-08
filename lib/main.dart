@@ -32,6 +32,8 @@ import 'presentation/screens/tutorials_home_screen.dart';
 import 'presentation/screens/products_screen.dart';
 import 'presentation/screens/admin/admin_products_screen.dart';
 import 'presentation/screens/admin/product_form_screen.dart';
+import 'presentation/screens/admin/admin_deals_screen.dart';
+import 'presentation/screens/industry/create_deal_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -119,6 +121,7 @@ class MyApp extends StatelessWidget {
 
           // Admin routes
           '/admin/products': (context) => const AdminProductsScreen(),
+          '/admin/deals': (context) => AdminDealsScreen(),
           '/admin/product/form': (context) {
             final args =
                 ModalRoute.of(context)!.settings.arguments
@@ -132,6 +135,7 @@ class MyApp extends StatelessWidget {
           // Industry routes
           '/industry/schedule_pickup': (context) => const SchedulePickup(),
           '/industry/service_history': (context) => ServiceHistoryScreen(),
+          '/industry/create_deal': (context) => CreateDealScreen(),
 
           // Driver routes
           '/driver/driverdailytasks': (context) => const DriverTasksScreen(),

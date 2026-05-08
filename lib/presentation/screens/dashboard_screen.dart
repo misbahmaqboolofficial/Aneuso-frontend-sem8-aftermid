@@ -405,17 +405,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Navigator.pushNamed(context, '/admin/products');
                       },
                     ),
-                    // _buildDrawerItem(
-                    //   8,
-                    //   'Send Notification',
-                    //   Icons.inventory_rounded,
-                    //   _selectedDrawerIndex == 8,
-                    //   () {
-                    //     setState(() => _selectedDrawerIndex = 8);
-                    //     Navigator.pop(context);
-                    //     Navigator.pushNamed(context, '/admin/products');
-                    //   },
-                    // ),
+                    _buildDrawerItem(
+                      23,
+                      'Deal Management',
+                      Icons.handshake_rounded,
+                      _selectedDrawerIndex == 23,
+                      () {
+                        setState(() => _selectedDrawerIndex = 23);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/admin/deals');
+                      },
+                    ),
                   ],
 
                   // Industry-specific items
@@ -470,17 +470,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Navigator.pushNamed(context, '/tutorials/home');
                       },
                     ),
-                    // _buildDrawerItem(
-                    //   12,
-                    //   'Deal Management',
-                    //   Icons.inventory_rounded,
-                    //   _selectedDrawerIndex == 12,
-                    //   () {
-                    //     setState(() => _selectedDrawerIndex = 12);
-                    //     Navigator.pop(context);
-                    //     Navigator.pushNamed(context, '/admin/products');
-                    //   },
-                    // ),
+                    _buildDrawerItem(
+                      12,
+                      'Deal Management',
+                      Icons.handshake_rounded,
+                      _selectedDrawerIndex == 12,
+                      () {
+                        setState(() => _selectedDrawerIndex = 12);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/industry/create_deal');
+                      },
+                    ),
                     // _buildDrawerItem(
                     //   13,
                     //   'Ratings',
@@ -912,6 +912,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Color(0xFFD78FEE),
         'Manage Branches',
       ),
+      _dashboardCard(
+        'Deals',
+        Icons.handshake_rounded,
+        Color(0xFF00BBF9),
+        'Manage All Deals',
+      ),
       // _dashboardCard(
       //   'Settings',
       //   Icons.settings_rounded,
@@ -969,6 +975,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Icons.person_rounded,
         Color(0xFFF15BB5),
         'My profile',
+      ),
+      _dashboardCard(
+        'Deals',
+        Icons.handshake_rounded,
+        Color(0xFF00F5D4),
+        'Manage My Deals',
       ),
       // _dashboardCard(
       //   'Reports',
@@ -1159,6 +1171,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/citizen/report-garbage');
         } else if (subtitle == 'Public Garbage') {
           Navigator.pushNamed(context, '/garbage-reports');
+        } else if (subtitle == 'Manage All Deals') {
+          Navigator.pushNamed(context, '/admin/deals');
+        } else if (subtitle == 'Manage My Deals') {
+          Navigator.pushNamed(context, '/industry/create_deal');
         }
       },
       child: Container(
