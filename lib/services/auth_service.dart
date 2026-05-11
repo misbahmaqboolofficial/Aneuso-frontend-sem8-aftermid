@@ -39,6 +39,7 @@ class AuthService {
     required String phoneNumber,
     required int userTypeId,
     required int? designationId,
+    String? industryName,
   }) async {
     return await _authRepository.register(
       fullName: fullName,
@@ -47,6 +48,7 @@ class AuthService {
       phoneNumber: phoneNumber,
       userTypeId: userTypeId,
       designationId: designationId,
+      industryName: industryName,
     );
   }
 

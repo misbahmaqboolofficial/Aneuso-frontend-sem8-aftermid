@@ -28,6 +28,12 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
   int pendingTasks = 0;
   int completedTasks = 0;
   double totalWeight = 0.0;
+  String workingStatus = 'Free';
+  bool isStatusLoading = false;
+  String _statusFilter = 'All'; // 'All', 'Pending', 'Completed'
+  String _sourceFilter = 'All'; // 'All', 'Industry', 'Admin'
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -35,6 +41,78 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
     final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
     driverId = user?.driverId ?? 0;
     fetchDriverTasks();
+    fetchDriverProfile();
+  }
+
+  Future<void> fetchDriverProfile() async {
+    try {
+      final token = StorageUtil.getToken();
+      final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
+      final userId = user?.id ?? 0;
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/drivers/profiles/$driverId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          setState(() {
+            workingStatus = data['data']['working_status'] ?? 'Free';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching driver profile: $e');
+    }
+  }
+
+  Future<void> toggleWorkingStatus() async {
+    setState(() => isStatusLoading = true);
+    try {
+      final token = StorageUtil.getToken();
+      final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
+      final userId = user?.id ?? 0;
+      final newAvailable = workingStatus == 'Busy'; // If Busy, set available=true (Free)
+      
+      final response = await http.put(
+        Uri.parse('$baseUrl/drivers/availability/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'available': newAvailable,
+          'driver_id': userId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          workingStatus = data['working_status'] ?? (newAvailable ? 'Free' : 'Busy');
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Status updated to $workingStatus')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update status')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() => isStatusLoading = false);
+    }
   }
 
   Future<void> fetchDriverTasks() async {
@@ -45,49 +123,92 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
 
     try {
       final token = StorageUtil.getToken();
-      final response = await http.get(
-        Uri.parse('$baseUrl/pickups/schedules/driver/$driverId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          if (token != null) 'Authorization': 'Bearer $token',
-        },
-      );
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
 
-      await Future.delayed(
-        const Duration(milliseconds: 500),
-      ); // Simulate loading
+      final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
+      final userId = user?.id ?? 0;
+      
+      // Fetch Industry Tasks
+      final industryRes = await http.get(Uri.parse('$baseUrl/pickups/schedules/driver/$driverId'), headers: headers);
+      
+      // Fetch Admin Tasks (Garbage Reports)
+      final adminRes = await http.get(Uri.parse('$baseUrl/reports/public-garbage?driver_id=$userId'), headers: headers);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          setState(() {
-            tasks = data['data'] ?? [];
-            totalTasks = data['total'] ?? 0;
-            calculateStatistics();
-            isLoading = false;
-          });
-        } else {
-          setState(() {
-            hasError = true;
-            errorMessage = 'Failed to load tasks';
-            isLoading = false;
-          });
-        }
-      } else {
-        setState(() {
-          hasError = true;
-          errorMessage = 'Server error: ${response.statusCode}';
-          isLoading = false;
-        });
+      List<dynamic> combinedTasks = [];
+
+      if (industryRes.statusCode == 200) {
+        final data = jsonDecode(industryRes.body);
+        final industryTasks = (data['data'] as List).map((t) => <String, dynamic>{
+          ...Map<String, dynamic>.from(t), 
+          'source': 'Industry'
+        }).toList();
+        combinedTasks.addAll(industryTasks);
       }
+
+      if (adminRes.statusCode == 200) {
+        final data = jsonDecode(adminRes.body);
+        final adminTasks = (data['data'] as List).map((t) => <String, dynamic>{
+          ...Map<String, dynamic>.from(t), 
+          'source': 'Admin',
+          // Normalize some fields for the UI
+          'branch_name': t['address'],
+          'company_name': 'Public Mission',
+          'pickup_status_id': _mapAdminStatusToPickupStatus(t['report_status_id']),
+          'scheduled_date': t['created_at'],
+          'estimated_weight_kg': t['estimated_volume'],
+          'waste_type_name': t['urgency_name'] ?? 'Urgent',
+        }).toList();
+        combinedTasks.addAll(adminTasks);
+      }
+
+      setState(() {
+        tasks = combinedTasks;
+        totalTasks = combinedTasks.length;
+        calculateStatistics();
+        isLoading = false;
+      });
     } catch (e) {
+      debugPrint('Fetch tasks error: $e');
       setState(() {
         hasError = true;
         errorMessage = 'Network error: $e';
         isLoading = false;
       });
     }
+  }
+
+  int _mapAdminStatusToPickupStatus(int adminStatus) {
+    if (adminStatus == 174) return 3; // Completed
+    return 1; // Pending
+  }
+
+  List<dynamic> _getFilteredTasks() {
+    return tasks.where((task) {
+      // 1. Status Filter
+      bool statusMatch = true;
+      if (_statusFilter == 'Pending') statusMatch = task['pickup_status_id'] == 1;
+      if (_statusFilter == 'Completed') statusMatch = task['pickup_status_id'] == 3;
+
+      // 2. Source Filter
+      bool sourceMatch = true;
+      if (_sourceFilter == 'Industry') sourceMatch = task['source'] == 'Industry';
+      if (_sourceFilter == 'Admin') sourceMatch = task['source'] == 'Admin';
+
+      // 3. Search Filter
+      bool searchMatch = true;
+      if (_searchQuery.isNotEmpty) {
+        final query = _searchQuery.toLowerCase();
+        final branch = (task['branch_name'] ?? '').toString().toLowerCase();
+        final company = (task['company_name'] ?? '').toString().toLowerCase();
+        searchMatch = branch.contains(query) || company.contains(query);
+      }
+
+      return statusMatch && sourceMatch && searchMatch;
+    }).toList();
   }
 
   void calculateStatistics() {
@@ -190,10 +311,10 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Daily Tasks',
                             style: TextStyle(
                               fontSize: 32,
@@ -202,13 +323,44 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                               letterSpacing: 0.5,
                             ),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Your pickup schedule',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                            ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text(
+                                'Status: ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white.withOpacity(0.7),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: isStatusLoading ? null : toggleWorkingStatus,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: workingStatus == 'Free' ? Colors.green : Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: isStatusLoading 
+                                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                    : Text(
+                                        workingStatus,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -289,39 +441,87 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                   child: Column(
                     children: [
                       // List Header
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Pickups',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4E56C0).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                '${tasks.length} tasks',
-                                style: const TextStyle(
-                                  color: Color(0xFF4E56C0),
-                                  fontWeight: FontWeight.w600,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Pickups',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF333333),
                                 ),
                               ),
-                            ),
-                          ],
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4E56C0).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '${_getFilteredTasks().length} tasks',
+                                  style: const TextStyle(
+                                    color: Color(0xFF4E56C0),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+
+                        // Search Bar
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (val) => setState(() => _searchQuery = val),
+                            decoration: InputDecoration(
+                              hintText: 'Search tasks...',
+                              prefixIcon: const Icon(Icons.search),
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.grey[200]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.grey[200]!),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Source Filters
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                _buildSourceChip('All'),
+                                const SizedBox(width: 8),
+                                _buildSourceChip('Industry'),
+                                const SizedBox(width: 8),
+                                _buildSourceChip('Admin'),
+                                const SizedBox(width: 24),
+                                Container(width: 1, height: 24, color: Colors.grey[300]),
+                                const SizedBox(width: 24),
+                                _buildFilterChip('All'),
+                                const SizedBox(width: 8),
+                                _buildFilterChip('Pending'),
+                                const SizedBox(width: 8),
+                                _buildFilterChip('Completed'),
+                              ],
+                            ),
+                          ),
+                        ),
 
                       // Tasks List
                       Expanded(
@@ -338,11 +538,11 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                                   20,
                                   20,
                                 ),
-                                itemCount: tasks.length,
+                                itemCount: _getFilteredTasks().length,
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 16),
                                 itemBuilder: (context, index) {
-                                  final task = tasks[index];
+                                  final task = _getFilteredTasks()[index];
                                   return _buildTaskCard(task);
                                 },
                               ),
@@ -408,7 +608,42 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
     );
   }
 
+  Widget _buildSourceChip(String label) {
+    bool isSelected = _sourceFilter == label;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (val) {
+        if (val) setState(() => _sourceFilter = label);
+      },
+      selectedColor: const Color(0xFF9B5DE0).withOpacity(0.2),
+      labelStyle: TextStyle(
+        color: isSelected ? const Color(0xFF9B5DE0) : Colors.grey[600],
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 12,
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String label) {
+    bool isSelected = _statusFilter == label;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (val) {
+        if (val) setState(() => _statusFilter = label);
+      },
+      selectedColor: const Color(0xFF4E56C0).withOpacity(0.2),
+      labelStyle: TextStyle(
+        color: isSelected ? const Color(0xFF4E56C0) : Colors.grey[600],
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 12,
+      ),
+    );
+  }
+
   Widget _buildTaskCard(Map<String, dynamic> task) {
+    bool isAdmin = task['source'] == 'Admin';
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -457,36 +692,28 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                         ),
                       ),
                     ),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(
-                    //     horizontal: 16,
-                    //     vertical: 8,
-                    //   ),
-                    //   decoration: BoxDecoration(
-                    //     color: getPriorityColor(
-                    //       task['priority_level_id'],
-                    //     ).withOpacity(0.1),
-                    //     borderRadius: BorderRadius.circular(20),
-                    //     border: Border.all(
-                    //       color: getPriorityColor(task['priority_level_id']),
-                    //     ),
-                    //   ),
-                    //   child: Text(
-                    //     task['priority_level_name'] ?? 'Standard',
-                    //     style: TextStyle(
-                    //       color: getPriorityColor(task['priority_level_id']),
-                    //       fontSize: 12,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isAdmin ? Colors.blue[50] : Colors.purple[50],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        isAdmin ? 'ADMIN TASK' : 'INDUSTRY TASK',
+                        style: TextStyle(
+                          color: isAdmin ? Colors.blue[800] : Colors.purple[800],
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
 
                 // Company and Branch Info
                 Text(
-                  task['company_name'] ?? 'Unknown Company',
+                  task['branch_name'] ?? 'Unknown Branch',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -495,7 +722,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  task['branch_name'] ?? 'Unknown Branch',
+                  task['company_name'] ?? 'Unknown Company',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 16),

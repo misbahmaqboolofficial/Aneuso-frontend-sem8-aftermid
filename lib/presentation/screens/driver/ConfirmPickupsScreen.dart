@@ -43,6 +43,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   bool isSubmitting = false;
   bool showValidationError = false;
   Map<String, dynamic>? selectedTask;
+  String _statusFilter = 'All'; // 'All', 'Pending', 'Completed'
 
   // Add this after your existing variables
   final ImagePicker _picker = ImagePicker();
@@ -325,39 +326,53 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                   child: Column(
                     children: [
                       // List Header
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Pickups',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4E56C0).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                '${tasks.length} tasks',
-                                style: const TextStyle(
-                                  color: Color(0xFF4E56C0),
-                                  fontWeight: FontWeight.w600,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Pickups',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF333333),
                                 ),
                               ),
-                            ),
-                          ],
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4E56C0).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '${_getFilteredTasks().length} tasks',
+                                  style: const TextStyle(
+                                    color: Color(0xFF4E56C0),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+
+                        // Filter Chips
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          child: Row(
+                            children: [
+                              _buildFilterChip('All'),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Pending'),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Completed'),
+                            ],
+                          ),
+                        ),
 
                       // Tasks List
                       Expanded(
@@ -374,11 +389,11 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                   20,
                                   20,
                                 ),
-                                itemCount: tasks.length,
+                                itemCount: _getFilteredTasks().length,
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 16),
                                 itemBuilder: (context, index) {
-                                  final task = tasks[index];
+                                  final task = _getFilteredTasks()[index];
                                   return _buildTaskCard(task);
                                 },
                               ),
@@ -522,7 +537,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
 
                 // Company and Branch Info
                 Text(
-                  task['company_name'] ?? 'Unknown Company',
+                  task['branch_name'] ?? 'Unknown Branch',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -531,7 +546,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  task['branch_name'] ?? 'Unknown Branch',
+                  task['company_name'] ?? 'Unknown Company',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 16),
@@ -1023,7 +1038,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            selectedTask?['company_name'] ?? '',
+                            selectedTask?['branch_name'] ?? '',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey[600],
@@ -1043,8 +1058,8 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildDetailRow(
-                                  'Branch',
-                                  selectedTask?['branch_name'] ?? 'N/A',
+                                  'Company',
+                                  selectedTask?['company_name'] ?? 'N/A',
                                   Icons.business,
                                 ),
                                 const SizedBox(height: 12),
@@ -1702,5 +1717,37 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
+  }
+  Widget _buildFilterChip(String label) {
+    bool isSelected = _statusFilter == label;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (selected) {
+          setState(() {
+            _statusFilter = label;
+          });
+        }
+      },
+      selectedColor: const Color(0xFF4E56C0),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.black87,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      backgroundColor: Colors.grey[100],
+      elevation: isSelected ? 2 : 0,
+    );
+  }
+
+  List<dynamic> _getFilteredTasks() {
+    if (_statusFilter == 'All') return tasks;
+    if (_statusFilter == 'Pending') {
+      return tasks.where((t) => t['pickup_status_id'] == 1).toList();
+    }
+    if (_statusFilter == 'Completed') {
+      return tasks.where((t) => t['pickup_status_id'] == 2 || t['pickup_status_id'] == 3).toList();
+    }
+    return tasks;
   }
 }

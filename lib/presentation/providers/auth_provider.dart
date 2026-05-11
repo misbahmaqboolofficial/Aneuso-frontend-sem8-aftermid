@@ -161,6 +161,7 @@ class AuthProvider with ChangeNotifier {
     required String phoneNumber,
     required int userTypeId,
     required int? designationId,
+    String? industryName,
   }) async {
     _isLoading = true;
     _error = null;
@@ -174,6 +175,7 @@ class AuthProvider with ChangeNotifier {
         phoneNumber: phoneNumber,
         userTypeId: userTypeId,
         designationId: designationId,
+        industryName: industryName,
       );
       // _currentUser = authResponse.user;
       // debugPrint(

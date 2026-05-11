@@ -66,6 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
           activeStatus: response.data!.user.activeStatus,
           emailVerifiedAt: response.data!.user.emailVerifiedAt,
           driverId: response.data!.user.driverId,
+          industryName: response.data!.user.industryName,
         ),
       );
     } catch (e) {
@@ -88,6 +89,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String phoneNumber,
     required int userTypeId,
     required int? designationId,
+    String? industryName,
   }) async {
     try {
       final response = await remoteDataSource.register(
@@ -97,6 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
         phoneNumber: phoneNumber,
         userTypeId: userTypeId,
         designationId: designationId,
+        industryName: industryName,
       );
       // // Save token and user data locally
       // if (response.token != null && response.token != "") {
@@ -118,6 +121,7 @@ class AuthRepositoryImpl implements AuthRepository {
           designationId: response.data!.user.designationId,
           activeStatus: response.data!.user.activeStatus,
           emailVerifiedAt: response.data!.user.emailVerifiedAt,
+          industryName: response.data!.user.industryName,
         ),
       );
     } catch (e) {
@@ -178,6 +182,7 @@ class AuthRepositoryImpl implements AuthRepository {
         designationId: user.designationId,
         activeStatus: user.activeStatus,
         emailVerifiedAt: user.emailVerifiedAt,
+        industryName: user.industryName,
       );
     } catch (e) {
       rethrow;
@@ -205,6 +210,7 @@ class AuthRepositoryImpl implements AuthRepository {
         designationId: user.designationId,
         activeStatus: user.activeStatus,
         emailVerifiedAt: user.emailVerifiedAt,
+        industryName: user.industryName,
       );
     } catch (e) {
       rethrow;
@@ -240,6 +246,7 @@ class AuthRepositoryImpl implements AuthRepository {
         activeStatus: user.activeStatus,
         emailVerifiedAt: user.emailVerifiedAt,
         driverId: user.driverId,
+        industryName: user.industryName,
       );
     }
     return null;

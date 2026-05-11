@@ -55,14 +55,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
       final addedItem = await CartService.addToCart(product.id, 1);
 
       if (addedItem != null && mounted) {
+        // DISMISS existing snackbar immediately so the new one shows up right away
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               '${product.productName} added to cart!',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF4E56C0), // Premium Purple
             behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2), // Show for a shorter time
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -70,6 +74,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               label: 'View Cart',
               textColor: Colors.white,
               onPressed: () {
+                // Clear snackbar before navigating to avoid it "sticking" on the next screen
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CartScreen()),
@@ -97,6 +103,16 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       }
+    }
+  }
+
+  Future<void> _buyNow(dynamic product) async {
+    await _addToCart(product);
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CartScreen()),
+      );
     }
   }
 
@@ -1561,53 +1577,46 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                   SizedBox(height: 4),
                                   // Add to Cart Button for non-admin users
                                   if (!isAdmin && prod.stockQuantity > 0)
-                                    GestureDetector(
-                                      onTap: () => _addToCart(prod),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Color(0xFF4E56C0),
-                                              Color(0xFF9B5DE0),
-                                            ],
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Color(
-                                                0xFF4E56C0,
-                                              ).withOpacity(0.3),
-                                              blurRadius: 5,
-                                              offset: Offset(0, 2),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => _addToCart(prod),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(colors: [Color(0xFF4E56C0), Color(0xFF6366F1)]),
+                                              borderRadius: BorderRadius.circular(10),
                                             ),
-                                          ],
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.add_shopping_cart_rounded, color: Colors.white, size: 12),
+                                                SizedBox(width: 4),
+                                                Text('Add', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.add_shopping_cart_rounded,
+                                        SizedBox(width: 8),
+                                        GestureDetector(
+                                          onTap: () => _buyNow(prod),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                            decoration: BoxDecoration(
                                               color: Colors.white,
-                                              size: 12,
+                                              border: Border.all(color: Color(0xFF4E56C0)),
+                                              borderRadius: BorderRadius.circular(10),
                                             ),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              'Add',
-                                              style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white,
-                                              ),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.bolt_rounded, color: Color(0xFF4E56C0), size: 12),
+                                                SizedBox(width: 4),
+                                                Text('Buy Now', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF4E56C0))),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                 ],
                               ),

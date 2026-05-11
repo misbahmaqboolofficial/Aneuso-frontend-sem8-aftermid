@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aneuso_app/core/constants/app_constants.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
 class CreateDealScreen extends StatefulWidget {
   @override
@@ -44,7 +46,7 @@ class _CreateDealScreenState extends State<CreateDealScreen> {
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
-          'company_id': _companyIdController.text,
+          'company_id': Provider.of<AuthProvider>(context, listen: false).currentUser?.industryName ?? "",
           'waste_category_id': _selectedWasteCategory,
           'quantity_kg': double.tryParse(_quantityController.text) ?? 0,
           'price_per_kg': double.tryParse(_priceController.text) ?? 0,
@@ -87,10 +89,31 @@ class _CreateDealScreenState extends State<CreateDealScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _companyIdController,
-                decoration: InputDecoration(labelText: "Company ID (Manual Input)"),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  final name = auth.currentUser?.industryName ?? "Your Industry";
+                  return Container(
+                    padding: EdgeInsets.all(12),
+                    margin: EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.business, color: Color(0xFF4E56C0)),
+                        SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Industry Name", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
               ),
               DropdownButtonFormField<String>(
                 value: _selectedWasteCategory,

@@ -60,6 +60,7 @@ class AuthRemoteDataSource {
     required String phoneNumber,
     required int userTypeId,
     required int? designationId,
+    String? industryName,
   }) async {
     final url = Uri.parse('$baseUrl${ApiEndpoints.register}');
 
@@ -73,6 +74,7 @@ class AuthRemoteDataSource {
         'phone_number': phoneNumber,
         'user_type_id': userTypeId,
         'designation_id': designationId,
+        'industry_name': industryName,
       }),
     );
 

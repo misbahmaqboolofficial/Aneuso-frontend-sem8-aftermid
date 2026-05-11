@@ -24,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _industryNameController = TextEditingController();
 
   int? _selectedUserType;
   int? _selectedDesignationId;
@@ -43,6 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _industryNameController.dispose();
     super.dispose();
   }
 
@@ -98,6 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       phoneNumber: getCompletePhoneNumber(),
       userTypeId: _selectedUserType!,
       designationId: _selectedDesignationId,
+      industryName: _selectedUserType == AppConstants.userTypeIndustry ? _industryNameController.text.trim() : null,
     );
 
     if (success && mounted) {
@@ -536,6 +539,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     },
                                   ),
                                   SizedBox(height: 20),
+                                  
+                                  // Industry Name Field
+                                  if (_selectedUserType == AppConstants.userTypeIndustry) ...[
+                                    _buildStyledTextField(
+                                      controller: _industryNameController,
+                                      label: 'Industry Name',
+                                      icon: Icons.business_rounded,
+                                      validator: (value) {
+                                        if (_selectedUserType == AppConstants.userTypeIndustry && (value == null || value.isEmpty)) {
+                                          return 'Please enter your industry name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(height: 20),
+                                  ],
 
                                   // Designation Dropdown
                                   if (_selectedUserType ==

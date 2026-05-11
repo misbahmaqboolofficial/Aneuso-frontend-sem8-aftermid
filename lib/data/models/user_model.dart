@@ -11,6 +11,7 @@ class UserModel {
   final bool emailVerified;
   final DateTime? emailVerifiedAt;
   final int? driverId;
+  final String? industryName;
 
   UserModel({
     required this.id,
@@ -23,6 +24,7 @@ class UserModel {
     this.emailVerifiedAt,
     required this.activeStatus,
     this.driverId,
+    this.industryName,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class UserModel {
       emailVerifiedAt: _parseDateTime(json['email_verified_at']),
       activeStatus: json['active_status'],
       driverId: json['driver_id'],
+      industryName: json['industry_name'],
     );
   }
 
@@ -52,6 +55,7 @@ class UserModel {
       'email_verified_at': emailVerifiedAt?.toIso8601String(),
       'active_status': activeStatus,
       'driver_id': driverId,
+      'industry_name': industryName,
     };
   }
 

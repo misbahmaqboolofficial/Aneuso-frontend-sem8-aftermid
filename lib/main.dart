@@ -9,6 +9,7 @@ import 'package:aneuso_app/presentation/screens/public_garbage_reports_screen.da
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'core/utils/local_notification_service.dart';
 import 'core/utils/storage_util.dart';
 import 'services/auth_service.dart';
 import 'presentation/providers/auth_provider.dart';
@@ -34,12 +35,28 @@ import 'presentation/screens/admin/admin_products_screen.dart';
 import 'presentation/screens/admin/product_form_screen.dart';
 import 'presentation/screens/admin/admin_deals_screen.dart';
 import 'presentation/screens/industry/create_deal_screen.dart';
+import 'presentation/screens/admin/admin_pickups_screen.dart';
+import 'presentation/screens/citizen/CleanupCampaignsScreen.dart';
+import 'presentation/screens/citizen/CampaignDetailScreen.dart';
+import 'presentation/screens/admin/AdminCleanupDashboard.dart';
+import 'presentation/screens/driver/DriverMissionScreen.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize storage
   await StorageUtil.init();
+
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: 'https://bvwiqmyvvbowkteutxfb.supabase.co',
+    anonKey: 'sb_publishable_I5mJspChdvby2BP7GuVJnQ_lddFryLx',
+  );
+
+  // Initialize notifications
+  await LocalNotificationService.initialize();
 
   runApp(const MyApp());
 }
@@ -131,6 +148,7 @@ class MyApp extends StatelessWidget {
           '/companies': (context) => const CompanyListScreen(),
           '/branches': (context) => const BranchListScreen(),
           '/branches/stats': (context) => const BranchStatsScreen(),
+          '/admin/all_pickups': (context) => const AdminPickupsScreen(),
 
           // Industry routes
           '/industry/schedule_pickup': (context) => const SchedulePickup(),
@@ -146,6 +164,13 @@ class MyApp extends StatelessWidget {
           '/citizen/mycart': (context) => const CartScreen(),
           '/citizen/myorders': (context) => const OrdersScreen(),
           '/citizen/report-garbage': (context) => const ReportGarbageScreen(),
+          '/citizen/cleanup-campaigns': (context) => const CleanupCampaignsScreen(),
+          '/citizen/campaign-detail': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+            return CampaignDetailScreen(reportId: args?['id'] ?? 0);
+          },
+          '/admin/cleanup-dashboard': (context) => const AdminCleanupDashboard(),
+          '/driver/cleanup-missions': (context) => const DriverMissionScreen(),
         },
       ),
     );

@@ -1,21 +1,30 @@
 import 'package:aneuso_app/core/constants/app_constants.dart';
+import 'package:aneuso_app/presentation/screens/admin/MissionAssignmentScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:aneuso_app/presentation/screens/admin/CleanupFinalizationScreen.dart';
+import 'package:aneuso_app/presentation/screens/GarbageMissionDetailsScreen.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../providers/auth_provider.dart';
 
 // ==================== MODEL ====================
 class GarbageReport {
-  final int id;
-  final int reportedByUserId;
-  final String photoUrl;
-  final String latitude;
-  final String longitude;
-  final String address;
-  final String description;
-  final String estimatedVolume;
-  final int reportStatusId;
-  final String fundingGoal;
-  final String fundsCollected;
+  int id;
+  int reportedByUserId;
+  String photoUrl;
+  String latitude;
+  String longitude;
+  String address;
+  String description;
+  String estimatedVolume;
+  int reportStatusId;
+  String fundingGoal;
+  String fundsCollected;
   final String? socialMediaPostIds;
   final String? cleanupScheduledDate;
   final String? cleanupCompletedDate;
@@ -24,6 +33,16 @@ class GarbageReport {
   final String reportedByName;
   final String reportedByEmail;
   final String reportStatusName;
+  String? driverName;
+  String? urgencyName;
+  String? afterPhotoUrl;
+  double? fuelExpense;
+  double? laborExpense;
+  double? otherExpense;
+  String? otherExpenseDescription;
+  int? driverId;
+  int? urgencyLevelId;
+  String? adminNotes;
 
   GarbageReport({
     required this.id,
@@ -45,6 +64,16 @@ class GarbageReport {
     required this.reportedByName,
     required this.reportedByEmail,
     required this.reportStatusName,
+    this.driverName,
+    this.urgencyName,
+    this.afterPhotoUrl,
+    this.fuelExpense,
+    this.laborExpense,
+    this.otherExpense,
+    this.otherExpenseDescription,
+    this.driverId,
+    this.urgencyLevelId,
+    this.adminNotes,
   });
 
   factory GarbageReport.fromJson(Map<String, dynamic> json) {
@@ -68,7 +97,46 @@ class GarbageReport {
       reportedByName: json['reported_by_name'] ?? 'Anonymous',
       reportedByEmail: json['reported_by_email'] ?? 'No email',
       reportStatusName: json['report_status_name'] ?? 'Unknown',
+      driverName: json['driver_name'],
+      urgencyName: json['urgency_name'],
+      afterPhotoUrl: json['after_photo_url'],
+      fuelExpense: json['fuel_expense'] != null ? double.tryParse(json['fuel_expense'].toString()) : null,
+      laborExpense: json['labor_expense'] != null ? double.tryParse(json['labor_expense'].toString()) : null,
+      otherExpense: json['other_expense'] != null ? double.tryParse(json['other_expense'].toString()) : null,
+      otherExpenseDescription: json['other_expense_description'],
+      driverId: json['driver_id'],
+      urgencyLevelId: json['urgency_level_id'],
+      adminNotes: json['admin_notes'],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'reported_by_user_id': reportedByUserId,
+      'address': address,
+      'photo_url': photoUrl,
+      'latitude': latitude,
+      'longitude': longitude,
+      'description': description,
+      'report_status_id': reportStatusId,
+      'report_status_name': reportStatusName,
+      'created_at': createdAt.toIso8601String(),
+      'reported_by_name': reportedByName,
+      'funding_goal': fundingGoal,
+      'funds_collected': fundsCollected,
+      'urgency_level_id': urgencyLevelId,
+      'urgency_name': urgencyName,
+      'driver_id': driverId,
+      'driver_name': driverName,
+      'estimated_volume': estimatedVolume,
+      'admin_notes': adminNotes,
+      'after_photo_url': afterPhotoUrl,
+      'fuel_expense': fuelExpense,
+      'labor_expense': laborExpense,
+      'other_expense': otherExpense,
+      'other_expense_description': otherExpenseDescription,
+    };
   }
 }
 
@@ -80,6 +148,19 @@ class ApiService {
     apiBaseUrl = url;
   }
   
+  Future<GarbageReport> fetchReportById(int id) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$apiBaseUrl/reports/public-garbage/$id?t=${DateTime.now().millisecondsSinceEpoch}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return GarbageReport.fromJson(data['data']);
+      } else { throw Exception('Report not found'); }
+    } catch (e) { throw Exception('Error: $e'); }
+  }
+
   Future<List<GarbageReport>> fetchPublicGarbageReports({int page = 1}) async {
     try {
       final response = await http.get(
@@ -102,6 +183,107 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Error fetching reports: $e');
+    }
+  }
+
+  Future<bool> updateReportStatus(int reportId, int statusId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(AppConstants.tokenKey);
+      
+      final response = await http.put(
+        Uri.parse('$apiBaseUrl/reports/public-garbage/$reportId/status'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'report_status_id': statusId,
+          'cleanup_completed_date': statusId == 174 ? DateTime.now().toIso8601String() : null,
+        }),
+      );
+      
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating status: $e');
+      return false;
+    }
+  }
+
+  Future<String?> uploadPhoto(dynamic fileSource) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(AppConstants.tokenKey);
+      
+      var request = http.MultipartRequest('POST', Uri.parse('$apiBaseUrl/upload/photo'));
+      request.headers['Authorization'] = 'Bearer $token';
+      
+      if (kIsWeb) {
+        // For web, fileSource should be XFile or bytes
+        if (fileSource is XFile) {
+          final bytes = await fileSource.readAsBytes();
+          request.files.add(http.MultipartFile.fromBytes(
+            'photo',
+            bytes,
+            filename: fileSource.name,
+          ));
+        }
+      } else {
+        // For mobile/desktop
+        if (fileSource is File) {
+          request.files.add(await http.MultipartFile.fromPath('photo', fileSource.path));
+        } else if (fileSource is XFile) {
+          request.files.add(await http.MultipartFile.fromPath('photo', fileSource.path));
+        }
+      }
+      
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['url'];
+      }
+      return null;
+    } catch (e) {
+      print('Upload error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> finalizeReport({
+    required int reportId,
+    required double fuel,
+    required double labor,
+    required double other,
+    required String description,
+    String? beforePhoto,
+    String? afterPhoto,
+  }) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(AppConstants.tokenKey);
+      
+      final response = await http.put(
+        Uri.parse('$apiBaseUrl/reports/cleanup/$reportId/finalize'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'fuel_expense': fuel,
+          'labor_expense': labor,
+          'other_expense': other,
+          'other_expense_description': description,
+          'photo_url': beforePhoto,
+          'after_photo_url': afterPhoto,
+        }),
+      );
+      
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Finalize error: $e');
+      return false;
     }
   }
 }
@@ -350,13 +532,14 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
 
   Widget _buildReportCard(GarbageReport report) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => GarbageReportDetailsScreen(report: report),
           ),
         );
+        _refreshReports();
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -384,7 +567,7 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
                           report.photoUrl,
                           height: 200,
                           width: double.infinity,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               height: 200,
@@ -402,6 +585,11 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
                             child: Icon(Icons.photo_camera, size: 50, color: Colors.grey),
                           ),
                         ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: _buildStatusBadge(report.reportStatusId, report.reportStatusName),
+                  ),
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -545,6 +733,66 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
     );
   }
 
+  String _getStatusName(int id, [String? fallbackName]) {
+    switch (id) {
+      case 170:
+      case 171: return 'Pending Review';
+      case 172: return 'Report Approved';
+      case 206: return 'Driver Assigned';
+      case 207: return 'Driver En Route';
+      case 205: return 'Cleanup In Progress';
+      case 208: return 'Garbage Collected';
+      case 174: return 'Area Cleaned';
+      case 204: return 'Collected / Funding Started';
+      default: 
+        if (fallbackName != null) {
+          return fallbackName.replaceFirst('report_status_', '').replaceAll('_', ' ').toUpperCase();
+        }
+        return 'Unknown';
+    }
+  }
+
+  Widget _buildStatusBadge(int statusId, String statusName) {
+    Color color;
+    IconData icon;
+    
+    switch (statusId) {
+      case 204: // Collected
+        color = Colors.green;
+        icon = Icons.check_circle_outline;
+        break;
+      case 172: // Funded
+        color = Colors.blue;
+        icon = Icons.volunteer_activism;
+        break;
+      default:
+        color = const Color(0xFF4E56C0);
+        icon = Icons.info_outline;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 4, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 14),
+          const SizedBox(width: 4),
+          Text(
+            _getStatusName(statusId, statusName).toUpperCase(),
+            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
@@ -564,10 +812,55 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
 }
 
 // ==================== DETAILS SCREEN ====================
-class GarbageReportDetailsScreen extends StatelessWidget {
+class GarbageReportDetailsScreen extends StatefulWidget {
   final GarbageReport report;
 
   const GarbageReportDetailsScreen({super.key, required this.report});
+
+  @override
+  State<GarbageReportDetailsScreen> createState() => _GarbageReportDetailsScreenState();
+}
+
+class _GarbageReportDetailsScreenState extends State<GarbageReportDetailsScreen> {
+  late int _currentStatusId;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentStatusId = widget.report.reportStatusId;
+    _refreshReport();
+  }
+
+  Future<void> _refreshReport() async {
+    try {
+      final updated = await ApiService().fetchReportById(widget.report.id);
+      if (mounted) {
+        setState(() {
+          _currentStatusId = updated.reportStatusId;
+          widget.report.reportStatusId = updated.reportStatusId; // Update local ref
+        });
+      }
+    } catch (e) { print(e); }
+  }
+
+  String _getStatusName(int id, [String? fallbackName]) {
+    switch (id) {
+      case 170:
+      case 171: return 'Pending Review';
+      case 172: return 'Report Approved';
+      case 206: return 'Driver Assigned';
+      case 207: return 'Driver En Route';
+      case 205: return 'Cleanup In Progress';
+      case 208: return 'Garbage Collected';
+      case 174: return 'Area Cleaned';
+      case 204: return 'Collected / Funding Started';
+      default: 
+        if (fallbackName != null) {
+          return fallbackName.replaceFirst('report_status_', '').replaceAll('_', ' ').toUpperCase();
+        }
+        return 'Unknown';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -583,10 +876,10 @@ class GarbageReportDetailsScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  report.photoUrl.isNotEmpty
+                  widget.report.photoUrl.isNotEmpty
                       ? Image.network(
-                          report.photoUrl,
-                          fit: BoxFit.cover,
+                          widget.report.photoUrl,
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               color: const Color(0xFFFDCFFA),
@@ -625,7 +918,7 @@ class GarbageReportDetailsScreen extends StatelessWidget {
                       children: [
                         const SizedBox(height: 12),
                         Text(
-                          report.address,
+                          widget.report.address,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -662,8 +955,8 @@ class GarbageReportDetailsScreen extends StatelessWidget {
                   _buildInfoCard(
                     icon: Icons.person_outline,
                     title: 'Reported By',
-                    content: report.reportedByName,
-                    subtitle: report.reportedByEmail,
+                    content: widget.report.reportedByName,
+                    subtitle: widget.report.reportedByEmail,
                   ),
                   const SizedBox(height: 16),
                   
@@ -671,7 +964,7 @@ class GarbageReportDetailsScreen extends StatelessWidget {
                   _buildInfoCard(
                     icon: Icons.description_outlined,
                     title: 'Description',
-                    content: report.description,
+                    content: widget.report.description,
                   ),
                   const SizedBox(height: 16),
                   
@@ -682,7 +975,7 @@ class GarbageReportDetailsScreen extends StatelessWidget {
                         child: _buildStatCard(
                           icon: Icons.attach_money,
                           title: 'Funding Goal',
-                          value: 'Rs.${double.parse(report.fundingGoal).toStringAsFixed(0)}',
+                          value: 'Rs.${double.parse(widget.report.fundingGoal).toStringAsFixed(0)}',
                           gradient: const LinearGradient(
                             colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
                           ),
@@ -699,14 +992,14 @@ class GarbageReportDetailsScreen extends StatelessWidget {
                         child: _buildInfoRow(
                           icon: Icons.calculate_outlined,
                           label: 'Estimated Volume',
-                          value: '${report.estimatedVolume} kg',
+                          value: '${widget.report.estimatedVolume} kg',
                         ),
                       ),
                       Expanded(
                         child: _buildInfoRow(
                           icon: Icons.location_on_outlined,
                           label: 'Address',
-                          value: '${report.address}',
+                          value: '${widget.report.address}',
                         ),
                       ),
                     ],
@@ -717,9 +1010,74 @@ class GarbageReportDetailsScreen extends StatelessWidget {
                   _buildInfoRow(
                     icon: Icons.calendar_today,
                     label: 'Reported Date',
-                    value: _formatFullDate(report.createdAt),
+                    value: _formatFullDate(widget.report.createdAt),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+                  
+                  // Current Status Display
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4E56C0).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFF4E56C0).withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.check_circle, color: Color(0xFF9B5DE0), size: 24),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Current Status',
+                              style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              _getStatusName(_currentStatusId),
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF4E56C0)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Mission Progress Button for Everyone
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GarbageMissionDetailsScreen(report: widget.report),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.timeline),
+                      label: const Text('View Mission Progress & Details'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF4E56C0),
+                        side: const BorderSide(color: Color(0xFF4E56C0)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Admin Action Section
+                  Consumer<AuthProvider>(
+                    builder: (context, auth, child) {
+                      if (auth.currentUser?.isAdmin == true && _currentStatusId != 204) {
+                        return _buildAdminActions(context);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                  
                   const SizedBox(height: 20),
                 ],
               ),
@@ -728,6 +1086,119 @@ class GarbageReportDetailsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildAdminActions(BuildContext context) {
+    // Determine if the report is already approved based on its status
+    // Status 170 or 171 are typical for "New/Pending" reports
+    bool isPending = _currentStatusId == 170 || _currentStatusId == 171;
+    bool isApproved = !isPending;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF4E56C0).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF4E56C0).withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Admin Controls',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF4E56C0),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MissionAssignmentScreen(
+                      reportId: widget.report.id,
+                      report: widget.report.toMap(),
+                    ),
+                  ),
+                ).then((_) {
+                  _refreshReport();
+                });
+              },
+              icon: Icon(isApproved ? Icons.edit_note_rounded : Icons.check_circle_outline),
+              label: Text(isApproved ? 'Update Mission' : 'Approve'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isApproved ? const Color(0xFF9B5DE0) : Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final newStatusId = await showModalBottomSheet<int>(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => _UpdateStatusBottomSheet(report: widget.report, currentStatusId: _currentStatusId),
+                );
+                
+                if (newStatusId != null) {
+                  setState(() {
+                    _currentStatusId = newStatusId;
+                  });
+                }
+              },
+              icon: const Icon(Icons.update),
+              label: const Text('Update Status'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF9B5DE0),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _markAsCollected(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Collection'),
+        content: const Text('Has this garbage been successfully collected?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes, Collected')),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      final success = await ApiService().updateReportStatus(widget.report.id, 204);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Report marked as Collected!')),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update status. Please try again.')),
+        );
+      }
+    }
   }
 
   Widget _buildInfoCard({
@@ -880,5 +1351,228 @@ class GarbageReportDetailsScreen extends StatelessWidget {
 
   String _formatFullDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+// ==================== UPDATE STATUS BOTTOM SHEET ====================
+class _UpdateStatusBottomSheet extends StatefulWidget {
+  final GarbageReport report;
+  final int currentStatusId;
+
+  const _UpdateStatusBottomSheet({required this.report, required this.currentStatusId});
+
+  @override
+  State<_UpdateStatusBottomSheet> createState() => _UpdateStatusBottomSheetState();
+}
+
+class _UpdateStatusBottomSheetState extends State<_UpdateStatusBottomSheet> {
+  late int selectedStatus;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedStatus = widget.currentStatusId;
+  }
+
+  Future<void> _submitStatus() async {
+    setState(() => isLoading = true);
+    final success = await ApiService().updateReportStatus(widget.report.id, selectedStatus);
+    setState(() => isLoading = false);
+    
+    if (success) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Status updated successfully!')),
+        );
+        Navigator.pop(context, selectedStatus);
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update status.')),
+        );
+      }
+    }
+  }
+
+  Widget _buildStepTracker() {
+    int currentStatus = selectedStatus;
+    int currentStep = 1;
+    if (currentStatus == 206) currentStep = 2;
+    else if (currentStatus == 207) currentStep = 3;
+    else if (currentStatus == 205) currentStep = 4;
+    else if (currentStatus == 208 || currentStatus == 174) currentStep = 5;
+    
+    final steps = [
+      {'label': 'Report Approved', 'id': 172},
+      {'label': 'Driver Assigned', 'id': 206},
+      {'label': 'Driver En Route', 'id': 207},
+      {'label': 'Cleanup In Progress', 'id': 205},
+      {'label': 'Garbage Collected', 'id': 208},
+    ];
+
+    const themeColor = Color(0xFF9B5DE0);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(steps.length, (index) {
+          int stepNum = index + 1;
+          bool isCompleted = stepNum < currentStep;
+          bool isActive = stepNum == currentStep;
+          bool isHighlight = stepNum <= currentStep;
+          bool isLast = index == steps.length - 1;
+
+          return Expanded(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: index == 0 ? Colors.transparent : (isHighlight ? themeColor : Colors.grey[300]),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        int newId = steps[index]['id'] as int;
+                        if (newId == 208 || newId == 174) {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CleanupFinalizationScreen(report: widget.report),
+                            ),
+                          );
+                          if (result == true) {
+                            Navigator.pop(context, 174); // Return Area Cleaned status
+                          }
+                        } else {
+                          setState(() {
+                            selectedStatus = newId;
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: isCompleted ? themeColor : Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isHighlight ? themeColor : Colors.grey[300]!,
+                            width: 2,
+                          ),
+                          boxShadow: isActive ? [BoxShadow(color: themeColor.withOpacity(0.3), blurRadius: 8, spreadRadius: 2)] : null,
+                        ),
+                        child: isCompleted
+                            ? const Icon(Icons.check, size: 16, color: Colors.white)
+                            : Center(
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: isActive ? themeColor : Colors.transparent,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: isLast ? Colors.transparent : (stepNum < currentStep ? themeColor : Colors.grey[300]),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  steps[index]['label'] as String,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: isHighlight ? FontWeight.bold : FontWeight.normal,
+                    color: isHighlight ? themeColor : Colors.grey[400],
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Update Report Status',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4E56C0),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildStepTracker(),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: isLoading ? null : _submitStatus,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF9B5DE0),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+                shadowColor: const Color(0xFF9B5DE0).withOpacity(0.4),
+              ),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    )
+                  : const Text(
+                      'UPDATE STATUS',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
   }
 }

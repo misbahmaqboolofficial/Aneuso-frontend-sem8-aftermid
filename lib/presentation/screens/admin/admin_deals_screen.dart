@@ -16,6 +16,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
   bool isLoading = true;
   TextEditingController _searchController = TextEditingController();
   String _selectedStatusFilter = 'All';
+  String _sortBy = 'Value (High to Low)'; // Default: Best to Worst
 
   @override
   void initState() {
@@ -73,6 +74,21 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
 
         return matchesStatus && matchesSearch;
       }).toList();
+
+      // Apply Sorting
+      if (_sortBy == 'Value (High to Low)') {
+        filteredDeals.sort((a, b) {
+          double valA = double.tryParse(a['total_value']?.toString() ?? '0') ?? 0;
+          double valB = double.tryParse(b['total_value']?.toString() ?? '0') ?? 0;
+          return valB.compareTo(valA);
+        });
+      } else if (_sortBy == 'Value (Low to High)') {
+        filteredDeals.sort((a, b) {
+          double valA = double.tryParse(a['total_value']?.toString() ?? '0') ?? 0;
+          double valB = double.tryParse(b['total_value']?.toString() ?? '0') ?? 0;
+          return valA.compareTo(valB);
+        });
+      }
     });
   }
 
@@ -185,6 +201,21 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
           icon: Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF4E56C0)),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.sort_rounded, color: Color(0xFF4E56C0)),
+            onSelected: (value) {
+              setState(() {
+                _sortBy = value;
+                _applyFilters();
+              });
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'Value (High to Low)', child: Text('Most Beneficial First')),
+              PopupMenuItem(value: 'Value (Low to High)', child: Text('Least Beneficial First')),
+            ],
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -295,7 +326,17 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                                       ),
                                     ],
                                   ),
-                                  trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "\$${deal['total_value']}",
+                                        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4E56C0), fontSize: 16),
+                                      ),
+                                      Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                                    ],
+                                  ),
                                 ),
                               );
                             },

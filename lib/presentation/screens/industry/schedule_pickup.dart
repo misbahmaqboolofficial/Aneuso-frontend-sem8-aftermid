@@ -1,5 +1,6 @@
 import 'package:aneuso_app/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import '../../providers/auth_provider.dart';
@@ -24,6 +25,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
   List<dynamic> pickups = [];
   bool isLoading = true;
   bool isSubmitting = false;
+  String _statusFilter = 'All'; // 'All', 'Pending', 'Completed'
 
   // Form controllers
   final TextEditingController scheduledDateController = TextEditingController();
@@ -196,10 +198,43 @@ class _SchedulePickupState extends State<SchedulePickup> {
   }
 
   Future<void> schedulePickup() async {
-    if (scheduledDateController.text.isEmpty ||
-        estimatedWeightController.text.isEmpty ||
-        locationAddressController.text.isEmpty) {
-      showSnackBar('Please fill all required fields');
+    if (scheduledDateController.text.isEmpty) {
+      showSnackBar('Please select a scheduled date');
+      return;
+    }
+    if (selectedBranch == null) {
+      showSnackBar('Please select a branch');
+      return;
+    }
+    if (estimatedWeightController.text.isEmpty) {
+      showSnackBar('Please enter estimated weight');
+      return;
+    }
+    
+    // Weight validation: must be a number
+    final weight = double.tryParse(estimatedWeightController.text);
+    if (weight == null) {
+      showSnackBar('Insert a number in the weight field');
+      return;
+    }
+
+    if (locationAddressController.text.isEmpty) {
+      showSnackBar('Please enter location address');
+      return;
+    }
+
+    // Location validation: example "Address, City"
+    if (!locationAddressController.text.contains(',')) {
+      showSnackBar('Insert in this format: Address, City');
+      return;
+    }
+
+    if (notesController.text.isEmpty) {
+      showSnackBar('Please enter some notes');
+      return;
+    }
+    if (notesController.text.length < 4) {
+      showSnackBar('You have to insert at least 4 alphabets in notes');
       return;
     }
 
@@ -210,7 +245,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
       'branch_id': selectedBranch,
       'scheduled_date': scheduledDateController.text,
       'time_slot': selectedTimeSlot,
-      'estimated_weight_kg': int.parse(estimatedWeightController.text),
+      'estimated_weight_kg': weight, // Using the parsed weight value
       'waste_type_id': selectedWasteType,
       'priority_level_id': selectedPriority,
       'notes': notesController.text,
@@ -531,7 +566,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(isMobile ? 16 : 20),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -551,6 +586,22 @@ class _SchedulePickupState extends State<SchedulePickup> {
               ],
             ),
           ),
+          
+          // Filter Bar
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 20, vertical: 8),
+            child: Row(
+              children: [
+                _buildFilterChip('All', isMobile),
+                const SizedBox(width: 8),
+                _buildFilterChip('Pending', isMobile),
+                const SizedBox(width: 8),
+                _buildFilterChip('Completed', isMobile),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
           Expanded(
             child: isLoading
                 ? const Center(
@@ -585,9 +636,9 @@ class _SchedulePickupState extends State<SchedulePickup> {
                       left: isMobile ? 8 : 0,
                       right: isMobile ? 8 : 0,
                     ),
-                    itemCount: pickups.length,
+                    itemCount: _getFilteredPickups().length,
                     itemBuilder: (context, index) {
-                      final pickup = pickups[index];
+                      final pickup = _getFilteredPickups()[index];
                       return _buildPickupCard(pickup, isMobile: isMobile);
                     },
                   ),
@@ -979,6 +1030,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                     child: TextFormField(
                       controller: estimatedWeightController,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: InputDecoration(
                         hintText: 'Enter weight in kg',
                         border: OutlineInputBorder(
@@ -999,7 +1051,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                     child: TextFormField(
                       controller: locationAddressController,
                       decoration: InputDecoration(
-                        hintText: 'Enter pickup location',
+                        hintText: 'Enter pickup location (e.g. Street, City)',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -1453,5 +1505,40 @@ class _SchedulePickupState extends State<SchedulePickup> {
       default:
         return const Color(0xFF9B5DE0);
     }
+  }
+
+  Widget _buildFilterChip(String label, bool isMobile) {
+    bool isSelected = _statusFilter == label;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (selected) {
+          setState(() {
+            _statusFilter = label;
+          });
+        }
+      },
+      selectedColor: const Color(0xFF4E56C0),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.black87,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: isMobile ? 12 : 14,
+      ),
+      backgroundColor: Colors.grey[100],
+      elevation: isSelected ? 2 : 0,
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 4 : 8),
+    );
+  }
+
+  List<dynamic> _getFilteredPickups() {
+    if (_statusFilter == 'All') return pickups;
+    if (_statusFilter == 'Pending') {
+      return pickups.where((p) => p['pickup_status_id'] == 1).toList();
+    }
+    if (_statusFilter == 'Completed') {
+      return pickups.where((p) => p['pickup_status_id'] == 2 || p['pickup_status_id'] == 3).toList();
+    }
+    return pickups;
   }
 }
