@@ -14,6 +14,7 @@ abstract class AuthRepository {
     required String phoneNumber,
     required int userTypeId,
     required int? designationId,
+    String? industryName,
   });
   
   // Future<AuthResponseEntity> testLogin({

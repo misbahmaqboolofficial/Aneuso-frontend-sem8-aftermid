@@ -37,6 +37,9 @@ class StorageUtil {
   static Future<bool> removeUserData() async {
     return await _prefs?.remove(AppConstants.userKey) ?? false;
   }
+  static Future<bool> removeAllData() async {
+    return await _prefs?.clear() ?? false;
+  }
 
   // User Data Management
   static Future<bool> setStringData(String key, String stringJson) async {
@@ -55,5 +58,6 @@ class StorageUtil {
   static Future<void> clearAuthData() async {
     await removeToken();
     await removeUserData();
+    await removeAllData();
   }
 }

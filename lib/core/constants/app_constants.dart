@@ -1,5 +1,6 @@
 class AppConstants {
-  static const String baseUrl = 'http://localhost:3000/api';
+  static const String baseUrl = 'http://localhost:3000/api'; // on laptop
+  // static const String baseUrl = 'http://172.16.154.248:3000/api'; // on local network mobile same wifi (lenovo laptop)
   static const String tokenKey = 'auth_token';
   static const String userKey = 'user_data';
   static const int connectTimeout = 30000;

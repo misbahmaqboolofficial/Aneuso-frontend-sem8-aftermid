@@ -19,7 +19,7 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _sliderController = PageController();
+    _sliderController = PageController(viewportFraction: 0.85);
     // Force fresh data from server
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<TutorialProvider>(context, listen: false);
@@ -38,27 +38,53 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF8F9FF),
       appBar: AppBar(
-        title: const Text('Tutorials'),
+        title: const Text(
+          'Tutorials Home',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.green.shade700,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.white),
+            onPressed: () {},
+            tooltip: 'Search',
+          ),
+        ],
       ),
       body: Consumer<TutorialProvider>(
         builder: (context, provider, _) {
           return SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Featured Slider
                 _buildFeaturedSlider(provider),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // Topics Grid
                 _buildTopicsSection(provider),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // Popular Videos
                 _buildPopularVideosSection(provider),
+                const SizedBox(height: 24),
               ],
             ),
           );
@@ -72,21 +98,62 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
 
     if (sliderVideos.isEmpty) {
       return Container(
-        height: 200,
-        margin: const EdgeInsets.all(8),
+        height: 220,
+        margin: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFD78FEE).withOpacity(0.2),
+              Color(0xFFFDCFFA).withOpacity(0.2),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(color: Color(0xFFD78FEE).withOpacity(0.3)),
         ),
-        child: const Center(child: Text('No featured videos')),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.video_library,
+                size: 60,
+                color: Color(0xFF9B5DE0).withOpacity(0.5),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'No featured videos',
+                style: TextStyle(
+                  color: Color(0xFF4E56C0).withOpacity(0.7),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Text(
+            'Featured Videos',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF4E56C0),
+              letterSpacing: -0.5,
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
         SizedBox(
-          height: 220,
+          height: 240,
           child: PageView.builder(
             controller: _sliderController,
             onPageChanged: (index) =>
@@ -99,120 +166,225 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
                   ? YoutubeUtils.getThumbnailUrl(videoId)
                   : '';
 
-              return GestureDetector(
-                onTap: () {
-                  if (video.youtubeLink.isNotEmpty) {
-                    Navigator.pushNamed(
-                      context,
-                      '/tutorials/video/player',
-                      arguments: {
-                        'url': video.youtubeLink,
-                        'title': video.title,
-                      },
-                    );
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.green.shade700,
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Thumbnail with error handling
-                      if (thumbnailUrl.isNotEmpty)
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              thumbnailUrl,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.green.shade700,
-                                  child: const Icon(
-                                    Icons.video_collection,
-                                    size: 50,
-                                    color: Colors.white,
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: _currentSlideIndex == index ? 4 : 12,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF4E56C0).withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    if (video.youtubeLink.isNotEmpty) {
+                      Navigator.pushNamed(
+                        context,
+                        '/tutorials/video/player',
+                        arguments: {
+                          'url': video.youtubeLink,
+                          'title': video.title,
+                        },
+                      );
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                      ),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Thumbnail with error handling
+                        if (thumbnailUrl.isNotEmpty)
+                          Positioned.fill(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              child: Image.network(
+                                thumbnailUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(24),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Color(0xFF4E56C0),
+                                          Color(0xFF9B5DE0),
+                                        ],
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.video_collection,
+                                      size: 60,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.7),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 20,
+                          left: 20,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFDCFFA).withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.play_arrow,
+                                  size: 14,
+                                  color: Color(0xFF4E56C0),
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  'WATCH',
+                                  style: TextStyle(
+                                    color: Color(0xFF4E56C0),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5,
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black54],
+                        Positioned(
+                          bottom: 16,
+                          left: 20,
+                          right: 20,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                video.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.2,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFD78FEE).withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.2),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      video.duration ?? '—',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          blurRadius: 10,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      Icons.play_arrow_rounded,
+                                      color: Color(0xFF4E56C0),
+                                      size: 24,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      const Icon(
-                        Icons.play_circle_outline,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                      Positioned(
-                        bottom: 12,
-                        left: 12,
-                        right: 12,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              video.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              video.duration ?? '—',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
             },
           ),
         ),
-        // Slider dots
+        // Custom slider dots
+        SizedBox(height: 20),
         Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                sliderVideos.length,
-                (index) => Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentSlideIndex == index ? 12 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentSlideIndex == index
-                        ? Colors.green
-                        : Colors.grey,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+          child: Wrap(
+            spacing: 6,
+            children: List.generate(
+              sliderVideos.length,
+              (index) => AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                width: _currentSlideIndex == index ? 32 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: _currentSlideIndex == index
+                      ? Color(0xFF4E56C0)
+                      : Color(0xFFD78FEE).withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: _currentSlideIndex == index
+                      ? [
+                          BoxShadow(
+                            color: Color(0xFF4E56C0).withOpacity(0.5),
+                            blurRadius: 8,
+                          ),
+                        ]
+                      : null,
                 ),
               ),
             ),
@@ -227,96 +399,199 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
 
     if (topics.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(child: Text('No topics available')),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFDCFFA).withOpacity(0.1),
+                Color(0xFFD78FEE).withOpacity(0.1),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: Color(0xFFD78FEE).withOpacity(0.3)),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.category_rounded,
+                size: 60,
+                color: Color(0xFF9B5DE0).withOpacity(0.4),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'No categories available',
+                style: TextStyle(
+                  color: Color(0xFF4E56C0).withOpacity(0.6),
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Categories',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 12),
-        GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemCount: topics.length,
-          itemBuilder: (context, index) {
-            final topic = topics[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/tutorials/topic',
-                  arguments: {'id': topic.id},
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade300),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.green.shade400,
-                            Colors.green.shade700,
-                          ],
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.category, size: 40, color: Colors.white),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            topic.title,
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Categories',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF4E56C0),
+                  letterSpacing: -0.5,
                 ),
               ),
-            );
-          },
-        ),
-      ],
+              Text(
+                '${topics.length} topics',
+                style: TextStyle(
+                  color: Color(0xFF9B5DE0),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.1,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: topics.length,
+            itemBuilder: (context, index) {
+              final topic = topics[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/tutorials/topic',
+                    arguments: {'id': topic.id},
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        _getCategoryColor(index).withOpacity(0.9),
+                        _getCategoryColor(index).withOpacity(0.7),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _getCategoryColor(index).withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Icon(
+                                  _getCategoryIcon(index),
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                topic.title,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  height: 1.3,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  Color _getCategoryColor(int index) {
+    final colors = [
+      Color(0xFF4E56C0),
+      Color(0xFF9B5DE0),
+      Color(0xFFD78FEE),
+      Color(0xFF4E56C0),
+      Color(0xFF9B5DE0),
+      Color(0xFFD78FEE),
+    ];
+    return colors[index % colors.length];
+  }
+
+  IconData _getCategoryIcon(int index) {
+    final icons = [
+      Icons.code_rounded,
+      Icons.design_services_rounded,
+      Icons.business_center_rounded,
+      Icons.science_rounded,
+      Icons.terminal_rounded,
+      Icons.analytics_rounded,
+    ];
+    return icons[index % icons.length];
   }
 
   Widget _buildPopularVideosSection(TutorialProvider provider) {
@@ -324,39 +599,102 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
 
     if (videos.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(child: Text('No videos available')),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFDCFFA).withOpacity(0.1),
+                Color(0xFFD78FEE).withOpacity(0.1),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: Color(0xFFD78FEE).withOpacity(0.3)),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.play_circle_fill_rounded,
+                size: 60,
+                color: Color(0xFF9B5DE0).withOpacity(0.4),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'No videos available yet',
+                style: TextStyle(
+                  color: Color(0xFF4E56C0).withOpacity(0.6),
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Latest Videos',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Latest Videos',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF4E56C0),
+                  letterSpacing: -0.5,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${videos.length} videos',
+                  style: TextStyle(
+                    color: Color(0xFF4E56C0),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 12),
-        ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: videos.length,
-          itemBuilder: (context, index) {
-            final video = videos[index];
-            return _buildVideoListItem(context, video);
-          },
-        ),
-      ],
+          SizedBox(height: 20),
+          ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: videos.length,
+            itemBuilder: (context, index) {
+              final video = videos[index];
+              return _buildVideoListItem(context, video, index);
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildVideoListItem(BuildContext context, TutorialVideoEntity video) {
+  Widget _buildVideoListItem(
+    BuildContext context,
+    TutorialVideoEntity video,
+    int index,
+  ) {
     final videoId = YoutubeUtils.extractVideoId(video.youtubeLink);
     final thumbnailUrl = videoId != null
         ? YoutubeUtils.getThumbnailUrl(videoId)
@@ -372,101 +710,173 @@ class _TutorialsHomeScreenState extends State<TutorialsHomeScreen> {
           );
         }
       },
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        elevation: 2,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Thumbnail with actual YouTube image or fallback
-                Container(
-                  width: 100,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: Colors.green.shade700,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFFD78FEE).withOpacity(0.15),
+              blurRadius: 20,
+              offset: Offset(0, 5),
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Number badge
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  child: thumbnailUrl.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: Image.network(
-                            thumbnailUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.green.shade700,
-                                child: const Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.play_circle_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF4E56C0).withOpacity(0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      video.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: Color(0xFF333333),
+                        height: 1.3,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFDCFFA).withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                size: 14,
+                                color: Color(0xFF9B5DE0),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                video.duration ?? '—',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF9B5DE0),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        if ((video.description ?? '').isNotEmpty)
+                          Expanded(
+                            child: Text(
+                              video.description!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 12),
+              // Thumbnail
+              Container(
+                width: 80,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFFD78FEE).withOpacity(0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: thumbnailUrl.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          thumbnailUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFD78FEE),
+                                    Color(0xFFFDCFFA),
                                   ],
                                 ),
-                              );
-                            },
-                          ),
-                        )
-                      : const Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Icon(
-                              Icons.play_circle_outline,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                          ],
+                              ),
+                              child: Icon(
+                                Icons.play_arrow_rounded,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
                         ),
-                ),
-                const SizedBox(width: 12),
-                // Video info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        video.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                      )
+                    : Icon(
+                        Icons.play_arrow_rounded,
+                        size: 30,
+                        color: Colors.white,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        video.duration ?? '—',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      if ((video.description ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          video.description!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

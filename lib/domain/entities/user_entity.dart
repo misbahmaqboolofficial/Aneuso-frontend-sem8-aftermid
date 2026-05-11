@@ -7,6 +7,8 @@ class UserEntity {
   final int? designationId;
   final int activeStatus;
   final DateTime? emailVerifiedAt;
+  final int? driverId;
+  final String? industryName;
 
   UserEntity({
     required this.id,
@@ -17,6 +19,8 @@ class UserEntity {
     this.designationId,
     required this.activeStatus,
     this.emailVerifiedAt,
+    this.driverId,
+    this.industryName,
   });
 
   String get userType {

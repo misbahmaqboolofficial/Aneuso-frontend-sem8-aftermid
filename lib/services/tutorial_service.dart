@@ -9,7 +9,7 @@ class TutorialService {
 
   Future<Map<String, dynamic>> getTopics({
     int page = 1,
-    int limit = 20,
+    int limit = 9999,
     String? search,
   }) async {
     final sb = StringBuffer('/tutorials/topics?page=$page&limit=$limit');
@@ -30,7 +30,7 @@ class TutorialService {
     int id, {
     bool includeVideos = false,
     int page = 1,
-    int limit = 20,
+    int limit = 9999,
   }) async {
     final url =
         '/tutorials/topics/$id?include_videos=${includeVideos ? 'true' : 'false'}&page=$page&limit=$limit';
@@ -44,7 +44,7 @@ class TutorialService {
 
   Future<Map<String, dynamic>> getVideos({
     int page = 1,
-    int limit = 20,
+    int limit = 9999,
     int? topicId,
     String? search,
     int? isActive,

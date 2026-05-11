@@ -14,7 +14,7 @@ class CompanyProvider with ChangeNotifier {
   // Pagination/search
   int _currentPage = 1;
   int _totalPages = 1;
-  int _limit = 10;
+  int _limit = 9999;
   bool _hasMore = true;
   String _searchQuery = '';
 

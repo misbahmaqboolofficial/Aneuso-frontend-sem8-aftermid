@@ -10,6 +10,7 @@ class CompanyEntity {
   final String wasteType;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final bool activeStatus = true;
 
   CompanyEntity({
     required this.id,

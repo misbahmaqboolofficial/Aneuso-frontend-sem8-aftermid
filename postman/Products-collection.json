@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "ANEUSO - Products API",
+    "_postman_id": "products-collection-001",
+    "description": "Collection for Products, Image Upload and Stock APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Get Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/products"
+      }
+    },
+    {
+      "name": "Get Product By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/products/1"
+      }
+    },
+    {
+      "name": "Create Product (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{auth_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product_name\": \"Test Fertilizer\",\n  \"product_code\": \"FERT-001\",\n  \"category_id\": 1,\n  \"description\": \"High-quality fertilizer\",\n  \"price\": 125.50,\n  \"stock_quantity\": 100,\n  \"status_id\": 1\n}"
+        },
+        "url": "{{base_url}}/products"
+      }
+    },
+    {
+      "name": "Update Product (Admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{auth_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"price\": 140.00 }" },
+        "url": "{{base_url}}/products/1"
+      }
+    },
+    {
+      "name": "Delete Product (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "Authorization", "value": "Bearer {{auth_token}}", "type": "text" } ],
+        "url": "{{base_url}}/products/1"
+      }
+    },
+    {
+      "name": "Upload Images (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{auth_token}}", "type": "text" } ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "images", "type": "file", "src": [] }
+          ]
+        },
+        "url": "{{base_url}}/products/1/images"
+      }
+    },
+    {
+      "name": "Remove Image (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{auth_token}}", "type": "text" }, { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{ \"url\": \"/uploads/products/your-file.jpg\" }" },
+        "url": "{{base_url}}/products/1/images/remove"
+      }
+    },
+    {
+      "name": "Update Stock (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{auth_token}}", "type": "text" }, { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{ \"stock_quantity\": 150 }" },
+        "url": "{{base_url}}/products/1/stock"
+      }
+    }
+  ]
+}

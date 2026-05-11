@@ -9,7 +9,7 @@ class BranchProvider extends ChangeNotifier {
   List<BranchEntity> _branches = [];
   List<dynamic> _companies = [];
   int _currentPage = 1;
-  int _limit = 10;
+  int _limit = 9999;
   int _totalPages = 1;
   bool _isLoading = false;
   bool _hasMore = true;

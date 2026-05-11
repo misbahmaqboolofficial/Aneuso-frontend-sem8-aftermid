@@ -11,7 +11,7 @@ class CompanyService {
 
   Future<List<CompanyEntity>> getCompanies({
     int page = 1,
-    int limit = 10,
+    int limit = 9999,
   }) async {
     final response = await _api.get('/companies?page=$page&limit=$limit');
     if (response.statusCode == 200) {
@@ -61,7 +61,7 @@ class CompanyService {
   // Get companies with pagination and optional search
   Future<Map<String, dynamic>> getCompaniesPage({
     int page = 1,
-    int limit = 10,
+    int limit = 9999,
     String? search,
   }) async {
     final query = StringBuffer('/companies?page=$page&limit=$limit');
