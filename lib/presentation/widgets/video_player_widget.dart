@@ -201,7 +201,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   'Video Error',
                   style: TextStyle(
                     fontSize: 18,
-                    color: Color(0xFF4E56C0),
+                    color: Color(0xFF6F38C5),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -272,7 +272,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 'Loading Video...',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Color(0xFF4E56C0),
+                  color: Color(0xFF6F38C5),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -287,7 +287,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF4E56C0).withOpacity(0.2),
+            color: Color(0xFF6F38C5).withOpacity(0.2),
             blurRadius: 15,
             offset: Offset(0, 8),
           ),
@@ -341,7 +341,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   ),
                   border: Border(
                     top: BorderSide(
-                      color: Color(0xFF4E56C0).withOpacity(0.3),
+                      color: Color(0xFF6F38C5).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -408,7 +408,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: Color(0xFF4E56C0).withOpacity(0.2),
+                        color: Color(0xFF6F38C5).withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(

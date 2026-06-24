@@ -1,13 +1,16 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/pickup_status.dart';
 import '../../../core/utils/storage_util.dart';
 import 'AdminCleanupDashboard.dart';
 import 'CleanupFinalizationScreen.dart';
-import '../GarbageMissionDetailsScreen.dart';
-import '../public_garbage_reports_screen.dart';
+import 'GarbageMissionDetailsScreen.dart';
+import 'public_garbage_reports_screen.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('MissionAssignmentScreen.dart');
 
 class MissionAssignmentScreen extends StatefulWidget {
   final int reportId;
@@ -30,7 +33,32 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
   List<dynamic> drivers = [];
   bool isLoading = true;
 
-  // ── Exclusive WOW Purple Palette (with White for Lightness) ──────────
+  List<dynamic> get _assignableDrivers =>
+      drivers.where((d) => d['driver_profile_id'] != null).toList();
+
+  int? _driverUserIdFromStoredId(dynamic storedDriverId) {
+    if (storedDriverId == null) return null;
+    final raw = storedDriverId is int
+        ? storedDriverId
+        : int.tryParse('$storedDriverId');
+    if (raw == null || raw <= 0) return null;
+
+    for (final d in _assignableDrivers) {
+      final userId = d['id'] is int ? d['id'] as int : int.tryParse('${d['id']}');
+      final profileId = d['driver_profile_id'] is int
+          ? d['driver_profile_id'] as int
+          : int.tryParse('${d['driver_profile_id']}');
+      if (userId == raw || profileId == raw) return userId;
+    }
+    return null;
+  }
+
+  void _syncSelectedDriverFromReport(dynamic storedDriverId) {
+    final mapped = _driverUserIdFromStoredId(storedDriverId);
+    if (mapped != null) selectedDriver = mapped;
+  }
+
+  // â”€â”€ Exclusive WOW Purple Palette (with White for Lightness) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   static const darkPurple  = Color(0xFF450693);
   static const mainPurple  = Color(0xFF6F38C5);
   static const brightPurp  = Color(0xFF9B5DE0);
@@ -47,6 +75,9 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
 
   void _initializeData() {
     selectedStatus = widget.report['report_status_id'] ?? 204;
+    if (selectedStatus == 170 || selectedStatus == 171) {
+      selectedStatus = 172; // Automatically switch to Approved when opening the form for a pending report
+    }
     selectedUrgency = widget.report['urgency_level_id'] ?? 183;
     selectedDriver = widget.report['driver_id'];
     volumeController.text = widget.report['estimated_volume']?.toString() ?? '';
@@ -67,8 +98,11 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
         if (mounted) {
           setState(() {
             selectedStatus = data['report_status_id'];
+            if (selectedStatus == 170 || selectedStatus == 171) {
+              selectedStatus = 172; // Auto-select Approved
+            }
             selectedUrgency = data['urgency_level_id'] ?? 183;
-            selectedDriver = data['driver_id'];
+            _syncSelectedDriverFromReport(data['driver_id']);
             volumeController.text = data['estimated_volume']?.toString() ?? '';
             instructionsController.text = data['admin_notes'] ?? '';
             fundingController.text = data['funding_goal']?.toString() ?? '';
@@ -86,44 +120,80 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
       final response = await http.get(Uri.parse('$baseUrl/admin/drivers?active_status=1&limit=100&t=${DateTime.now().millisecondsSinceEpoch}'), headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         final List data = json.decode(response.body)['data'] as List;
-        setState(() { 
-          drivers = data; 
-          
-          // Data Migration: Ensure selectedDriver matches a User ID in the new dropdown system
-          if (selectedDriver != null) {
-            bool existsAsUserId = drivers.any((d) => d['id'] == selectedDriver);
-            if (!existsAsUserId) {
-              // Try to find if it was an old drivers.id
-              try {
-                final match = drivers.firstWhere((d) => d['driver_profile_id'] == selectedDriver);
-                selectedDriver = match['id'];
-              } catch (_) {
-                selectedDriver = null; // Clear if no match found
-              }
-            }
-          }
-          
-          isLoading = false; 
+        setState(() {
+          drivers = data;
+          _syncSelectedDriverFromReport(widget.report['driver_id']);
+          isLoading = false;
         });
-      } else { setState(() => isLoading = false); }
+      } else {
+        setState(() => isLoading = false);
+      }
     } catch (e) { setState(() => isLoading = false); }
   }
 
   Future<void> _submitAssignment() async {
+    final fundingValue = double.tryParse(fundingController.text.trim()) ?? 0.0;
+    if (fundingController.text.trim().isEmpty || fundingValue <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter the funding.'), backgroundColor: brightPurp));
+      return;
+    }
     if (selectedDriver == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Operational Error: A driver must be assigned.'), backgroundColor: brightPurp));
       return;
     }
+    if (_assignableDrivers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('No drivers with a completed profile. Approve a driver account first.'),
+        backgroundColor: brightPurp,
+      ));
+      return;
+    }
+
+    int dispatchStatus = selectedStatus;
+    if (dispatchStatus < ReportStatus.assigned) {
+      dispatchStatus = ReportStatus.assigned;
+    }
+
     setState(() => isLoading = true);
     try {
       final token = StorageUtil.getToken();
       final headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
-      await http.put(Uri.parse('$baseUrl/reports/cleanup/${widget.reportId}/approve'), headers: headers, body: json.encode({'urgency_level_id': selectedUrgency, 'funding_goal': fundingController.text, 'report_status_id': selectedStatus}));
-      if (selectedStatus >= 172) {
-        await http.put(Uri.parse('$baseUrl/reports/cleanup/${widget.reportId}/dispatch'), headers: headers, body: json.encode({'driver_id': selectedDriver, 'estimated_volume': volumeController.text, 'urgency_level_id': selectedUrgency, 'admin_notes': instructionsController.text, 'report_status_id': selectedStatus}));
+
+      final approveRes = await http.put(
+        Uri.parse('$baseUrl/reports/cleanup/${widget.reportId}/approve'),
+        headers: headers,
+        body: json.encode({
+          'urgency_level_id': selectedUrgency,
+          'funding_goal': fundingController.text,
+          'report_status_id': dispatchStatus,
+        }),
+      );
+      if (approveRes.statusCode < 200 || approveRes.statusCode >= 300) {
+        final err = json.decode(approveRes.body);
+        throw Exception(err['message'] ?? 'Failed to approve mission');
       }
+
+      final dispatchRes = await http.put(
+        Uri.parse('$baseUrl/reports/cleanup/${widget.reportId}/dispatch'),
+        headers: headers,
+        body: json.encode({
+          'driver_id': selectedDriver,
+          'estimated_volume': volumeController.text,
+          'urgency_level_id': selectedUrgency,
+          'admin_notes': instructionsController.text,
+          'report_status_id': dispatchStatus,
+        }),
+      );
+      if (dispatchRes.statusCode < 200 || dispatchRes.statusCode >= 300) {
+        final err = json.decode(dispatchRes.body);
+        throw Exception(err['message'] ?? 'Failed to assign driver');
+      }
+
       if (mounted) {
-        if (selectedStatus == 208) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Driver assigned successfully'), backgroundColor: brightPurp),
+        );
+        if (dispatchStatus == 208) {
           // If status is "Collected", redirect to Finalization
           final updatedReport = Map<String, dynamic>.from(widget.report);
           updatedReport['report_status_id'] = selectedStatus;
@@ -150,19 +220,21 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
           Navigator.pop(context, true);
         }
       }
-    } catch (e) { setState(() => isLoading = false); }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e'), backgroundColor: Colors.red.shade700),
+        );
+      }
+      setState(() => isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Positioned(top: -50, right: -50, child: _blurCircle(300, palePink.withOpacity(0.4))),
-          Positioned(bottom: -100, left: -100, child: _blurCircle(400, softLilac.withOpacity(0.2))),
-          
-          CustomScrollView(
+      body: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
@@ -173,7 +245,7 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
                 iconTheme: const IconThemeData(color: darkPurple),
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
-                  title: const Text('MISSION SETUP', style: TextStyle(fontWeight: FontWeight.w900, color: darkPurple, fontSize: 16, letterSpacing: 4)),
+                  title: Text(_kScreenTitle, style: TextStyle(fontWeight: FontWeight.w900, color: darkPurple, fontSize: 16, letterSpacing: 4)),
                   background: Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [palePink.withOpacity(0.5), Colors.white]))),
                 ),
               ),
@@ -192,11 +264,11 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _sectionHeader('PRIORITY CORE', Icons.bolt_rounded),
+                                  _sectionHeader('URGENCY LEVEL', Icons.bolt_rounded),
                                   const SizedBox(height: 20),
                                   _buildUrgencyGrid(),
                                   const SizedBox(height: 24),
-                                  _wowTextField('FUNDING TARGET (PKR)', fundingController, Icons.payments_rounded, isNum: true),
+                                  _wowTextField('FUNDING FOR THIS ASSIGNMENT (PKR)', fundingController, Icons.payments_rounded, isNum: true),
                                 ],
                               ),
                             ),
@@ -209,9 +281,9 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
                                 children: [
                                   _buildDriverDropdown(),
                                   const SizedBox(height: 32),
-                                  _wowTextField('MASS VOLUME (KG)', volumeController, Icons.scale_rounded, isNum: true),
+                                  _wowTextField('ESTIMATED WEIGHT (KG)', volumeController, Icons.scale_rounded, isNum: true),
                                   const SizedBox(height: 32),
-                                  _wowTextField('COMMAND NOTES', instructionsController, Icons.description_rounded, maxLines: 3),
+                                  _wowTextField('INSTRUCTIONS', instructionsController, Icons.description_rounded, maxLines: 3),
                                 ],
                               ),
                             ),
@@ -224,12 +296,8 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
               ),
             ],
           ),
-        ],
-      ),
     );
   }
-
-  Widget _blurCircle(double size, Color color) => Container(width: size, height: size, decoration: BoxDecoration(shape: BoxShape.circle, color: color), child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container(color: Colors.transparent)));
 
   Widget _lightCard({required Widget child}) => Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32), border: Border.all(color: darkPurple.withOpacity(0.05)), boxShadow: [BoxShadow(color: darkPurple.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 10))]), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32), child: child));
 
@@ -259,7 +327,7 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionHeader('PERSONNEL SELECTION', Icons.local_shipping_rounded),
+        _sectionHeader('SELECT DRIVER', Icons.local_shipping_rounded),
         const SizedBox(height: 20),
         DropdownButtonFormField<int>(
           value: selectedDriver,
@@ -273,9 +341,14 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: darkPurple.withOpacity(0.05))),
             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: brightPurp, width: 2)),
           ),
-          hint: const Text('SELECT OPERATIONAL PERSONNEL', style: TextStyle(color: darkPurple, fontSize: 13, fontWeight: FontWeight.w700)),
+          hint: Text(
+            _assignableDrivers.isEmpty
+                ? 'NO APPROVED DRIVER PROFILES'
+                : 'SELECT ACTIVE DRIVER',
+            style: const TextStyle(color: darkPurple, fontSize: 13, fontWeight: FontWeight.w700),
+          ),
           selectedItemBuilder: (context) {
-            return drivers.map<Widget>((d) {
+            return _assignableDrivers.map<Widget>((d) {
               final String name = d['full_name'] ?? 'Driver';
               return Row(
                 mainAxisSize: MainAxisSize.min,
@@ -287,7 +360,7 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
               );
             }).toList();
           },
-          items: drivers.map<DropdownMenuItem<int>>((d) {
+          items: _assignableDrivers.map<DropdownMenuItem<int>>((d) {
             final int userId = d['id'];
             final String name = d['full_name'] ?? 'Driver';
             final String vehicle = d['vehicle_name'] ?? 'ACTIVE PERSONNEL';
@@ -342,7 +415,7 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
     return Container(
       width: double.infinity, height: 60,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), gradient: const LinearGradient(colors: [brightPurp, mainPurple]), boxShadow: [BoxShadow(color: brightPurp.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 10))]),
-      child: ElevatedButton(onPressed: _submitAssignment, style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: const Text('INITIALIZE MISSION PROTOCOL', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1))),
+      child: ElevatedButton(onPressed: _submitAssignment, style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: const Text('ASSIGN DRIVER', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1))),
     );
   }
 
@@ -350,7 +423,7 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
     final steps = [
       {'label': 'Approved', 'id': 172},
       {'label': 'Assigned', 'id': 206},
-      {'label': 'En Route', 'id': 207},
+      {'label': 'On the Way', 'id': 207},
       {'label': 'In Progress', 'id': 205},
       {'label': 'Collected', 'id': 208},
     ];
@@ -364,7 +437,7 @@ class _MissionAssignmentScreenState extends State<MissionAssignmentScreen> {
 
     return Column(
       children: [
-        Text('MISSION STAGE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: darkPurple.withOpacity(0.4), letterSpacing: 3)),
+        Text('CURRENT STATUS', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: darkPurple.withOpacity(0.4), letterSpacing: 3)),
         const SizedBox(height: 20),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,

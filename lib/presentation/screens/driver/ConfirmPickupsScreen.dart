@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:aneuso_app/core/constants/app_constants.dart';
+import 'package:aneuso_app/core/constants/pickup_status.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -120,12 +122,11 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   }
 
   void calculateStatistics() {
-    pendingTasks = tasks.where((task) => task['pickup_status_id'] == 1).length;
+    pendingTasks = tasks
+        .where((task) => task['pickup_status_id'] != PickupStatus.completed)
+        .length;
     completedTasks = tasks
-        .where(
-          (task) =>
-              task['pickup_status_id'] == 2 || task['pickup_status_id'] == 3,
-        )
+        .where((task) => task['pickup_status_id'] == PickupStatus.completed)
         .length;
 
     totalWeight = tasks.fold(0.0, (sum, task) {
@@ -154,26 +155,13 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
         return const Color(0xFF9B5DE0);
       case 3: // in-progress
         // return const Color(0xFF2196F3);
-        return const Color(0xFF4E56C0);
+        return const Color(0xFF6F38C5);
       default:
         return const Color(0xFF9E9E9E);
     }
   }
 
-  String getStatusText(int statusId) {
-    switch (statusId) {
-      case 1:
-        return 'Pending';
-      case 2:
-      case 3:
-        return 'Completed';
-        // case 3:
-        // return 'In Progress';
-        return 'Completed';
-      default:
-        return 'Unknown';
-    }
-  }
+  String getStatusText(int statusId) => PickupStatus.label(statusId);
 
   Color getPriorityColor(int priorityId) {
     switch (priorityId) {
@@ -182,7 +170,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
       case 2: // medium
         return const Color(0xFFD78FEE);
       case 3: // low/citizen
-        return const Color(0xFF4E56C0);
+        return const Color(0xFF6F38C5);
       default:
         return const Color(0xFF9B5DE0);
     }
@@ -191,7 +179,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FF),
+      backgroundColor: const Color(0xFFF9F6FF),
       body: SafeArea(
         child: Column(
           children: [
@@ -200,7 +188,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [const Color(0xFF4E56C0), const Color(0xFF9B5DE0)],
+                  colors: [const Color(0xFF6F38C5), const Color(0xFF9B5DE0)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -345,13 +333,13 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF4E56C0).withOpacity(0.1),
+                                  color: const Color(0xFF6F38C5).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   '${_getFilteredTasks().length} tasks',
                                   style: const TextStyle(
-                                    color: Color(0xFF4E56C0),
+                                    color: Color(0xFF6F38C5),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -713,7 +701,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF4E56C0).withOpacity(0.1),
+                      color: const Color(0xFF6F38C5).withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -725,7 +713,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                     child: CircularProgressIndicator(
                       strokeWidth: 4,
                       valueColor: const AlwaysStoppedAnimation(
-                        Color(0xFF4E56C0),
+                        Color(0xFF6F38C5),
                       ),
                       backgroundColor: const Color(0xFF9B5DE0).withOpacity(0.2),
                     ),
@@ -791,7 +779,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
             ElevatedButton(
               onPressed: fetchDriverTasks,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4E56C0),
+                backgroundColor: const Color(0xFF6F38C5),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -833,7 +821,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF4E56C0).withOpacity(0.1),
+                    const Color(0xFF6F38C5).withOpacity(0.1),
                     const Color(0xFF9B5DE0).withOpacity(0.1),
                   ],
                   begin: Alignment.topLeft,
@@ -844,7 +832,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               child: Icon(
                 Icons.check_circle_outline,
                 size: 80,
-                color: const Color(0xFF4E56C0).withOpacity(0.5),
+                color: const Color(0xFF6F38C5).withOpacity(0.5),
               ),
             ),
             const SizedBox(height: 24),
@@ -1050,7 +1038,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8F9FF),
+                              color: const Color(0xFFF9F6FF),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: Colors.grey[100]!),
                             ),
@@ -1102,7 +1090,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          if (selectedTask!['pickup_status_id'] != 3) ...[
+                          if (selectedTask!['pickup_status_id'] != PickupStatus.completed) ...[
                             // Confirmation Form
                             const Text(
                               'Pickup Confirmation',
@@ -1121,7 +1109,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Collected Weight (kg)',
                                 labelStyle: const TextStyle(
-                                  color: Color(0xFF4E56C0),
+                                  color: Color(0xFF6F38C5),
                                 ),
                                 hintText: 'Enter actual collected weight',
                                 prefixIcon: const Icon(
@@ -1133,7 +1121,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                   borderSide: BorderSide.none,
                                 ),
                                 filled: true,
-                                fillColor: const Color(0xFFF8F9FF),
+                                fillColor: const Color(0xFFF9F6FF),
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                   vertical: 18,
@@ -1193,7 +1181,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                       decoration: InputDecoration(
                                         labelText: 'Issue Type',
                                         labelStyle: const TextStyle(
-                                          color: Color(0xFF4E56C0),
+                                          color: Color(0xFF6F38C5),
                                         ),
                                         prefixIcon: const Icon(
                                           Icons.category,
@@ -1206,7 +1194,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                           borderSide: BorderSide.none,
                                         ),
                                         filled: true,
-                                        fillColor: const Color(0xFFF8F9FF),
+                                        fillColor: const Color(0xFFF9F6FF),
                                       ),
                                       items: [
                                         const DropdownMenuItem(
@@ -1236,7 +1224,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                         decoration: InputDecoration(
                                           labelText: 'Issue Description',
                                           labelStyle: const TextStyle(
-                                            color: Color(0xFF4E56C0),
+                                            color: Color(0xFF6F38C5),
                                           ),
                                           hintText: 'Describe the issue...',
                                           border: OutlineInputBorder(
@@ -1246,7 +1234,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                             borderSide: BorderSide.none,
                                           ),
                                           filled: true,
-                                          fillColor: const Color(0xFFF8F9FF),
+                                          fillColor: const Color(0xFFF9F6FF),
                                         ),
                                       ),
                                   ],
@@ -1274,7 +1262,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                             //           children: [
                             //             Icon(
                             //               Icons.photo_library,
-                            //               color: Color(0xFF4E56C0),
+                            //               color: Color(0xFF6F38C5),
                             //             ),
                             //             SizedBox(width: 8),
                             //             Text(
@@ -1320,7 +1308,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                             //                         image: FileImage(
                             //                           selectedPhotos[index],
                             //                         ),
-                            //                         fit: BoxFit.cover,
+                            //                         fit: BoxFit.contain,
                             //                       ),
                             //                     ),
                             //                   ),
@@ -1363,7 +1351,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                             //               _pickImage(setSheetState),
                             //           style: OutlinedButton.styleFrom(
                             //             foregroundColor: const Color(
-                            //               0xFF4E56C0,
+                            //               0xFF6F38C5,
                             //             ),
                             //             side: const BorderSide(
                             //               color: Color(0xFFD78FEE),
@@ -1398,7 +1386,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                     ? null
                                     : () => _submitConfirmation(setSheetState),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4E56C0),
+                                  backgroundColor: const Color(0xFF6F38C5),
                                   foregroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
@@ -1547,9 +1535,18 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
         }
       }
 
-      // Get current location (mock for now - implement with location package)
-      final double latitude = 0;
-      final double longitude = 0;
+      // Get current location
+      double latitude = 0.0;
+      double longitude = 0.0;
+      try {
+        final pos = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        );
+        latitude = pos.latitude;
+        longitude = pos.longitude;
+      } catch (e) {
+        debugPrint('Could not get current location for confirmation: $e');
+      }
 
       // Prepare request body
       final requestBody = {
@@ -1648,7 +1645,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [const Color(0xFF4E56C0), const Color(0xFF9B5DE0)],
+                    colors: [const Color(0xFF6F38C5), const Color(0xFF9B5DE0)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -1681,7 +1678,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                     _resetForm();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4E56C0),
+                    backgroundColor: const Color(0xFF6F38C5),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -1712,7 +1709,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: const Color(0xFF4E56C0),
+        backgroundColor: const Color(0xFF6F38C5),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -1730,7 +1727,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
           });
         }
       },
-      selectedColor: const Color(0xFF4E56C0),
+      selectedColor: const Color(0xFF6F38C5),
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : Colors.black87,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -1743,10 +1740,14 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   List<dynamic> _getFilteredTasks() {
     if (_statusFilter == 'All') return tasks;
     if (_statusFilter == 'Pending') {
-      return tasks.where((t) => t['pickup_status_id'] == 1).toList();
+      return tasks
+          .where((t) => t['pickup_status_id'] != PickupStatus.completed)
+          .toList();
     }
     if (_statusFilter == 'Completed') {
-      return tasks.where((t) => t['pickup_status_id'] == 2 || t['pickup_status_id'] == 3).toList();
+      return tasks
+          .where((t) => t['pickup_status_id'] == PickupStatus.completed)
+          .toList();
     }
     return tasks;
   }

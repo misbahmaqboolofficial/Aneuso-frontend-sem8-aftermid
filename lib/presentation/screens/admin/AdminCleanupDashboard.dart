@@ -1,15 +1,18 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'CleanupFinalizationScreen.dart';
 import 'MissionAssignmentScreen.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/pickup_status.dart';
 import '../../../core/utils/storage_util.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../public_garbage_reports_screen.dart';
-import '../GarbageMissionDetailsScreen.dart';
+import 'public_garbage_reports_screen.dart';
+import 'GarbageMissionDetailsScreen.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('AdminCleanupDashboard.dart');
 
 class AdminCleanupDashboard extends StatefulWidget {
   const AdminCleanupDashboard({super.key});
@@ -60,13 +63,7 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Changed to white for lightness
-      body: Stack(
-        children: [
-          // Dynamic Mesh Background Accents
-          Positioned(top: -100, right: -100, child: _blurCircle(400, palePink.withOpacity(0.4))),
-          Positioned(bottom: -50, left: -100, child: _blurCircle(350, softLilac.withOpacity(0.2))),
-          
-          isLoading
+      body: isLoading
               ? const Center(child: CircularProgressIndicator(color: brightPurp))
               : RefreshIndicator(
                   color: brightPurp,
@@ -100,12 +97,8 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
                     ],
                   ),
                 ),
-        ],
-      ),
     );
   }
-
-  Widget _blurCircle(double size, Color color) => Container(width: size, height: size, decoration: BoxDecoration(shape: BoxShape.circle, color: color), child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container(color: Colors.transparent)));
 
   Widget _buildWOWAppBar() {
     return SliverAppBar(
@@ -116,7 +109,7 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,
         titlePadding: const EdgeInsets.only(left: 20, bottom: 20),
-        title: const Text('CLEANUP COMMAND', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: darkPurple, letterSpacing: 3)),
+        title: Text(_kScreenTitle, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: darkPurple, letterSpacing: 3)),
         background: Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [palePink.withOpacity(0.5), Colors.white]))),
       ),
       actions: [
@@ -239,6 +232,36 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
               ),
             ),
             _buildWOWMiniStepper(statusId),
+            if (ReportStatus.canLiveTrack(statusId) && report['driver_id'] != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/live-tracking',
+                        arguments: {
+                          'task_id': report['id'],
+                          'task_type': TrackingTaskType.adminCleanup,
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.location_on_rounded, color: Colors.white),
+                    label: const Text(
+                      'Live Track Cleanup',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: brightPurp,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ),
             if (isDone)
               Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 8), color: brightPurp, child: const Center(child: Text('MISSION SUCCESS', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)))),
           ],

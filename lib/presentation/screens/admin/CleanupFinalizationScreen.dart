@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import '../public_garbage_reports_screen.dart';
+import 'public_garbage_reports_screen.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('CleanupFinalizationScreen.dart');
 
 class CleanupFinalizationScreen extends StatefulWidget {
   final GarbageReport report;
@@ -27,7 +29,7 @@ class _CleanupFinalizationScreenState extends State<CleanupFinalizationScreen> {
   bool _isUploading = false;
   final _picker = ImagePicker();
 
-  // ── Exclusive WOW Purple Palette (with White for Lightness) ──────────
+  // â”€â”€ Exclusive WOW Purple Palette (with White for Lightness) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   static const darkPurple  = Color(0xFF450693);
   static const mainPurple  = Color(0xFF6F38C5);
   static const brightPurp  = Color(0xFF9B5DE0);
@@ -80,12 +82,7 @@ class _CleanupFinalizationScreenState extends State<CleanupFinalizationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Positioned(top: -150, left: -100, child: _blurCircle(400, palePink.withOpacity(0.4))),
-          Positioned(bottom: -100, right: -100, child: _blurCircle(350, softLilac.withOpacity(0.2))),
-          
-          CustomScrollView(
+      body: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
@@ -96,7 +93,7 @@ class _CleanupFinalizationScreenState extends State<CleanupFinalizationScreen> {
                 iconTheme: const IconThemeData(color: darkPurple),
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
-                  title: const Text('FINALIZATION', style: TextStyle(fontWeight: FontWeight.w900, color: darkPurple, fontSize: 16, letterSpacing: 4)),
+                  title: Text(_kScreenTitle, style: TextStyle(fontWeight: FontWeight.w900, color: darkPurple, fontSize: 16, letterSpacing: 4)),
                   background: Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [palePink.withOpacity(0.5), Colors.white]))),
                 ),
               ),
@@ -153,12 +150,8 @@ class _CleanupFinalizationScreenState extends State<CleanupFinalizationScreen> {
               ),
             ],
           ),
-        ],
-      ),
     );
   }
-
-  Widget _blurCircle(double size, Color color) => Container(width: size, height: size, decoration: BoxDecoration(shape: BoxShape.circle, color: color), child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container(color: Colors.transparent)));
 
   Widget _lightCard({required Widget child}) => Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32), border: Border.all(color: darkPurple.withOpacity(0.05)), boxShadow: [BoxShadow(color: darkPurple.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 10))]), child: Padding(padding: const EdgeInsets.all(24), child: child));
 
@@ -217,7 +210,7 @@ class _CleanupFinalizationScreenState extends State<CleanupFinalizationScreen> {
     return Container(
       width: double.infinity, height: 64,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), gradient: const LinearGradient(colors: [brightPurp, mainPurple]), boxShadow: [BoxShadow(color: brightPurp.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 10))]),
-      child: ElevatedButton(onPressed: _isUploading ? null : _submit, style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: _isUploading ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2) : const Text('SUBMIT MISSION PROTOCOL', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5))),
+      child: ElevatedButton(onPressed: _isUploading ? null : _submit, style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: _isUploading ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2) : const Text('SUBMIT REPORT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5))),
     );
   }
 }

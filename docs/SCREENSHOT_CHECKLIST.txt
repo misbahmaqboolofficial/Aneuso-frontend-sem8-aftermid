@@ -1,0 +1,52 @@
+# ANEUSO manual screenshot checklist
+# 1) flutter run -d windows
+# 2) npm start  (API in aneuso_api_nodeexpressjs)
+# 3) For each line below: navigate to screen, then run the PowerShell command.
+
+# Auth
+# 01_login          — app start / logout first
+# 02_register       — tap Sign Up
+# 03_otp            — only if testing OTP flow
+
+# Dashboards (login as each role, password123)
+# 04_admin          — misbahmaqboolofficial@gmail.com
+# 05_industry       — misbahmaqbool154@gmail.com
+# 06_driver         — ali@gmail.com
+# 07_citizen        — misbahmaqbool123official@gmail.com
+
+# Citizen
+# 08_products
+# 09_cart
+# 10_orders
+# 11_report_garbage
+# 12_cleanup_campaigns
+# 13_messages
+# 14_jobs
+
+# Industry
+# 15_schedule_pickup
+# 16_create_deal
+# 17_service_history
+# 18_three_bin_training
+
+# Driver
+# 19_daily_tasks
+# 20_confirm_pickups
+# 21_cleanup_missions
+# 22_my_ratings
+
+# Admin
+# 23_companies
+# 24_branches
+# 25_admin_products
+# 26_admin_pickups
+# 27_admin_broadcast
+# 28_admin_cleanup
+# 29_driver_ratings
+
+# Example capture command:
+# cd aneuso_mobile_app_flutter
+# powershell -ExecutionPolicy Bypass -File scripts/capture_aneuso_window.ps1 -Name "01_login"
+
+# Build Word files (one per screenshot + summary):
+# python scripts/build_test_report.py

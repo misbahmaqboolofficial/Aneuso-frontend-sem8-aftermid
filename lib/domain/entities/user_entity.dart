@@ -44,5 +44,8 @@ class UserEntity {
   bool get isCitizen => userTypeId == 3;
   bool get isActive => activeStatus == 1;
   bool get isEmailVerified => emailVerifiedAt != null;
+
+  /// Admin, industry, and driver accounts can switch to citizen dashboard view.
+  bool get canUseCitizenDashboard => userTypeId != 3;
   
 }

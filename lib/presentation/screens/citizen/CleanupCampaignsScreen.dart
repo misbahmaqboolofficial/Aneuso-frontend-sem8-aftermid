@@ -5,6 +5,9 @@ import 'package:aneuso_app/presentation/screens/citizen/CampaignDetailScreen.dar
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('CleanupCampaignsScreen.dart');
 
 class CleanupCampaignsScreen extends StatefulWidget {
   const CleanupCampaignsScreen({super.key});
@@ -34,7 +37,7 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
     try {
       final token = StorageUtil.getToken();
       final response = await http.get(
-        Uri.parse('$baseUrl/reports/public-garbage'),
+        Uri.parse('$baseUrl/citizen/campaigns?limit=50&sort_by=urgent'),
         headers: {
           'Content-Type': 'application/json',
           if (token != null) 'Authorization': 'Bearer $token',
@@ -45,12 +48,7 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           setState(() {
-            // Filter only reports that are approved or beyond
-            // Statuses: 171 (Under Review), 172 (Funded), 173 (Scheduled), 206 (Dispatched), 205 (In Progress), 174 (Cleaned)
-            campaigns = (data['data'] as List).where((report) {
-              final statusId = report['report_status_id'];
-              return statusId >= 171 || statusId == 204;
-            }).toList();
+            campaigns = data['data'] as List<dynamic>? ?? [];
             isLoading = false;
           });
         }
@@ -71,10 +69,10 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDCFFA).withOpacity(0.1),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
-        title: const Text(
-          'Cleanup Campaigns',
+        title: Text(
+          _kScreenTitle,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
@@ -103,11 +101,66 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
                   ? _buildEmptyState()
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
-                      itemCount: campaigns.length,
+                      itemCount: campaigns.length + 1,
                       itemBuilder: (context, index) {
-                        return _buildCampaignCard(campaigns[index]);
+                        if (index == 0) return _buildDisclaimerBanner();
+                        return _buildCampaignCard(campaigns[index - 1]);
                       },
                     ),
+    );
+  }
+
+  Widget _buildDisclaimerBanner() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color(0xFF6F38C5).withOpacity(0.9), const Color(0xFF9B5DE0)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6F38C5).withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.volunteer_activism_rounded, color: Colors.white, size: 28),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'A Note from Gulbhao',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'We are trying to clean the best we can with the available funds. Sometimes, if funds are low, the entire garbage of a certain complaint might not get completely cleared.\n\nPlease don\'t be discouraged or discourage our team if an area isn\'t 100% spotless. We are still giving it our all! Support us by funding campaigns so we can keep making our city beautiful together. 💜',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.95),
+              fontSize: 14,
+              height: 1.5,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -299,18 +352,18 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
       case 170:
       case 171:
         text = 'FUNDING ACTIVE';
-        color = const Color(0xFF4E56C0);
+        color = const Color(0xFF6F38C5);
         break;
       case 206:
         text = 'DRIVER ASSIGNED';
-        color = const Color(0xFF4E56C0);
+        color = const Color(0xFF6F38C5);
         break;
       case 207:
-        text = 'DRIVER EN ROUTE';
+        text = 'Driver on the Way';
         color = Colors.orange;
         break;
       case 205:
-        text = 'CLEANUP IN PROGRESS';
+        text = 'Cleaning Started';
         color = Colors.indigo;
         break;
       case 208:

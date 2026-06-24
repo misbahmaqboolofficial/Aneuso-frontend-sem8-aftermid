@@ -15,16 +15,25 @@ class ProductService {
   Future<List<ProductModel>> getProducts({
     int page = 1,
     int limit = 9999,
+    int? statusId,
   }) async {
-    final response = await _api.get('/products?page=$page&limit=$limit');
+    var query = '/products?page=$page&limit=$limit';
+    if (statusId != null) {
+      query += '&status_id=$statusId';
+    }
+    final response = await _api.get(query);
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       if (body['success'] == true) {
         final data = body['data'] as List;
         return data.map((e) => ProductModel.fromJson(e)).toList();
+      } else {
+        throw Exception(body['message'] ?? 'Failed to load products');
       }
+    } else {
+      final errBody = response.body.isNotEmpty ? response.body : 'No response body';
+      throw Exception('Failed to load products: ${response.statusCode} - $errBody');
     }
-    throw Exception('Failed to load products');
   }
 
   Future<ProductModel> getProductById(int id) async {
@@ -56,7 +65,7 @@ class ProductService {
       final resp = jsonDecode(response.body);
       debugPrint('Update Product Response: $resp');
       if (resp['success'] == true) {
-        return ProductModel.fromJson(resp['data']);
+        return getProductById(id);
       }
       throw Exception(resp['message'] ?? 'Failed to update product');
     }

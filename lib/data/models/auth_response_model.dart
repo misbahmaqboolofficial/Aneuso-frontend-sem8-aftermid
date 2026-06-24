@@ -19,7 +19,7 @@ class AuthResponseModel {
     return AuthResponseModel(
       success: json['success'],
       message: json['message'],
-      requiresVerification: json['requiresVerification'] ?? "",
+      requiresVerification: json['requiresVerification'] == true,
       data: AuthData.fromJson(json['data']),
       token: json['token'] ?? "",
     );

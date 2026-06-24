@@ -125,6 +125,8 @@ class AuthService {
       emailVerifiedAt: json['email_verified_at'] != null
           ? DateTime.tryParse(json['email_verified_at'].toString())
           : null,
+      driverId: json['driver_id'] as int?,
+      industryName: json['industry_name'] as String?,
     );
   }
 

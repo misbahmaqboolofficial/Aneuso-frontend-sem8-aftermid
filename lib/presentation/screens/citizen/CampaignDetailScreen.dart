@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/pickup_status.dart';
 import '../../../core/utils/storage_util.dart';
 
 class CampaignDetailScreen extends StatefulWidget {
@@ -28,26 +29,93 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     setState(() => isLoading = true);
     try {
       final token = StorageUtil.getToken();
-      // Fetch all garbage reports and filter for the specific one
-      // (In a real app, you'd have a specific /reports/:id endpoint)
       final response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}/reports/public-garbage'),
+        Uri.parse('${AppConstants.baseUrl}/citizen/campaigns/${widget.reportId}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          if (token != null) 'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200) {
-        final List all = json.decode(response.body)['data'];
-        setState(() {
-          campaign = all.firstWhere((r) => r['id'] == widget.reportId);
-          isLoading = false;
-        });
+        final body = json.decode(response.body);
+        if (body['success'] == true) {
+          setState(() {
+            campaign = body['data'] as Map<String, dynamic>?;
+            isLoading = false;
+          });
+          return;
+        }
       }
+      setState(() => isLoading = false);
     } catch (e) {
       debugPrint('Error fetching campaign details: $e');
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _donate() async {
+    if (campaign == null) return;
+    final amountController = TextEditingController();
+    final amount = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Contribute to cleanup'),
+        content: TextField(
+          controller: amountController,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Amount (PKR)',
+            prefixText: 'Rs ',
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              final value = double.tryParse(amountController.text.trim());
+              if (value == null || value <= 0) return;
+              Navigator.pop(ctx, value);
+            },
+            child: const Text('Donate'),
+          ),
+        ],
+      ),
+    );
+    amountController.dispose();
+    if (amount == null || !mounted) return;
+
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.post(
+        Uri.parse('${AppConstants.baseUrl}/reports/public-garbage/${widget.reportId}/donate'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'amount': amount,
+          'payment_method': 'app',
+        }),
+      );
+      final body = json.decode(response.body);
+      if (response.statusCode == 201 && body['success'] == true) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Thank you! Rs ${amount.toStringAsFixed(0)} contributed.')),
+        );
+        await _fetchDetails();
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(body['message']?.toString() ?? 'Donation failed')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
@@ -61,7 +129,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     final actualVolume = campaign!['actual_volume'] ?? '0';
     
     return Scaffold(
-      backgroundColor: const Color(0xFFFDCFFA).withOpacity(0.1),
+      backgroundColor: const Color(0xFFF9F6FF),
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
@@ -73,6 +141,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                 children: [
                   _buildStatusHeader(statusId),
                   const SizedBox(height: 24),
+                  _buildFundingSection(),
+                  const SizedBox(height: 24),
                   _buildComparisonSection(estVolume, actualVolume),
                   const SizedBox(height: 24),
                   if (statusId == 174) _buildExpenseSection(),
@@ -80,7 +150,9 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
                   const Text('MISSION TIMELINE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1)),
                   const SizedBox(height: 16),
                   _buildTimeline(statusId),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
+                  if (_canLiveTrackCleanup()) _buildLiveTrackButton(),
+                  if (_canLiveTrackCleanup()) const SizedBox(height: 24),
                   _buildImpactCard(),
                   const SizedBox(height: 40),
                 ],
@@ -132,6 +204,62 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFundingSection() {
+    final goal = double.tryParse('${campaign!['funding_goal']}') ?? 0;
+    final collected = double.tryParse('${campaign!['funds_collected']}') ?? 0;
+    final progress = goal > 0 ? (collected / goal).clamp(0.0, 1.0) : 0.0;
+    final statusId = campaign!['report_status_id'];
+    final canDonate = statusId == 170 || statusId == 171 || statusId == 204;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('FUNDING PROGRESS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 1)),
+              Text('${(progress * 100).toInt()}%', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF9B5DE0))),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.grey[100],
+              valueColor: const AlwaysStoppedAnimation(Color(0xFF9B5DE0)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('Rs ${collected.toStringAsFixed(0)} collected of Rs ${goal.toStringAsFixed(0)} goal'),
+          if (canDonate) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _donate,
+                icon: const Icon(Icons.volunteer_activism_outlined),
+                label: const Text('Contribute to this cleanup'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF6F38C5),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -219,7 +347,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     final stages = [
       {'id': 204, 'label': 'Approved'},
       {'id': 206, 'label': 'Assigned'},
-      {'id': 207, 'label': 'En Route'},
+      {'id': 207, 'label': 'On the Way'},
       {'id': 205, 'label': 'Arrived'},
       {'id': 208, 'label': 'Collected'},
       {'id': 174, 'label': 'Cleaned'},
@@ -262,12 +390,46 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
     switch (id) {
       case 204: return 'Approved';
       case 206: return 'Driver Assigned';
-      case 207: return 'Driver En Route';
-      case 205: return 'Cleanup In Progress';
+      case 207: return 'Driver on the Way';
+      case 205: return 'Cleaning Started';
       case 208: return 'Garbage Collected';
       case 174: return 'Area Cleaned';
       default: return 'Under Review';
     }
+  }
+
+  bool _canLiveTrackCleanup() {
+    if (campaign == null) return false;
+    final driverId = campaign!['driver_id'];
+    final hasDriver = driverId != null && int.tryParse('$driverId') != null && int.parse('$driverId') > 0;
+    final statusId = campaign!['report_status_id'] is int
+        ? campaign!['report_status_id'] as int
+        : int.tryParse('${campaign!['report_status_id']}') ?? 0;
+    return hasDriver && (statusId == 206 || statusId == 207 || statusId == 205);
+  }
+
+  Widget _buildLiveTrackButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            '/live-tracking',
+            arguments: {
+              'task_id': widget.reportId,
+              'task_type': TrackingTaskType.adminCleanup,
+            },
+          );
+        },
+        icon: const Icon(Icons.my_location_rounded),
+        label: const Text('Live Track Cleanup Truck'),
+        style: FilledButton.styleFrom(
+          backgroundColor: const Color(0xFF6F38C5),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+      ),
+    );
   }
 
   Widget _buildImpactCard() {

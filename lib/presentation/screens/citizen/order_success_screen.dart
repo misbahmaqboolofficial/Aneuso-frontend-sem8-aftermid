@@ -10,7 +10,7 @@ class OrderSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
+      backgroundColor: const Color(0xFFF9F6FF),
       body: Stack(
         children: [
           // Background gradient
@@ -21,7 +21,7 @@ class OrderSuccessScreen extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF4E56C0).withOpacity(0.05),
+                    Color(0xFF6F38C5).withOpacity(0.05),
                     Color(0xFF9B5DE0).withOpacity(0.05),
                     Color(0xFFD78FEE).withOpacity(0.05),
                   ],
@@ -45,7 +45,7 @@ class OrderSuccessScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Color(0xFF4E56C0),
+                        Color(0xFF6F38C5),
                         Color(0xFF9B5DE0),
                         Color(0xFFD78FEE),
                       ],
@@ -53,7 +53,7 @@ class OrderSuccessScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF4E56C0).withOpacity(0.3),
+                        color: Color(0xFF6F38C5).withOpacity(0.3),
                         blurRadius: 20,
                         offset: Offset(0, 10),
                       ),
@@ -76,7 +76,7 @@ class OrderSuccessScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF4E56C0),
+                    color: Color(0xFF6F38C5),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -129,7 +129,7 @@ class OrderSuccessScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF4E56C0),
+                                color: Color(0xFF6F38C5),
                               ),
                             ),
                           ],
@@ -150,7 +150,7 @@ class OrderSuccessScreen extends StatelessWidget {
                             order.items.length.toString(),
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                           ),
                         ],
@@ -170,7 +170,7 @@ class OrderSuccessScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                           ),
                         ],
@@ -191,13 +191,13 @@ class OrderSuccessScreen extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Color(0xFF4E56C0).withOpacity(0.1),
+                              color: Color(0xFF6F38C5).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
                               order.orderStatusName,
                               style: TextStyle(
-                                color: Color(0xFF4E56C0),
+                                color: Color(0xFF6F38C5),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -249,7 +249,7 @@ class OrderSuccessScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                           ),
                           SizedBox(height: 15),
@@ -283,7 +283,7 @@ class OrderSuccessScreen extends StatelessWidget {
                                           item.productName,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
-                                            color: Color(0xFF4E56C0),
+                                            color: Color(0xFF6F38C5),
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -303,7 +303,7 @@ class OrderSuccessScreen extends StatelessWidget {
                                     'Rs ${item.totalPrice.toStringAsFixed(2)}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: Color(0xFF4E56C0),
+                                      color: Color(0xFF6F38C5),
                                     ),
                                   ),
                                 ],
@@ -339,7 +339,7 @@ class OrderSuccessScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                               side: BorderSide(
-                                color: Color(0xFF4E56C0),
+                                color: Color(0xFF6F38C5),
                                 width: 2,
                               ),
                             ),
@@ -357,7 +357,7 @@ class OrderSuccessScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF4E56C0),
+                                  color: Color(0xFF6F38C5),
                                 ),
                               ),
                             ),
@@ -390,7 +390,7 @@ class OrderSuccessScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Color(0xFF4E56C0),
+                                  Color(0xFF6F38C5),
                                   Color(0xFF9B5DE0),
                                   Color(0xFFD78FEE),
                                 ],
@@ -398,7 +398,7 @@ class OrderSuccessScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Color(0xFF4E56C0).withOpacity(0.4),
+                                  color: Color(0xFF6F38C5).withOpacity(0.4),
                                   blurRadius: 10,
                                   offset: Offset(0, 5),
                                 ),

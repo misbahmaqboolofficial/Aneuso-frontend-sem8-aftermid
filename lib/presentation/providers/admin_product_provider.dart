@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:aneuso_app/services/product_service.dart';
 import 'package:aneuso_app/data/models/product_model.dart';
+import 'package:aneuso_app/core/constants/stock_availability.dart';
 
 class AdminProductProvider with ChangeNotifier {
   final ProductService _service = ProductService();
@@ -15,13 +16,19 @@ class AdminProductProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> loadProducts() async {
+  Future<void> loadProducts({bool retailOnly = false}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
     try {
       _products = await _service.getProducts();
+      if (retailOnly) {
+        _products = _products
+            .where((p) => p.statusId != ProductAvailability.inactive)
+            .toList();
+      }
     } catch (e) {
+      debugPrint('⚠️ Load products error: $e');
       _error = e.toString();
     } finally {
       _isLoading = false;

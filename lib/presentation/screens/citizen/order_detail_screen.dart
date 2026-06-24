@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/order_service.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('order_detail_screen.dart');
 
 class OrderDetailScreen extends StatefulWidget {
   final int orderId;
@@ -98,7 +101,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF4E56C0),
+                    color: Color(0xFF6F38C5),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -109,24 +112,25 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 SizedBox(height: 8),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Color(0xFF4E56C0).withOpacity(0.1),
+                        color: Color(0xFF6F38C5).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         'Qty: ${item.quantity}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF4E56C0),
+                          color: Color(0xFF6F38C5),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
@@ -151,23 +155,28 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           SizedBox(width: 15),
 
           // Total Price
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                'Total',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Rs ${item.totalPrice.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF4E56C0),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Total',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
-              ),
-            ],
+                SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'Rs ${item.totalPrice.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF6F38C5),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -206,7 +215,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                     ),
                   ),
                   SizedBox(height: 4),
@@ -328,7 +337,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF4E56C0),
+                  color: Color(0xFF6F38C5),
                 ),
               ),
               SizedBox(height: 10),
@@ -349,7 +358,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           'Shipping Address',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(height: 4),
@@ -382,7 +391,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           'Billing Address',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(height: 4),
@@ -408,7 +417,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF4E56C0),
+                    color: Color(0xFF6F38C5),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -445,14 +454,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF4E56C0).withOpacity(0.9),
+            Color(0xFF6F38C5).withOpacity(0.9),
             Color(0xFF9B5DE0).withOpacity(0.9),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF4E56C0).withOpacity(0.3),
+            color: Color(0xFF6F38C5).withOpacity(0.3),
             blurRadius: 15,
             offset: Offset(0, 8),
           ),
@@ -561,7 +570,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -569,11 +578,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+              colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
-            'Order Details',
+            _kScreenTitle,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -585,12 +594,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           icon: Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF4E56C0).withOpacity(0.1),
+              color: Color(0xFF6F38C5).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF4E56C0),
+              color: Color(0xFF6F38C5),
               size: 20,
             ),
           ),
@@ -601,12 +610,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             icon: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Color(0xFF4E56C0).withOpacity(0.1),
+                color: Color(0xFF6F38C5).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.refresh_rounded,
-                color: Color(0xFF4E56C0),
+                color: Color(0xFF6F38C5),
                 size: 22,
               ),
             ),
@@ -625,7 +634,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                        colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -642,12 +651,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     'Loading Order...',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 10),
-                  CircularProgressIndicator(color: Color(0xFF4E56C0)),
+                  CircularProgressIndicator(color: Color(0xFF6F38C5)),
                 ],
               ),
             )
@@ -698,12 +707,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF4E56C0).withOpacity(0.4),
+                              color: Color(0xFF6F38C5).withOpacity(0.4),
                               blurRadius: 10,
                               offset: Offset(0, 5),
                             ),
@@ -764,7 +773,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                     ),
                   ),
                   SizedBox(height: 15),
@@ -780,7 +789,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               ),
             )
           : RefreshIndicator(
-              color: Color(0xFF4E56C0),
+              color: Color(0xFF6F38C5),
               onRefresh: _loadOrder,
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(20),
@@ -812,7 +821,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                           ),
                           SizedBox(height: 15),

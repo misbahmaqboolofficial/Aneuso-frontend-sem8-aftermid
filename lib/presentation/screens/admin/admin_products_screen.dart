@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aneuso_app/presentation/providers/admin_product_provider.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+import 'package:aneuso_app/core/constants/stock_availability.dart';
+import 'package:aneuso_app/data/models/product_model.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('admin_products_screen.dart');
 
 class AdminProductsScreen extends StatefulWidget {
   const AdminProductsScreen({Key? key}) : super(key: key);
@@ -15,11 +20,50 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
   List<dynamic> _filteredProducts = [];
   String _searchQuery = '';
 
+  Widget _buildStockBadge({required int statusId, required int stockQuantity, double fontSize = 14}) {
+    final label = ProductAvailability.label(statusId: statusId, stockQuantity: stockQuantity);
+    final color = ProductAvailability.color(statusId: statusId, stockQuantity: stockQuantity);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: fontSize <= 12 ? 4 : 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color, width: 1),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _setProductAvailability(ProductModel prod, bool outOfStock) async {
+    final updated = await provider.updateProduct(prod.id, {
+      'status_id': outOfStock ? ProductAvailability.outOfStock : ProductAvailability.inStock,
+      'stock_quantity': outOfStock ? 0 : (prod.stockQuantity > 0 ? prod.stockQuantity : 1),
+    });
+    if (!mounted) return;
+    if (updated != null) {
+      _performSearch(_searchQuery);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(outOfStock ? 'Product marked out of stock' : 'Product marked in stock')),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     provider = Provider.of<AdminProductProvider>(context, listen: false);
-    provider.loadProducts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        provider.loadProducts();
+      }
+    });
 
     // Listen to search controller changes
     _searchController.addListener(() {
@@ -96,7 +140,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF4E56C0),
+                  color: Color(0xFF6F38C5),
                 ),
               ),
               SizedBox(height: 10),
@@ -231,23 +275,91 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                  GestureDetector(
+                      onTap: () {
+                        if (prod.images != null && prod.images.isNotEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              insetPadding: EdgeInsets.zero,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  InteractiveViewer(
+                                    panEnabled: true,
+                                    minScale: 0.5,
+                                    maxScale: 4,
+                                    child: Image.network(prod.images.first, fit: BoxFit.contain),
+                                  ),
+                                  Positioned(
+                                    top: 40,
+                                    right: 20,
+                                    child: IconButton(
+                                      icon: Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(Icons.close, color: Colors.white, size: 24),
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: (prod.images != null && prod.images.isNotEmpty)
+                            ? ClipOval(
+                                child: Image.network(
+                                  prod.images.first,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                      child: Icon(
+                                        Icons.broken_image_rounded,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    );
+                                  },
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return const Center(
+                                      child: SizedBox(
+                                        width: 15,
+                                        height: 15,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            : const Center(
+                                child: Icon(
+                                  Icons.shopping_bag_rounded,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
                       ),
-                      shape: BoxShape.circle,
                     ),
-                    child: Center(
-                      child: Icon(
-                        Icons.shopping_bag_rounded,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ),
                   SizedBox(width: 15),
                   Expanded(
                     child: Text(
@@ -255,7 +367,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF4E56C0),
+                        color: Color(0xFF6F38C5),
                       ),
                     ),
                   ),
@@ -280,27 +392,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 '${prod.stockQuantity ?? 0} units',
               ),
               SizedBox(height: 15),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: prod.stockQuantity > 0
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: prod.stockQuantity > 0 ? Colors.green : Colors.red,
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  prod.stockQuantity > 0 ? 'In Stock' : 'Out of Stock',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: prod.stockQuantity > 0 ? Colors.green : Colors.red,
-                  ),
-                ),
-              ),
+              _buildStockBadge(statusId: prod.statusId, stockQuantity: prod.stockQuantity ?? 0),
               SizedBox(height: 25),
               Container(
                 height: 48,
@@ -318,7 +410,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                        colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -346,7 +438,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -354,11 +446,11 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+              colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
-            'Product Management',
+            _kScreenTitle,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w800,
@@ -370,12 +462,12 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           icon: Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF4E56C0).withOpacity(0.1),
+              color: Color(0xFF6F38C5).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF4E56C0),
+              color: Color(0xFF6F38C5),
               size: 20,
             ),
           ),
@@ -404,7 +496,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                        colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -421,12 +513,12 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     'Loading Products...',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 10),
-                  CircularProgressIndicator(color: Color(0xFF4E56C0)),
+                  CircularProgressIndicator(color: Color(0xFF6F38C5)),
                 ],
               ),
             );
@@ -479,12 +571,12 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF4E56C0).withOpacity(0.4),
+                              color: Color(0xFF6F38C5).withOpacity(0.4),
                               blurRadius: 10,
                               offset: Offset(0, 5),
                             ),
@@ -547,7 +639,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -578,7 +670,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Color(0xFF4E56C0),
+                              Color(0xFF6F38C5),
                               Color(0xFF9B5DE0),
                               Color(0xFFD78FEE),
                             ],
@@ -586,7 +678,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF4E56C0).withOpacity(0.4),
+                              color: Color(0xFF6F38C5).withOpacity(0.4),
                               blurRadius: 10,
                               offset: Offset(0, 5),
                             ),
@@ -626,7 +718,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           }
 
           return RefreshIndicator(
-            color: Color(0xFF4E56C0),
+            color: Color(0xFF6F38C5),
             onRefresh: () async {
               await provider.loadProducts();
               _clearSearch();
@@ -643,7 +735,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFF4E56C0).withOpacity(0.1),
+                          color: Color(0xFF6F38C5).withOpacity(0.1),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -677,7 +769,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           IconButton(
                             icon: Icon(
                               Icons.close_rounded,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                             onPressed: _clearSearch,
                           ),
@@ -692,7 +784,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                       children: [
                         Icon(
                           Icons.search_rounded,
-                          color: Color(0xFF4E56C0),
+                          color: Color(0xFF6F38C5),
                           size: 20,
                         ),
                         SizedBox(width: 8),
@@ -701,7 +793,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(width: 10),
@@ -711,7 +803,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFF4E56C0).withOpacity(0.1),
+                            color: Color(0xFF6F38C5).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -719,7 +811,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                           ),
                         ),
@@ -738,14 +830,14 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            Color(0xFF4E56C0).withOpacity(0.9),
+                            Color(0xFF6F38C5).withOpacity(0.9),
                             Color(0xFF9B5DE0).withOpacity(0.9),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFF4E56C0).withOpacity(0.3),
+                            color: Color(0xFF6F38C5).withOpacity(0.3),
                             blurRadius: 15,
                             offset: Offset(0, 8),
                           ),
@@ -767,7 +859,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           _buildStatItem(
                             'In Stock',
                             displayProducts
-                                .where((prod) => prod.stockQuantity > 0)
+                                .where((prod) => ProductAvailability.isAvailable(
+                                      statusId: prod.statusId,
+                                      stockQuantity: prod.stockQuantity,
+                                    ))
                                 .length
                                 .toString(),
                             Icons.check_circle_rounded,
@@ -797,7 +892,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF4E56C0),
+                          color: Color(0xFF6F38C5),
                         ),
                       ),
                     ),
@@ -828,7 +923,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF4E56C0),
+                                color: Color(0xFF6F38C5),
                               ),
                             ),
                             SizedBox(height: 10),
@@ -863,7 +958,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: Color(0xFF4E56C0).withOpacity(0.2),
+                                      color: Color(0xFF6F38C5).withOpacity(0.2),
                                       width: 1,
                                     ),
                                     boxShadow: [
@@ -884,7 +979,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                       children: [
                                         Icon(
                                           Icons.clear_all_rounded,
-                                          color: Color(0xFF4E56C0),
+                                          color: Color(0xFF6F38C5),
                                           size: 20,
                                         ),
                                         SizedBox(width: 8),
@@ -893,7 +988,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
-                                            color: Color(0xFF4E56C0),
+                                            color: Color(0xFF6F38C5),
                                           ),
                                         ),
                                       ],
@@ -933,32 +1028,62 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             ),
                             child: ListTile(
                               contentPadding: EdgeInsets.all(20),
+                              isThreeLine: true,
                               leading: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFF4E56C0).withOpacity(0.9),
-                                      Color(0xFF9B5DE0).withOpacity(0.9),
-                                    ],
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFF6F38C5).withOpacity(0.9),
+                                        Color(0xFF9B5DE0).withOpacity(0.9),
+                                      ],
+                                    ),
+                                    shape: BoxShape.circle,
                                   ),
-                                  shape: BoxShape.circle,
+                                  child: (prod.images != null && prod.images.isNotEmpty)
+                                      ? ClipOval(
+                                          child: Image.network(
+                                            prod.images.first,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return const Center(
+                                                child: Icon(
+                                                  Icons.broken_image_rounded,
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                ),
+                                              );
+                                            },
+                                            loadingBuilder: (context, child, loadingProgress) {
+                                              if (loadingProgress == null) return child;
+                                              return const Center(
+                                                child: SizedBox(
+                                                  width: 12,
+                                                  height: 12,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : const Center(
+                                          child: Icon(
+                                            Icons.shopping_bag_rounded,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                        ),
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.shopping_bag_rounded,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                              ),
                               title: Text(
                                 prod.productName,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF4E56C0),
+                                  color: Color(0xFF6F38C5),
                                 ),
                               ),
                               subtitle: Column(
@@ -972,61 +1097,43 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                         size: 14,
                                         color: Colors.grey[600],
                                       ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        'Rs ${prod.price ?? 0}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w600,
+                                      const SizedBox(width: 5),
+                                      Expanded(
+                                        child: Text(
+                                          'Rs ${prod.price ?? 0}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      SizedBox(width: 15),
                                       Icon(
                                         Icons.inventory_2_rounded,
                                         size: 14,
                                         color: Colors.grey[600],
                                       ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        '${prod.stockQuantity} units',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[600],
+                                      const SizedBox(width: 5),
+                                      Flexible(
+                                        child: Text(
+                                          '${prod.stockQuantity} units',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
                                   ),
                                   SizedBox(height: 8),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: prod.stockQuantity > 0
-                                          ? Colors.green.withOpacity(0.1)
-                                          : Colors.red.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: prod.stockQuantity > 0
-                                            ? Colors.green
-                                            : Colors.red,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      prod.stockQuantity > 0
-                                          ? 'In Stock'
-                                          : 'Out of Stock',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: prod.stockQuantity > 0
-                                            ? Colors.green
-                                            : Colors.red,
-                                      ),
-                                    ),
+                                  _buildStockBadge(
+                                    statusId: prod.statusId,
+                                    stockQuantity: prod.stockQuantity,
+                                    fontSize: 12,
                                   ),
                                 ],
                               ),
@@ -1034,13 +1141,13 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF4E56C0).withOpacity(0.1),
+                                  color: Color(0xFF6F38C5).withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: PopupMenuButton<String>(
                                   icon: Icon(
                                     Icons.more_vert_rounded,
-                                    color: Color(0xFF4E56C0),
+                                    color: Color(0xFF6F38C5),
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
@@ -1054,6 +1161,10 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                         '/admin/product/form',
                                         arguments: {'id': prod.id},
                                       );
+                                    } else if (value == 'mark_oos') {
+                                      await _setProductAvailability(prod, true);
+                                    } else if (value == 'mark_in_stock') {
+                                      await _setProductAvailability(prod, false);
                                     } else if (value == 'delete') {
                                       await _showDeleteConfirmation(
                                         context,
@@ -1068,7 +1179,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                         children: [
                                           Icon(
                                             Icons.visibility_rounded,
-                                            color: Color(0xFF4E56C0),
+                                            color: Color(0xFF6F38C5),
                                             size: 20,
                                           ),
                                           SizedBox(width: 10),
@@ -1076,7 +1187,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                             'View Details',
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: Color(0xFF4E56C0),
+                                              color: Color(0xFF6F38C5),
                                             ),
                                           ),
                                         ],
@@ -1088,7 +1199,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                         children: [
                                           Icon(
                                             Icons.edit_rounded,
-                                            color: Color(0xFF4E56C0),
+                                            color: Color(0xFF6F38C5),
                                             size: 20,
                                           ),
                                           SizedBox(width: 10),
@@ -1096,12 +1207,37 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                             'Edit',
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: Color(0xFF4E56C0),
+                                              color: Color(0xFF6F38C5),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
+                                    if (ProductAvailability.isAvailable(
+                                      statusId: prod.statusId,
+                                      stockQuantity: prod.stockQuantity,
+                                    ))
+                                      PopupMenuItem(
+                                        value: 'mark_oos',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.remove_shopping_cart_outlined, color: Colors.orange[700], size: 20),
+                                            SizedBox(width: 10),
+                                            Text('Mark Out of Stock', style: TextStyle(fontSize: 14, color: Colors.orange[700])),
+                                          ],
+                                        ),
+                                      )
+                                    else
+                                      PopupMenuItem(
+                                        value: 'mark_in_stock',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.check_circle_outline, color: Colors.green[700], size: 20),
+                                            SizedBox(width: 10),
+                                            Text('Mark In Stock', style: TextStyle(fontSize: 14, color: Colors.green[700])),
+                                          ],
+                                        ),
+                                      ),
                                     PopupMenuItem(
                                       value: 'delete',
                                       child: Row(
@@ -1141,7 +1277,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
         onPressed: () {
           Navigator.pushNamed(context, '/admin/product/form');
         },
-        backgroundColor: Color(0xFF4E56C0),
+        backgroundColor: Color(0xFF6F38C5),
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Container(
@@ -1149,12 +1285,12 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           height: 60,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+              colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
             ),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Color(0xFF4E56C0).withOpacity(0.4),
+                color: Color(0xFF6F38C5).withOpacity(0.4),
                 blurRadius: 10,
                 offset: Offset(0, 5),
               ),
@@ -1201,7 +1337,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF4E56C0),
+                color: Color(0xFF6F38C5),
               ),
             ),
           ],

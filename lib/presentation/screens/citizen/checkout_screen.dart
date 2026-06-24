@@ -297,7 +297,7 @@
 //             children: [
 //               Icon(
 //                 Icons.location_on_rounded,
-//                 color: Color(0xFF4E56C0),
+//                 color: Color(0xFF6F38C5),
 //                 size: 24,
 //               ),
 //               SizedBox(width: 10),
@@ -306,7 +306,7 @@
 //                 style: TextStyle(
 //                   fontSize: 18,
 //                   fontWeight: FontWeight.w700,
-//                   color: Color(0xFF4E56C0),
+//                   color: Color(0xFF6F38C5),
 //                 ),
 //               ),
 //             ],
@@ -326,7 +326,7 @@
 //               ),
 //               focusedBorder: OutlineInputBorder(
 //                 borderRadius: BorderRadius.circular(15),
-//                 borderSide: BorderSide(color: Color(0xFF4E56C0), width: 2),
+//                 borderSide: BorderSide(color: Color(0xFF6F38C5), width: 2),
 //               ),
 //             ),
 //             maxLines: 3,
@@ -362,12 +362,12 @@
 //                     }
 //                   });
 //                 },
-//                 activeColor: Color(0xFF4E56C0),
+//                 activeColor: Color(0xFF6F38C5),
 //               ),
 //               Text(
 //                 'Billing address same as shipping',
 //                 style: TextStyle(
-//                   color: Color(0xFF4E56C0),
+//                   color: Color(0xFF6F38C5),
 //                   fontWeight: FontWeight.w500,
 //                 ),
 //               ),
@@ -389,7 +389,7 @@
 //                 ),
 //                 focusedBorder: OutlineInputBorder(
 //                   borderRadius: BorderRadius.circular(15),
-//                   borderSide: BorderSide(color: Color(0xFF4E56C0), width: 2),
+//                   borderSide: BorderSide(color: Color(0xFF6F38C5), width: 2),
 //                 ),
 //               ),
 //               maxLines: 3,
@@ -432,7 +432,7 @@
 //             children: [
 //               Icon(
 //                 Icons.payment_rounded,
-//                 color: Color(0xFF4E56C0),
+//                 color: Color(0xFF6F38C5),
 //                 size: 24,
 //               ),
 //               SizedBox(width: 10),
@@ -441,7 +441,7 @@
 //                 style: TextStyle(
 //                   fontSize: 18,
 //                   fontWeight: FontWeight.w700,
-//                   color: Color(0xFF4E56C0),
+//                   color: Color(0xFF6F38C5),
 //                 ),
 //               ),
 //             ],
@@ -464,12 +464,12 @@
 //                     padding: EdgeInsets.all(15),
 //                     decoration: BoxDecoration(
 //                       color: _paymentMethodId == method['id']
-//                           ? Color(0xFF4E56C0).withOpacity(0.1)
+//                           ? Color(0xFF6F38C5).withOpacity(0.1)
 //                           : Colors.grey[50],
 //                       borderRadius: BorderRadius.circular(15),
 //                       border: Border.all(
 //                         color: _paymentMethodId == method['id']
-//                             ? Color(0xFF4E56C0)
+//                             ? Color(0xFF6F38C5)
 //                             : Colors.transparent,
 //                         width: 2,
 //                       ),
@@ -479,12 +479,12 @@
 //                         Container(
 //                           padding: EdgeInsets.all(8),
 //                           decoration: BoxDecoration(
-//                             color: Color(0xFF4E56C0).withOpacity(0.1),
+//                             color: Color(0xFF6F38C5).withOpacity(0.1),
 //                             shape: BoxShape.circle,
 //                           ),
 //                           child: Icon(
 //                             _getPaymentMethodIcon(method['name']),
-//                             color: Color(0xFF4E56C0),
+//                             color: Color(0xFF6F38C5),
 //                             size: 20,
 //                           ),
 //                         ),
@@ -495,14 +495,14 @@
 //                             style: TextStyle(
 //                               fontSize: 16,
 //                               fontWeight: FontWeight.w600,
-//                               color: Color(0xFF4E56C0),
+//                               color: Color(0xFF6F38C5),
 //                             ),
 //                           ),
 //                         ),
 //                         if (_paymentMethodId == method['id'])
 //                           Icon(
 //                             Icons.check_circle_rounded,
-//                             color: Color(0xFF4E56C0),
+//                             color: Color(0xFF6F38C5),
 //                           ),
 //                       ],
 //                     ),
@@ -548,7 +548,7 @@
 //                   decoration: BoxDecoration(
 //                     gradient: LinearGradient(
 //                       colors: [
-//                         Color(0xFF4E56C0),
+//                         Color(0xFF6F38C5),
 //                         Color(0xFF9B5DE0),
 //                       ],
 //                     ),
@@ -596,7 +596,7 @@
 //                         ),
 //                         focusedBorder: OutlineInputBorder(
 //                           borderRadius: BorderRadius.circular(15),
-//                           borderSide: BorderSide(color: Color(0xFF4E56C0), width: 2),
+//                           borderSide: BorderSide(color: Color(0xFF6F38C5), width: 2),
 //                         ),
 //                       ),
 //                     ),
@@ -607,7 +607,7 @@
 //                     child: ElevatedButton(
 //                       onPressed: _isProcessing ? null : _applyPromoCode,
 //                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Color(0xFF4E56C0),
+//                         backgroundColor: Color(0xFF6F38C5),
 //                         shape: RoundedRectangleBorder(
 //                           borderRadius: BorderRadius.circular(15),
 //                         ),
@@ -667,7 +667,7 @@
 //                   style: TextStyle(
 //                     fontSize: 18,
 //                     fontWeight: FontWeight.w700,
-//                     color: Color(0xFF4E56C0),
+//                     color: Color(0xFF6F38C5),
 //                   ),
 //                 ),
 //                 Container(
@@ -686,7 +686,7 @@
 //                       decoration: BoxDecoration(
 //                         gradient: LinearGradient(
 //                           colors: [
-//                             Color(0xFF4E56C0),
+//                             Color(0xFF6F38C5),
 //                             Color(0xFF9B5DE0),
 //                           ],
 //                         ),
@@ -737,14 +737,14 @@
 //           begin: Alignment.topLeft,
 //           end: Alignment.bottomRight,
 //           colors: [
-//             Color(0xFF4E56C0).withOpacity(0.9),
+//             Color(0xFF6F38C5).withOpacity(0.9),
 //             Color(0xFF9B5DE0).withOpacity(0.9),
 //           ],
 //         ),
 //         borderRadius: BorderRadius.circular(20),
 //         boxShadow: [
 //           BoxShadow(
-//             color: Color(0xFF4E56C0).withOpacity(0.3),
+//             color: Color(0xFF6F38C5).withOpacity(0.3),
 //             blurRadius: 15,
 //             offset: Offset(0, 8),
 //           ),
@@ -881,7 +881,7 @@
 //                           height: 24,
 //                           child: CircularProgressIndicator(
 //                             strokeWidth: 2,
-//                             color: Color(0xFF4E56C0),
+//                             color: Color(0xFF6F38C5),
 //                           ),
 //                         )
 //                       : Row(
@@ -889,7 +889,7 @@
 //                           children: [
 //                             Icon(
 //                               Icons.lock_rounded,
-//                               color: Color(0xFF4E56C0),
+//                               color: Color(0xFF6F38C5),
 //                               size: 20,
 //                             ),
 //                             SizedBox(width: 10),
@@ -898,7 +898,7 @@
 //                               style: TextStyle(
 //                                 fontSize: 16,
 //                                 fontWeight: FontWeight.w700,
-//                                 color: Color(0xFF4E56C0),
+//                                 color: Color(0xFF6F38C5),
 //                               ),
 //                             ),
 //                           ],
@@ -954,7 +954,7 @@
 //           shaderCallback: (bounds) {
 //             return LinearGradient(
 //               colors: [
-//                 Color(0xFF4E56C0),
+//                 Color(0xFF6F38C5),
 //                 Color(0xFF9B5DE0),
 //               ],
 //             ).createShader(bounds);
@@ -972,12 +972,12 @@
 //           icon: Container(
 //             padding: EdgeInsets.all(8),
 //             decoration: BoxDecoration(
-//               color: Color(0xFF4E56C0).withOpacity(0.1),
+//               color: Color(0xFF6F38C5).withOpacity(0.1),
 //               shape: BoxShape.circle,
 //             ),
 //             child: Icon(
 //               Icons.arrow_back_ios_new_rounded,
-//               color: Color(0xFF4E56C0),
+//               color: Color(0xFF6F38C5),
 //               size: 20,
 //             ),
 //           ),
@@ -995,7 +995,7 @@
 //                     decoration: BoxDecoration(
 //                       gradient: LinearGradient(
 //                         colors: [
-//                           Color(0xFF4E56C0),
+//                           Color(0xFF6F38C5),
 //                           Color(0xFF9B5DE0),
 //                         ],
 //                       ),
@@ -1014,13 +1014,13 @@
 //                     'Loading Checkout...',
 //                     style: TextStyle(
 //                       fontSize: 18,
-//                       color: Color(0xFF4E56C0),
+//                       color: Color(0xFF6F38C5),
 //                       fontWeight: FontWeight.w600,
 //                     ),
 //                   ),
 //                   SizedBox(height: 10),
 //                   CircularProgressIndicator(
-//                     color: Color(0xFF4E56C0),
+//                     color: Color(0xFF6F38C5),
 //                   ),
 //                 ],
 //               ),
@@ -1073,14 +1073,14 @@
 //                             decoration: BoxDecoration(
 //                               gradient: LinearGradient(
 //                                 colors: [
-//                                   Color(0xFF4E56C0),
+//                                   Color(0xFF6F38C5),
 //                                   Color(0xFF9B5DE0),
 //                                 ],
 //                               ),
 //                               borderRadius: BorderRadius.circular(12),
 //                               boxShadow: [
 //                                 BoxShadow(
-//                                   color: Color(0xFF4E56C0).withOpacity(0.4),
+//                                   color: Color(0xFF6F38C5).withOpacity(0.4),
 //                                   blurRadius: 10,
 //                                   offset: Offset(0, 5),
 //                                 ),
@@ -1148,7 +1148,7 @@
 //                                       style: TextStyle(
 //                                         fontSize: 16,
 //                                         fontWeight: FontWeight.w700,
-//                                         color: Color(0xFF4E56C0),
+//                                         color: Color(0xFF6F38C5),
 //                                       ),
 //                                     ),
 //                                     Text(
@@ -1193,7 +1193,7 @@
 //                                 children: [
 //                                   Icon(
 //                                     Icons.note_alt_rounded,
-//                                     color: Color(0xFF4E56C0),
+//                                     color: Color(0xFF6F38C5),
 //                                     size: 24,
 //                                   ),
 //                                   SizedBox(width: 10),
@@ -1202,7 +1202,7 @@
 //                                     style: TextStyle(
 //                                       fontSize: 18,
 //                                       fontWeight: FontWeight.w700,
-//                                       color: Color(0xFF4E56C0),
+//                                       color: Color(0xFF6F38C5),
 //                                     ),
 //                                   ),
 //                                 ],
@@ -1219,7 +1219,7 @@
 //                                   ),
 //                                   focusedBorder: OutlineInputBorder(
 //                                     borderRadius: BorderRadius.circular(15),
-//                                     borderSide: BorderSide(color: Color(0xFF4E56C0), width: 2),
+//                                     borderSide: BorderSide(color: Color(0xFF6F38C5), width: 2),
 //                                   ),
 //                                 ),
 //                                 maxLines: 3,
@@ -1247,6 +1247,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/cart_service.dart';
+import 'package:aneuso_app/core/utils/local_notification_service.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('checkout_screen.dart');
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({Key? key}) : super(key: key);
@@ -1292,8 +1296,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       _checkoutSummary = CheckoutSummary(
         subtotal: cart.subtotal,
         totalItems: cart.totalItems,
-        tax: 0, // You can calculate tax based on your business logic
-        shipping: 0, // Add shipping calculation if needed
+        tax: 0.0, // You can calculate tax based on your business logic
+        shipping: 0.0, // Add shipping calculation if needed
         total: cart.subtotal,
       );
 
@@ -1370,6 +1374,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _showSuccessDialog(Map<String, dynamic> result) async {
+    // Fire a native Android notification for the successful order
+    final orderNumber = result['data']?['order_number']?.toString() ?? 'N/A';
+    await LocalNotificationService.showNotification(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: '✅ Order Placed Successfully!',
+      body: 'Your order #$orderNumber has been confirmed. Thank you for your purchase!',
+    );
+
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -1403,7 +1415,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF4E56C0),
+                  color: Color(0xFF6F38C5),
                 ),
               ),
               SizedBox(height: 15),
@@ -1430,7 +1442,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF4E56C0),
+                          color: Color(0xFF6F38C5),
                         ),
                       ),
                     ],
@@ -1466,7 +1478,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                        colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -1504,18 +1516,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         margin: EdgeInsets.only(bottom: 10),
         padding: EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFF4E56C0).withOpacity(0.1) : Colors.white,
+          color: isSelected ? Color(0xFF6F38C5).withOpacity(0.1) : Colors.white,
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
             color: isSelected
-                ? Color(0xFF4E56C0)
+                ? Color(0xFF6F38C5)
                 : Colors.grey.withOpacity(0.2),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Color(0xFF4E56C0).withOpacity(0.1),
+                    color: Color(0xFF6F38C5).withOpacity(0.1),
                     blurRadius: 10,
                     offset: Offset(0, 5),
                   ),
@@ -1529,13 +1541,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               height: 40,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Color(0xFF4E56C0)
+                    ? Color(0xFF6F38C5)
                     : Colors.grey.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 _getPaymentMethodIcon(method.typeName),
-                color: isSelected ? Colors.white : Color(0xFF4E56C0),
+                color: isSelected ? Colors.white : Color(0xFF6F38C5),
                 size: 20,
               ),
             ),
@@ -1549,7 +1561,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                     ),
                   ),
                   SizedBox(height: 4),
@@ -1563,7 +1575,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             if (isSelected)
               Icon(
                 Icons.check_circle_rounded,
-                color: Color(0xFF4E56C0),
+                color: Color(0xFF6F38C5),
                 size: 24,
               ),
           ],
@@ -1608,14 +1620,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF4E56C0).withOpacity(0.9),
+            Color(0xFF6F38C5).withOpacity(0.9),
             Color(0xFF9B5DE0).withOpacity(0.9),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF4E56C0).withOpacity(0.3),
+            color: Color(0xFF6F38C5).withOpacity(0.3),
             blurRadius: 15,
             offset: Offset(0, 8),
           ),
@@ -1688,7 +1700,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -1696,11 +1708,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+              colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
-            'Checkout',
+            _kScreenTitle,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -1712,12 +1724,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           icon: Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF4E56C0).withOpacity(0.1),
+              color: Color(0xFF6F38C5).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF4E56C0),
+              color: Color(0xFF6F38C5),
               size: 20,
             ),
           ),
@@ -1734,7 +1746,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                        colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -1751,12 +1763,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     'Preparing Checkout...',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 10),
-                  CircularProgressIndicator(color: Color(0xFF4E56C0)),
+                  CircularProgressIndicator(color: Color(0xFF6F38C5)),
                 ],
               ),
             )
@@ -1807,12 +1819,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF4E56C0).withOpacity(0.4),
+                              color: Color(0xFF6F38C5).withOpacity(0.4),
                               blurRadius: 10,
                               offset: Offset(0, 5),
                             ),
@@ -1876,7 +1888,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(height: 10),
@@ -1899,7 +1911,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF4E56C0),
+                                        color: Color(0xFF6F38C5),
                                       ),
                                     ),
                                   ],
@@ -1934,7 +1946,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(height: 10),
@@ -1951,7 +1963,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Color(0xFF4E56C0)),
+                              borderSide: BorderSide(color: Color(0xFF6F38C5)),
                             ),
                           ),
                         ),
@@ -1982,7 +1994,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(height: 10),
@@ -1999,7 +2011,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Color(0xFF4E56C0)),
+                              borderSide: BorderSide(color: Color(0xFF6F38C5)),
                             ),
                           ),
                         ),
@@ -2030,7 +2042,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF4E56C0),
+                            color: Color(0xFF6F38C5),
                           ),
                         ),
                         SizedBox(height: 15),
@@ -2080,7 +2092,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             'Your payment is secure. By completing your purchase, you agree to our Terms of Service and Privacy Policy.',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF4E56C0),
+                              color: Color(0xFF6F38C5),
                             ),
                           ),
                         ),
@@ -2115,7 +2127,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 )
                               : LinearGradient(
                                   colors: [
-                                    Color(0xFF4E56C0),
+                                    Color(0xFF6F38C5),
                                     Color(0xFF9B5DE0),
                                     Color(0xFFD78FEE),
                                   ],
@@ -2125,7 +2137,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               ? null
                               : [
                                   BoxShadow(
-                                    color: Color(0xFF4E56C0).withOpacity(0.4),
+                                    color: Color(0xFF6F38C5).withOpacity(0.4),
                                     blurRadius: 10,
                                     offset: Offset(0, 5),
                                   ),

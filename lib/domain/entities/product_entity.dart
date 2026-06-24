@@ -8,6 +8,7 @@ class ProductEntity {
   final int stockQuantity;
   final int statusId;
   final List<String> images;
+  final String? categoryName;
 
   ProductEntity({
     required this.id,
@@ -19,6 +20,7 @@ class ProductEntity {
     required this.stockQuantity,
     required this.statusId,
     required this.images,
+    this.categoryName,
   });
 
   factory ProductEntity.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class ProductEntity {
               ?.map((e) => e.toString())
               .toList() ??
           [],
+      categoryName: json['category_name']?.toString(),
     );
   }
 }

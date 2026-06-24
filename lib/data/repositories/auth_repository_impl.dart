@@ -34,7 +34,21 @@ class AuthRepositoryImpl implements AuthRepository {
           success: response.success,
           token: null,
           message: response.message,
-          user: null,
+          user: response.data?.user != null
+              ? UserEntity(
+                  id: response.data!.user.id,
+                  fullName: response.data!.user.fullName,
+                  email: response.data!.user.email,
+                  phoneNumber: response.data!.user.phoneNumber,
+                  userTypeId: response.data!.user.userTypeId,
+                  designationId: response.data!.user.designationId,
+                  activeStatus: response.data!.user.activeStatus,
+                  emailVerifiedAt: response.data!.user.emailVerifiedAt,
+                  driverId: response.data!.user.driverId,
+                  industryName: response.data!.user.industryName,
+                )
+              : null,
+          requiresVerification: response.requiresVerification == true,
         );
       }
 
@@ -182,6 +196,7 @@ class AuthRepositoryImpl implements AuthRepository {
         designationId: user.designationId,
         activeStatus: user.activeStatus,
         emailVerifiedAt: user.emailVerifiedAt,
+        driverId: user.driverId,
         industryName: user.industryName,
       );
     } catch (e) {
@@ -210,6 +225,7 @@ class AuthRepositoryImpl implements AuthRepository {
         designationId: user.designationId,
         activeStatus: user.activeStatus,
         emailVerifiedAt: user.emailVerifiedAt,
+        driverId: user.driverId,
         industryName: user.industryName,
       );
     } catch (e) {

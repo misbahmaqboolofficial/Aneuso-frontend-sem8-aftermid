@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/pickup_status.dart';
 import '../../../core/utils/storage_util.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('admin_pickups_screen.dart');
 
 class AdminPickupsScreen extends StatefulWidget {
   const AdminPickupsScreen({super.key});
@@ -14,6 +19,7 @@ class AdminPickupsScreen extends StatefulWidget {
 
 class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
   List pickups = [];
+  List _drivers = [];
   bool isLoading = true;
   String? selectedStatus;
 
@@ -26,6 +32,97 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
   void initState() {
     super.initState();
     _fetchPickups();
+    _fetchDrivers();
+  }
+
+  Future<void> _fetchDrivers() async {
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.get(
+        Uri.parse('${AppConstants.baseUrl}/industry/available-drivers'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      final result = json.decode(response.body);
+      if (result['success'] == true && mounted) {
+        setState(() => _drivers = result['data'] ?? []);
+      }
+    } catch (e) {
+      debugPrint('Error fetching drivers: $e');
+    }
+  }
+
+  Future<void> _assignDriver(int pickupId, String? currentDriverName) async {
+    if (_drivers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No approved drivers available')),
+      );
+      return;
+    }
+
+    int? selectedId;
+    final confirmed = await showDialog<int>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Assign driver'),
+          content: DropdownButtonFormField<int>(
+            value: selectedId,
+            decoration: const InputDecoration(labelText: 'Select driver'),
+            items: _drivers
+                .map<DropdownMenuItem<int>>((d) {
+                  final id = d['id'] is int ? d['id'] as int : int.parse('${d['id']}');
+                  return DropdownMenuItem(
+                    value: id,
+                    child: Text('${d['full_name'] ?? 'Driver'} (${d['vehicle_plate_number'] ?? '—'})'),
+                  );
+                })
+                .toList(),
+            onChanged: (v) => setDialogState(() => selectedId = v),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+              onPressed: selectedId == null ? null : () => Navigator.pop(ctx, selectedId),
+              child: const Text('Assign'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed == null) return;
+
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.put(
+        Uri.parse('${AppConstants.baseUrl}/pickups/schedules/$pickupId/assign-driver'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'driver_id': confirmed}),
+      );
+      final result = json.decode(response.body);
+      if (response.statusCode == 200 && result['success'] != false) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Driver assigned successfully')),
+          );
+          _fetchPickups();
+        }
+      } else {
+        throw Exception(result['message'] ?? 'Assign failed');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e')),
+        );
+      }
+    }
   }
 
   Future<void> _fetchPickups() async {
@@ -68,9 +165,10 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
   Color _getStatusColor(int? statusId) {
     switch (statusId) {
       case 1: return const Color(0xFF2196F3); // Scheduled
-      case 2: return const Color(0xFFFF9800); // In Progress
+      case 2: return const Color(0xFFFF9800); // En Route
       case 3: return const Color(0xFF4CAF50); // Completed
-      case 4: return const Color(0xFFF44336); // Cancelled
+      case 4: return const Color(0xFF9B5DE0); // Reached Destination
+      case 6: return const Color(0xFFF44336); // Cancelled
       default: return const Color(0xFF9E9E9E);
     }
   }
@@ -80,7 +178,8 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
       case 1: return Icons.calendar_today;
       case 2: return Icons.local_shipping;
       case 3: return Icons.check_circle;
-      case 4: return Icons.cancel;
+      case 4: return Icons.place_rounded;
+      case 6: return Icons.cancel;
       default: return Icons.help_outline;
     }
   }
@@ -88,39 +187,63 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FF),
+      backgroundColor: const Color(0xFFF9F6FF),
       body: CustomScrollView(
         slivers: [
           // Header Section
           SliverAppBar(
-            expandedHeight: 200.0,
+            backgroundColor: const Color(0xFF9B5DE0),
             floating: false,
             pinned: true,
             elevation: 0,
             leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
-                child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-              ),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                'Pickup Management',
-                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5, color: Colors.white),
+            actions: [
+              IconButton(
+                onPressed: _fetchPickups,
+                icon: const Icon(Icons.refresh, color: Colors.white),
               ),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF9B5DE0), Color(0xFFD78FEE), Color(0xFFFDCFFA)],
-                  ),
+            ],
+          ),
+
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF9B5DE0),
+                    Color(0xFF6F38C5),
+                  ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 80, 20, 0),
-                  child: Row(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _kScreenTitle,
+                    style: GoogleFonts.poppins(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    height: 1,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildHeaderStat('Total', totalCount.toString(), Icons.analytics),
@@ -128,19 +251,9 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
                       _buildHeaderStat('Done', completedCount.toString(), Icons.task_alt),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
-            actions: [
-              IconButton(
-                onPressed: _fetchPickups,
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
-                  child: const Icon(Icons.refresh, color: Colors.white, size: 20),
-                ),
-              ),
-            ],
           ),
 
           // Filter Section
@@ -185,10 +298,24 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.8), size: 20),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-        Text(label, style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.7))),
+        Icon(icon, color: Colors.white.withOpacity(0.9), size: 22),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: Colors.white.withOpacity(0.8),
+          ),
+        ),
       ],
     );
   }
@@ -299,8 +426,14 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            pickup['company_name'] ?? 'Unknown Company',
-                            style: TextStyle(color: Colors.grey[500], fontSize: 14, fontWeight: FontWeight.w500),
+                            (pickup['company_name'] ?? 'Unknown Company').toString().toLowerCase().contains('iba')
+                                ? 'EcoWaste Solutions'
+                                : (pickup['company_name'] ?? 'Unknown Company'),
+                            style: GoogleFonts.poppins(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
@@ -353,6 +486,57 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
                         style: const TextStyle(color: Color(0xFF9B5DE0), fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ],
+                  ),
+                ),
+                if (pickup['driver_id'] != null &&
+                    PickupStatus.canLiveTrack(statusId)) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final id = pickup['id'] is int
+                            ? pickup['id'] as int
+                            : int.parse('${pickup['id']}');
+                        Navigator.pushNamed(
+                          context,
+                          '/live-tracking',
+                          arguments: {
+                            'task_id': id,
+                            'task_type': 'industry_pickup',
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.location_on, size: 18),
+                      label: const Text('Live Track Driver'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6F38C5),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _assignDriver(
+                      pickup['id'] is int ? pickup['id'] as int : int.parse('${pickup['id']}'),
+                      pickup['driver_name']?.toString(),
+                    ),
+                    icon: const Icon(Icons.person_add_alt_1, size: 18),
+                    label: Text(
+                      pickup['driver_id'] == null ? 'Assign driver' : 'Reassign driver',
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF6F38C5),
+                      side: const BorderSide(color: Color(0xFF6F38C5)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
               ],

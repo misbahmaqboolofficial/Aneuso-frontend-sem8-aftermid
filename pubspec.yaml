@@ -48,6 +48,13 @@ dependencies:
   http_parser: ^4.0.2
   flutter_local_notifications: ^21.0.0
   supabase_flutter: ^2.3.0
+  google_fonts: ^6.1.0
+  geolocator: ^13.0.2
+  url_launcher: ^6.3.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  pointer_interceptor: ^0.10.1+2
+
 
 dev_dependencies:
   flutter_test:
@@ -71,14 +78,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-  # assets:
-    # - assets/images/lays.png
-    # - assets/images/engro.png
-    # - assets/images/unilever.png
+  assets:
+    - assets/fonts/Poppins-Regular.ttf
+    - assets/fonts/Poppins-Bold.ttf
+    - assets/fonts/Poppins-SemiBold.ttf
+    - assets/fonts/Poppins-ExtraBold.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

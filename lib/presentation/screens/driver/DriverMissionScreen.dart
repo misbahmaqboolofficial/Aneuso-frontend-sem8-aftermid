@@ -1,8 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/form_validators.dart';
+import '../../../core/constants/pickup_status.dart';
+import '../../../data/services/driver_tracking_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../../core/utils/storage_util.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('DriverMissionScreen.dart');
 
 class DriverMissionScreen extends StatefulWidget {
   const DriverMissionScreen({super.key});
@@ -70,9 +79,9 @@ class _DriverMissionScreenState extends State<DriverMissionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FF),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
-        title: const Text('My Cleanup Missions', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(_kScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF9B5DE0),
         elevation: 0,
       ),
@@ -140,7 +149,7 @@ class _DriverMissionScreenState extends State<DriverMissionScreen> {
   Widget _buildStatusChip(int statusId) {
     String label = 'Assigned';
     Color color = Colors.blue;
-    if (statusId == 207) { label = 'En Route'; color = Colors.orange; }
+    if (statusId == 207) { label = 'On the Way'; color = Colors.orange; }
     if (statusId == 205) { label = 'Arrived'; color = Colors.indigo; }
     if (statusId == 208) { label = 'Collected'; color = Colors.green; }
     
@@ -165,13 +174,13 @@ class _DriverMissionScreenState extends State<DriverMissionScreen> {
   Widget _buildActionButtons(Map<String, dynamic> mission) {
     final statusId = mission['report_status_id'];
     
-    if (statusId == 206) {
-      return _btn('START DRIVING (EN ROUTE)', () => updateStatus(mission['id'], 'en-route'), const Color(0xFF9B5DE0));
+    if (statusId == ReportStatus.assigned) {
+      return _btn('START TRACKING (ON THE WAY)', () => _startMissionTracking(mission), const Color(0xFF9B5DE0));
     }
-    if (statusId == 207) {
-      return _btn('ARRIVED AT LOCATION', () => updateStatus(mission['id'], 'arrive'), const Color(0xFF4E56C0));
+    if (statusId == ReportStatus.enRoute) {
+      return _btn('ARRIVED AT LOCATION', () => _markMissionArrived(mission['id']), const Color(0xFF6F38C5));
     }
-    if (statusId == 205) {
+    if (statusId == ReportStatus.arrived) {
       return _btn('MARK AS COLLECTED', () => _showCollectionDialog(mission['id']), Colors.green);
     }
     
@@ -189,28 +198,90 @@ class _DriverMissionScreenState extends State<DriverMissionScreen> {
     );
   }
 
+  Future<void> _startMissionTracking(Map<String, dynamic> mission) async {
+    final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
+    final dId = user?.driverId ?? 0;
+    try {
+      await DriverTrackingService.instance.start(
+        taskType: TrackingTaskType.adminCleanup,
+        taskId: mission['id'] as int,
+        driverId: dId,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tracking started')),
+        );
+        fetchMissions();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      }
+    }
+  }
+
+  Future<void> _markMissionArrived(int reportId) async {
+    try {
+      await DriverTrackingService.instance.markReached(
+        taskType: TrackingTaskType.adminCleanup,
+        taskId: reportId,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Arrived at cleanup location')),
+        );
+        fetchMissions();
+      }
+    } catch (e) {
+      await updateStatus(reportId, 'arrive');
+    }
+  }
+
   void _showCollectionDialog(int reportId) {
     final weight = TextEditingController();
+    final formKey = GlobalKey<FormState>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) => Padding(
         padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
-        child: Column(
+        child: Form(
+          key: formKey,
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text('Submit Collection Evidence', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            TextField(controller: weight, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Actual Weight Collected (kg)')),
+            TextFormField(
+              controller: weight,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Actual Weight Collected (kg)'),
+              validator: FormValidators.weightKg,
+            ),
             const SizedBox(height: 20),
-            _btn('SUBMIT PROOF', () {
+            _btn('SUBMIT PROOF', () async {
+              if (!formKey.currentState!.validate()) return;
               Navigator.pop(context);
+              double? latitude;
+              double? longitude;
+              try {
+                final pos = await Geolocator.getCurrentPosition(
+                  locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+                );
+                latitude = pos.latitude;
+                longitude = pos.longitude;
+              } catch (e) {
+                debugPrint('Could not get location on submit-collection: $e');
+              }
               updateStatus(reportId, 'submit-collection', extraData: {
                 'actual_volume': weight.text,
                 'after_photo_url': 'https://via.placeholder.com/400x300.png?text=After+Cleanup+Proof', // Placeholder for now
+                if (latitude != null) 'latitude': latitude,
+                if (longitude != null) 'longitude': longitude,
               });
             }, Colors.green),
           ],
+        ),
         ),
       ),
     );

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/utils/storage_util.dart';
 import 'package:aneuso_app/data/models/user_model.dart';
+import 'package:aneuso_app/data/services/driver_tracking_service.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/user_entity.dart';
@@ -17,6 +19,7 @@ class AuthProvider with ChangeNotifier {
   UserEntity? _currentUser;
   bool _isLoading = false;
   String? _error;
+  bool _dashboardCitizenMode = false;
 
   AuthProvider(this._authService);
 
@@ -29,6 +32,7 @@ class AuthProvider with ChangeNotifier {
   // OTP verification state
   bool _isVerifyingOtp = false;
   bool _isResendingOtp = false;
+  bool _loginRequiresVerification = false;
   int _otpTimeoutSeconds = 600; // 10 minutes
   Timer? _otpTimer;
   String? _otpVerificationEmail;
@@ -40,6 +44,7 @@ class AuthProvider with ChangeNotifier {
   bool get isLoadingDesignations => _isLoadingDesignations;
   bool get isVerifyingOtp => _isVerifyingOtp;
   bool get isResendingOtp => _isResendingOtp;
+  bool get loginRequiresVerification => _loginRequiresVerification;
   int get otpTimeoutSeconds => _otpTimeoutSeconds;
   String? get otpVerificationEmail => _otpVerificationEmail;
   String? get otpVerificationPurpose => _otpVerificationPurpose;
@@ -50,6 +55,50 @@ class AuthProvider with ChangeNotifier {
   String? get error => _error;
   bool get isLoggedIn => _currentUser != null;
 
+  /// True when dashboard/drawer should show citizen shop & community features.
+  bool get showCitizenDashboard {
+    final u = _currentUser;
+    if (u == null) return false;
+    if (u.isCitizen) return true;
+    return _dashboardCitizenMode;
+  }
+
+  bool get dashboardCitizenMode => _dashboardCitizenMode;
+
+  bool canToggleCitizenDashboard(UserEntity? user) =>
+      user != null && user.canUseCitizenDashboard;
+
+  Future<void> loadDashboardCitizenMode() async {
+    final u = _currentUser;
+    if (u == null || !u.canUseCitizenDashboard) {
+      _dashboardCitizenMode = false;
+      return;
+    }
+    _dashboardCitizenMode = StorageUtil.getStringData(
+          AppConstants.dashboardCitizenModeKey(u.id),
+        ) ==
+        '1';
+  }
+
+  Future<void> setDashboardCitizenMode(bool citizenMode) async {
+    final u = _currentUser;
+    if (u == null || !u.canUseCitizenDashboard) return;
+    _dashboardCitizenMode = citizenMode;
+    await StorageUtil.setStringData(
+      AppConstants.dashboardCitizenModeKey(u.id),
+      citizenMode ? '1' : '0',
+    );
+    notifyListeners();
+  }
+
+  /// Test-only helper for widget/golden screenshot tests.
+  @visibleForTesting
+  void setTestUser(UserEntity user) {
+    _currentUser = user;
+    _isLoading = false;
+    notifyListeners();
+  }
+
   // Initialize auth state
   Future<void> initialize() async {
     _isLoading = true;
@@ -59,6 +108,7 @@ class AuthProvider with ChangeNotifier {
       final isLoggedIn = await _authService.isUserLoggedIn();
       if (isLoggedIn) {
         _currentUser = await _authService.getCurrentUser();
+        await loadDashboardCitizenMode();
       }
     } catch (e) {
       _error = e.toString();
@@ -128,6 +178,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> login({required String email, required String password}) async {
     _isLoading = true;
     _error = null;
+    _loginRequiresVerification = false;
     notifyListeners();
 
     try {
@@ -136,12 +187,14 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       if (authResponse.success == false) {
+        _loginRequiresVerification = authResponse.requiresVerification;
         _error = authResponse.message;
         _isLoading = false;
         notifyListeners();
         return false;
       }
       _currentUser = authResponse.user;
+      await loadDashboardCitizenMode();
       _isLoading = false;
       notifyListeners();
       return true;
@@ -262,12 +315,14 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      await DriverTrackingService.instance.stop();
       // String token = StorageUtil.getToken() ?? "";
       // String user = StorageUtil.getUserData() ?? "";
       // print("Logout called token. $token ");
       // print("logout called user. $user");
       await _authService.logout();
       _currentUser = null;
+      _dashboardCitizenMode = false;
       _error = null;
     } catch (e) {
       // print("logout called error. $e");

@@ -48,6 +48,12 @@
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs camera access to take photos of collected waste</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app needs location access to record pickup location</string>
+		<string>Location is used for live driver pickup tracking and recording pickup coordinates.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Location is used so industry and admin users can see your live position during waste pickups, including when the app is in the background.</string>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>location</string>
+		</array>
 	</dict>
 </plist>

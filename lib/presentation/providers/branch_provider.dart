@@ -94,6 +94,14 @@ class BranchProvider extends ChangeNotifier {
     await fetchBranches(refresh: true);
   }
 
+  Future<void> applyFilters({int? companyId, bool? isMain}) async {
+    _companyFilter = companyId;
+    _isMainFilter = isMain;
+    _currentPage = 1;
+    _branches = [];
+    await fetchBranches(refresh: true);
+  }
+
   Future<BranchEntity> createBranch(Map<String, dynamic> body) async {
     final branch = await _service.createBranch(body);
     _branches.insert(0, branch);

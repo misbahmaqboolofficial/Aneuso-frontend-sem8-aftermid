@@ -5,43 +5,60 @@ import 'package:aneuso_app/presentation/screens/driver/ConfirmPickupsScreen.dart
 import 'package:aneuso_app/presentation/screens/driver/DailyTasksScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/ServiceHistoryScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/schedule_pickup.dart';
-import 'package:aneuso_app/presentation/screens/public_garbage_reports_screen.dart';
+import 'package:aneuso_app/presentation/screens/admin/public_garbage_reports_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'core/services/global_notification_listener.dart';
 import 'core/utils/local_notification_service.dart';
 import 'core/utils/storage_util.dart';
+import 'data/services/driver_tracking_service.dart';
 import 'services/auth_service.dart';
 import 'presentation/providers/auth_provider.dart';
-import 'presentation/screens/login_screen.dart';
-import 'presentation/screens/register_screen.dart';
-import 'presentation/screens/otp_verification_screen.dart';
+import 'presentation/screens/auth/login_screen.dart';
+import 'presentation/screens/auth/register_screen.dart';
+import 'presentation/screens/auth/otp_verification_screen.dart';
 import 'presentation/providers/company_provider.dart';
 import 'presentation/providers/admin_product_provider.dart';
-import 'presentation/screens/company_list_screen.dart';
-import 'presentation/screens/dashboard_screen.dart';
+import 'presentation/screens/admin/company_list_screen.dart';
+import 'presentation/screens/common/dashboard_screen.dart';
 import 'presentation/providers/branch_provider.dart';
 import 'presentation/providers/tutorial_provider.dart';
-import 'presentation/screens/branch_list_screen.dart';
-import 'presentation/screens/branch_stats_screen.dart';
-import 'presentation/screens/profile_screen.dart';
-import 'presentation/screens/topics_list_screen.dart';
-import 'presentation/screens/topic_detail_screen.dart';
-import 'presentation/screens/video_detail_screen.dart';
-import 'presentation/screens/video_player_screen.dart';
-import 'presentation/screens/tutorials_home_screen.dart';
-import 'presentation/screens/products_screen.dart';
+import 'presentation/providers/driver_ratings_provider.dart';
+import 'presentation/screens/driver/driver_my_ratings_screen.dart';
+import 'presentation/screens/admin/admin_driver_ratings_screen.dart';
+import 'presentation/screens/admin/branch_list_screen.dart';
+import 'presentation/screens/admin/branch_stats_screen.dart';
+import 'presentation/screens/common/profile_screen.dart';
+import 'presentation/screens/common/tutorials/topics_list_screen.dart';
+import 'presentation/screens/common/tutorials/topic_detail_screen.dart';
+import 'presentation/screens/common/tutorials/video_detail_screen.dart';
+import 'presentation/screens/common/tutorials/video_player_screen.dart';
+import 'presentation/screens/common/tutorials/tutorials_home_screen.dart';
+import 'presentation/screens/citizen/products_screen.dart';
 import 'presentation/screens/admin/admin_products_screen.dart';
 import 'presentation/screens/admin/product_form_screen.dart';
 import 'presentation/screens/admin/admin_deals_screen.dart';
 import 'presentation/screens/industry/create_deal_screen.dart';
+import 'presentation/screens/industry/view_deals_screen.dart';
 import 'presentation/screens/admin/admin_pickups_screen.dart';
 import 'presentation/screens/citizen/CleanupCampaignsScreen.dart';
 import 'presentation/screens/citizen/CampaignDetailScreen.dart';
 import 'presentation/screens/admin/AdminCleanupDashboard.dart';
 import 'presentation/screens/driver/DriverMissionScreen.dart';
+import 'presentation/screens/admin/admin_broadcast_screen.dart';
+import 'presentation/screens/industry/industry_three_bin_training_screen.dart';
+import 'presentation/screens/common/live_tracking_screen.dart';
+import 'presentation/screens/chat/messages_hub_screen.dart';
+import 'presentation/providers/job_provider.dart';
+import 'presentation/screens/common/jobs/jobs_list_screen.dart';
+import 'presentation/screens/common/jobs/job_detail_screen.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'core/theme/app_colors.dart';
+import 'core/theme/app_theme.dart';
+import 'presentation/widgets/app_ui.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +74,9 @@ void main() async {
 
   // Initialize notifications
   await LocalNotificationService.initialize();
+
+  // Resume driver background GPS if a pickup was being tracked
+  await DriverTrackingService.instance.restoreSessionIfNeeded();
 
   runApp(const MyApp());
 }
@@ -75,16 +95,35 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BranchProvider()),
         ChangeNotifierProvider(create: (_) => TutorialProvider()),
         ChangeNotifierProvider(create: (_) => AdminProductProvider()),
+        ChangeNotifierProvider(create: (_) => DriverRatingsProvider()),
+        ChangeNotifierProvider(create: (_) => JobProvider()),
       ],
       child: MaterialApp(
         title: 'ANEUSO - Waste Management',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
+        theme: AppTheme.light,
+        themeMode: ThemeMode.light,
+        builder: (context, child) {
+          final auth = context.watch<AuthProvider>();
+          Widget appChild =
+              AppResponsiveScope(child: child ?? const SizedBox.shrink());
+
+          if (auth.isLoggedIn && auth.currentUser != null) {
+            appChild = GlobalNotificationListener(
+              userId: auth.currentUser!.id,
+              child: appChild,
+            );
+          }
+
+          return appChild;
+        },
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, child) {
             if (authProvider.isLoading) {
               return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
+                body: Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
               );
             }
 
@@ -149,11 +188,16 @@ class MyApp extends StatelessWidget {
           '/branches': (context) => const BranchListScreen(),
           '/branches/stats': (context) => const BranchStatsScreen(),
           '/admin/all_pickups': (context) => const AdminPickupsScreen(),
+          '/driver/my_ratings': (context) => const DriverMyRatingsScreen(),
+          '/admin/driver_ratings': (context) => const AdminDriverRatingsScreen(),
+          '/admin/broadcast': (context) => const AdminBroadcastScreen(),
 
           // Industry routes
           '/industry/schedule_pickup': (context) => const SchedulePickup(),
+          '/industry/three-bin-training': (context) => const IndustryThreeBinTrainingScreen(),
           '/industry/service_history': (context) => ServiceHistoryScreen(),
           '/industry/create_deal': (context) => CreateDealScreen(),
+          '/industry/view_deals': (context) => const ViewDealsScreen(),
 
           // Driver routes
           '/driver/driverdailytasks': (context) => const DriverTasksScreen(),
@@ -171,6 +215,22 @@ class MyApp extends StatelessWidget {
           },
           '/admin/cleanup-dashboard': (context) => const AdminCleanupDashboard(),
           '/driver/cleanup-missions': (context) => const DriverMissionScreen(),
+
+          // Live Tracking
+          '/messages': (context) => const MessagesHubScreen(),
+          '/jobs': (context) => const JobsListScreen(),
+          '/jobs/detail': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+            return JobDetailScreen(jobId: args?['id'] ?? 0);
+          },
+
+          '/live-tracking': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+            return LiveTrackingScreen(
+              taskId: (args?['task_id'] ?? args?['pickup_id']) as int? ?? 0,
+              taskType: args?['task_type'] as String? ?? 'industry_pickup',
+            );
+          },
         },
       ),
     );

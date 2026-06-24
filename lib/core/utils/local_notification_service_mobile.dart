@@ -1,10 +1,16 @@
+import 'dart:io' show Platform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      return;
+    }
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -20,8 +26,13 @@ class LocalNotificationService {
       iOS: initializationSettingsIOS,
     );
 
+    // Android 13+ requires explicit runtime permission for notifications.
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+
     await _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification click if needed
       },
@@ -33,6 +44,9 @@ class LocalNotificationService {
     required String title,
     required String body,
   }) async {
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      return;
+    }
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'aneuso_channel_id',
       'Aneuso Notifications',
@@ -55,10 +69,10 @@ class LocalNotificationService {
     );
 
     await _notificationsPlugin.show(
-      id,
-      title,
-      body,
-      notificationDetails,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
     );
   }
 }

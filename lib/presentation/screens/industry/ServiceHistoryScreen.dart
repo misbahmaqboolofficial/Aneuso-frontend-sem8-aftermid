@@ -1,9 +1,16 @@
 import 'package:aneuso_app/core/constants/app_constants.dart';
+import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/core/utils/storage_util.dart';
+import 'package:aneuso_app/presentation/providers/driver_ratings_provider.dart';
+import 'package:aneuso_app/presentation/widgets/ratings/rate_driver_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('ServiceHistoryScreen.dart');
 
 class ServiceHistoryScreen extends StatefulWidget {
   const ServiceHistoryScreen({super.key});
@@ -102,12 +109,12 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+          colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF4E56C0).withOpacity(0.3),
+            color: const Color(0xFF6F38C5).withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -241,7 +248,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                   decoration: BoxDecoration(
                     gradient: index % 2 == 0
                         ? const LinearGradient(
-                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                           )
                         : const LinearGradient(
                             colors: [Color(0xFFD78FEE), Color(0xFFFDCFFA)],
@@ -264,7 +271,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A1A2E),
+                          color: Color(0xFFFFFFFF),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -291,7 +298,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                   child: Text(
                     history.wasteCategory.replaceAll(' Waste', ''),
                     style: const TextStyle(
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -305,7 +312,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                 _buildDetailItem(
                   Icons.person,
                   history.driverName,
-                  color: const Color(0xFF4E56C0),
+                  color: const Color(0xFF6F38C5),
                 ),
                 const SizedBox(width: 16),
                 _buildDetailItem(
@@ -364,10 +371,59 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                 ),
               ],
             ),
+            if (_canRateServiceHistory(history)) ...[
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton.icon(
+                  onPressed: () => _openRateServiceHistory(context, history),
+                  icon: const Icon(Icons.star_rate_rounded, size: 18),
+                  label: const Text('Rate driver'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primaryDeep,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  bool _canRateServiceHistory(ServiceHistory history) {
+    return history.pickupStatusId == 3 &&
+        history.scheduleDriverId != null &&
+        history.scheduleDriverId! > 0 &&
+        history.driverRatingId == null &&
+        history.pickupScheduleId != null;
+  }
+
+  Future<void> _openRateServiceHistory(
+    BuildContext context,
+    ServiceHistory history,
+  ) async {
+    final pid = history.pickupScheduleId;
+    if (pid == null) return;
+    final driverName = history.driverName;
+    final summary =
+        '${history.branchName} · ${formatDate(history.confirmationTime)}';
+
+    await RateDriverSheet.show(
+      context,
+      driverName: driverName,
+      pickupSummary: summary,
+      onSubmit: (rating, comment) async {
+        final res =
+            await context.read<DriverRatingsProvider>().submitIndustryRating(
+                  pickupId: pid,
+                  rating: rating,
+                  reviewComment: comment,
+                );
+        return res['success'] == true;
+      },
+    );
+    if (context.mounted) fetchServiceHistory();
   }
 
   Widget _buildDetailItem(IconData icon, String text, {Color? color}) {
@@ -402,7 +458,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             height: 80,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -423,7 +479,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A2E),
+              color: Color(0xFFFFFFFF),
             ),
           ),
           const SizedBox(height: 8),
@@ -477,7 +533,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             ElevatedButton(
               onPressed: fetchServiceHistory,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4E56C0),
+                backgroundColor: const Color(0xFF6F38C5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -513,7 +569,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
               height: 100,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                  colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                 ),
                 borderRadius: BorderRadius.circular(25),
               ),
@@ -529,7 +585,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1A1A2E),
+                color: Color(0xFFFFFFFF),
               ),
             ),
             const SizedBox(height: 10),
@@ -542,7 +598,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             ElevatedButton(
               onPressed: fetchServiceHistory,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4E56C0),
+                backgroundColor: const Color(0xFF6F38C5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -570,12 +626,12 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Service History',
-          style: TextStyle(
+        title: Text(
+          _kScreenTitle,
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1A1A2E),
+            color: Color(0xFFFFFFFF),
           ),
         ),
         centerTitle: false,
@@ -592,7 +648,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
               ),
               child: const Icon(
                 Icons.refresh,
-                color: Color(0xFF4E56C0),
+                color: Color(0xFF6F38C5),
                 size: 20,
               ),
             ),
@@ -611,7 +667,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
           ? _buildEmptyState()
           : RefreshIndicator(
               onRefresh: fetchServiceHistory,
-              color: const Color(0xFF4E56C0),
+              color: const Color(0xFF6F38C5),
               backgroundColor: Colors.white,
               child: CustomScrollView(
                 slivers: [
@@ -672,6 +728,10 @@ class ServiceHistory {
   final String branchName;
   final String wasteCategory;
   final String driverName;
+  final int? pickupScheduleId;
+  final int? pickupStatusId;
+  final int? scheduleDriverId;
+  final int? driverRatingId;
 
   ServiceHistory({
     required this.id,
@@ -682,18 +742,34 @@ class ServiceHistory {
     required this.branchName,
     required this.wasteCategory,
     required this.driverName,
+    this.pickupScheduleId,
+    this.pickupStatusId,
+    this.scheduleDriverId,
+    this.driverRatingId,
   });
 
   factory ServiceHistory.fromJson(Map<String, dynamic> json) {
+    int? asInt(dynamic v) {
+      if (v == null) return null;
+      if (v is int) return v;
+      return int.tryParse(v.toString());
+    }
+
     return ServiceHistory(
-      id: json['id'],
-      confirmationTime: json['confirmation_time'],
-      collectedWeightKg: json['collected_weight_kg'],
-      verificationStatusId: json['verification_status_id'],
-      companyName: json['company_name'],
-      branchName: json['branch_name'],
-      wasteCategory: json['waste_category'],
-      driverName: json['driver_name'],
+      id: json['id'] is int ? json['id'] as int : int.tryParse('${json['id']}') ?? 0,
+      confirmationTime: json['confirmation_time']?.toString() ?? '',
+      collectedWeightKg: json['collected_weight_kg']?.toString() ?? '0',
+      verificationStatusId: json['verification_status_id'] is int
+          ? json['verification_status_id'] as int
+          : int.tryParse('${json['verification_status_id']}') ?? 0,
+      companyName: json['company_name']?.toString() ?? '',
+      branchName: json['branch_name']?.toString() ?? '',
+      wasteCategory: json['waste_category']?.toString() ?? '',
+      driverName: json['driver_name']?.toString() ?? '',
+      pickupScheduleId: asInt(json['pickup_schedule_id']),
+      pickupStatusId: asInt(json['pickup_status_id']),
+      scheduleDriverId: asInt(json['schedule_driver_id']),
+      driverRatingId: asInt(json['driver_rating_id']),
     );
   }
 }

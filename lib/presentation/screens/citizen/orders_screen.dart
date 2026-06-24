@@ -1,6 +1,10 @@
 import 'package:aneuso_app/presentation/screens/citizen/order_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/order_service.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+import 'package:aneuso_app/core/utils/order_status_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('orders_screen.dart');
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({Key? key}) : super(key: key);
@@ -12,6 +16,7 @@ class OrdersScreen extends StatefulWidget {
 class _OrdersScreenState extends State<OrdersScreen> {
   List<Order> _orders = [];
   bool _isLoading = true;
+  bool _showPreviousOrders = false;
   String? _error;
 
   @override
@@ -40,13 +45,24 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
   }
 
+  List<Order> get _filteredOrders {
+    return _orders.where((order) {
+      return _showPreviousOrders ? isPreviousOrder(order) : isCurrentOrder(order);
+    }).toList();
+  }
+
   Color _getStatusColor(String status) {
     final lowerStatus = status.toLowerCase();
     if (lowerStatus.contains('pending')) return Colors.orange;
-    if (lowerStatus.contains('processing')) return Colors.blue;
-    if (lowerStatus.contains('shipped')) return Colors.purple;
-    if (lowerStatus.contains('delivered')) return Colors.green;
-    if (lowerStatus.contains('cancelled')) return Colors.red;
+    if (lowerStatus.contains('processing') || lowerStatus.contains('confirmed') || lowerStatus.contains('scheduled')) {
+      return Colors.blue;
+    }
+    if (lowerStatus.contains('ship')) return Colors.purple;
+    if (lowerStatus.contains('delivered') || lowerStatus.contains('completed')) return Colors.green;
+    if (lowerStatus.contains('cancel') || lowerStatus.contains('failed') || lowerStatus.contains('refund')) {
+      return Colors.red;
+    }
+    if (lowerStatus.contains('hold') || lowerStatus.contains('reschedul')) return Colors.amber;
     return Colors.grey;
   }
 
@@ -80,44 +96,53 @@ class _OrdersScreenState extends State<OrdersScreen> {
           children: [
             // Order Header
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      order.orderNumber,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF4E56C0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        order.orderNumber,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF6F38C5),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        order.createdAt.toString().split(' ')[0],
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(
+                        order.orderStatusName,
+                      ).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: _getStatusColor(order.orderStatusName),
+                        width: 1,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      order.createdAt.toString().split(' ')[0],
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(
-                      order.orderStatusName,
-                    ).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _getStatusColor(order.orderStatusName),
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    order.orderStatusName,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: _getStatusColor(order.orderStatusName),
+                    child: Text(
+                      orderStatusLabel(order.orderStatusName),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: _getStatusColor(order.orderStatusName),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
@@ -152,7 +177,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       Expanded(
                         child: Text(
                           item.productName,
-                          style: TextStyle(color: Color(0xFF4E56C0)),
+                          style: TextStyle(color: Color(0xFF6F38C5)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -202,7 +227,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF4E56C0),
+                        color: Color(0xFF6F38C5),
                       ),
                     ),
                   ],
@@ -231,7 +256,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     child: Ink(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                          colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -271,6 +296,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Widget _buildEmptyOrders() {
+    final isPrevious = _showPreviousOrders;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -283,82 +309,146 @@ class _OrdersScreenState extends State<OrdersScreen> {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.shopping_bag_outlined,
+              isPrevious ? Icons.history_rounded : Icons.shopping_bag_outlined,
               size: 70,
               color: Color(0xFF9B5DE0),
             ),
           ),
           SizedBox(height: 30),
           Text(
-            'No Orders Yet',
+            isPrevious ? 'No Previous Orders' : 'No Active Orders',
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF4E56C0),
+              color: Color(0xFF6F38C5),
             ),
           ),
           SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'You haven\'t placed any orders yet. Start shopping to make your first order!',
+              isPrevious
+                  ? 'Completed, delivered, and cancelled orders will appear here.'
+                  : 'You have no orders in progress right now. Start shopping to place an order!',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ),
-          SizedBox(height: 30),
-          Container(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          if (!isPrevious) ...[
+            SizedBox(height: 30),
+            Container(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.zero,
                 ),
-                padding: EdgeInsets.zero,
-              ),
-              child: Ink(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF4E56C0),
-                      Color(0xFF9B5DE0),
-                      Color(0xFFD78FEE),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF6F38C5),
+                        Color(0xFF9B5DE0),
+                        Color(0xFFD78FEE),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF6F38C5).withOpacity(0.4),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF4E56C0).withOpacity(0.4),
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.shopping_bag_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Start Shopping',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.shopping_bag_rounded,
                           color: Colors.white,
+                          size: 20,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 10),
+                        Text(
+                          'Start Shopping',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderToggle() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF9B5DE0).withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _showPreviousOrders = false),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: !_showPreviousOrders ? const Color(0xFF9B5DE0) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    'Current Orders',
+                    style: TextStyle(
+                      color: !_showPreviousOrders ? Colors.white : Colors.grey[700],
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _showPreviousOrders = true),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: _showPreviousOrders ? const Color(0xFF9B5DE0) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    'Previous Orders',
+                    style: TextStyle(
+                      color: _showPreviousOrders ? Colors.white : Colors.grey[700],
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
@@ -371,8 +461,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final filtered = _filteredOrders;
+    final currentCount = _orders.where(isCurrentOrder).length;
+    final previousCount = _orders.where(isPreviousOrder).length;
+
     return Scaffold(
-      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -380,11 +474,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
         title: ShaderMask(
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+              colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
             ).createShader(bounds);
           },
           child: Text(
-            'My Orders',
+            _kScreenTitle,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -396,12 +490,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
           icon: Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF4E56C0).withOpacity(0.1),
+              color: Color(0xFF6F38C5).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF4E56C0),
+              color: Color(0xFF6F38C5),
               size: 20,
             ),
           ),
@@ -412,12 +506,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
             icon: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Color(0xFF4E56C0).withOpacity(0.1),
+                color: Color(0xFF6F38C5).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.refresh_rounded,
-                color: Color(0xFF4E56C0),
+                color: Color(0xFF6F38C5),
                 size: 22,
               ),
             ),
@@ -436,7 +530,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                        colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -453,12 +547,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     'Loading Orders...',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Color(0xFF4E56C0),
+                      color: Color(0xFF6F38C5),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 10),
-                  CircularProgressIndicator(color: Color(0xFF4E56C0)),
+                  CircularProgressIndicator(color: Color(0xFF6F38C5)),
                 ],
               ),
             )
@@ -509,12 +603,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+                            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF4E56C0).withOpacity(0.4),
+                              color: Color(0xFF6F38C5).withOpacity(0.4),
                               blurRadius: 10,
                               offset: Offset(0, 5),
                             ),
@@ -553,83 +647,84 @@ class _OrdersScreenState extends State<OrdersScreen> {
             )
           : _orders.isEmpty
           ? _buildEmptyOrders()
-          : RefreshIndicator(
-              color: Color(0xFF4E56C0),
-              onRefresh: _loadOrders,
-              child: ListView(
-                padding: EdgeInsets.all(20),
-                children: [
-                  // Stats Card
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    margin: EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF4E56C0).withOpacity(0.9),
-                          Color(0xFF9B5DE0).withOpacity(0.9),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xFF4E56C0).withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItem(
-                          'Total Orders',
-                          _orders.length.toString(),
-                          Icons.shopping_bag_rounded,
-                        ),
-                        Container(
-                          height: 40,
-                          width: 1,
-                          color: Colors.white.withOpacity(0.3),
-                        ),
-                        _buildStatItem(
-                          'Total Spent',
-                          'Rs ${_orders.fold(0.0, (sum, order) => sum + order.finalAmount).toStringAsFixed(0)}',
-                          Icons.attach_money_rounded,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Orders List
-                  // Text(
-                  //   'All Orders (${_orders.length})',
-                  //   style: TextStyle(
-                  //     fontSize: 18,
-                  //     fontWeight: FontWeight.w700,
-                  //     color: Color(0xFF4E56C0),
-                  //     margin: EdgeInsets.only(bottom: 15, left: 5),
-                  //   ),
-                  // ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 15, left: 5),
+          : Column(
+              children: [
+                const SizedBox(height: 12),
+                _buildOrderToggle(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
                     child: Text(
-                      'All Orders (${_orders.length})',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF4E56C0),
+                      _showPreviousOrders
+                          ? 'Previous Orders ($previousCount)'
+                          : 'Current Orders ($currentCount)',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF9B5DE0),
                       ),
                     ),
                   ),
-
-                  ..._orders.map((order) => _buildOrderCard(order)).toList(),
-
-                  SizedBox(height: 30),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: filtered.isEmpty
+                      ? _buildEmptyOrders()
+                      : RefreshIndicator(
+                          color: Color(0xFF6F38C5),
+                          onRefresh: _loadOrders,
+                          child: ListView(
+                            padding: EdgeInsets.all(20),
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.only(bottom: 20),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF6F38C5).withOpacity(0.9),
+                                      Color(0xFF9B5DE0).withOpacity(0.9),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0xFF6F38C5).withOpacity(0.3),
+                                      blurRadius: 15,
+                                      offset: Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildStatItem(
+                                      _showPreviousOrders ? 'Previous' : 'Current',
+                                      filtered.length.toString(),
+                                      Icons.shopping_bag_rounded,
+                                    ),
+                                    Container(
+                                      height: 40,
+                                      width: 1,
+                                      color: Colors.white.withOpacity(0.3),
+                                    ),
+                                    _buildStatItem(
+                                      'Total Spent',
+                                      'Rs ${filtered.fold(0.0, (sum, order) => sum + order.finalAmount).toStringAsFixed(0)}',
+                                      Icons.attach_money_rounded,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ...filtered.map((order) => _buildOrderCard(order)),
+                              SizedBox(height: 30),
+                            ],
+                          ),
+                        ),
+                ),
+              ],
             ),
     );
   }

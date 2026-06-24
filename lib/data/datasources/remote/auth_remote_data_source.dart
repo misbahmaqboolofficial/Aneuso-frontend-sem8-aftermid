@@ -26,31 +26,40 @@ class AuthRemoteDataSource {
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
-      // print("User logged in with token: ${jsonResponse}");
       return AuthResponseModel.fromJson(jsonResponse);
-    } else {
-      final error = jsonDecode(response.body);
-      // debugPrint('Login Response: $error["message"]');
+    }
+
+    final error = jsonDecode(response.body);
+    if (response.statusCode == 403 && error['requiresVerification'] == true) {
+      final userJson = error['data']?['user'];
       return AuthResponseModel(
         success: false,
-        message: error['message'] ?? 'Login failed.',
-        requiresVerification: false,
-        data: AuthData(
-          user: UserModel(
-            id: 0,
-            fullName: '',
-            email: '',
-            phoneNumber: '',
-            userTypeId: 0,
-            designationId: 0,
-            activeStatus: 0,
-            emailVerifiedAt: null,
-            emailVerified: false,
-          ),
-          // requiresVerification: false,
-        ),
+        message: error['message'] ?? 'Email verification required.',
+        requiresVerification: true,
+        data: userJson != null
+            ? AuthData(user: UserModel.fromJson(userJson))
+            : null,
       );
     }
+
+    return AuthResponseModel(
+      success: false,
+      message: error['message'] ?? 'Login failed.',
+      requiresVerification: false,
+      data: AuthData(
+        user: UserModel(
+          id: 0,
+          fullName: '',
+          email: email,
+          phoneNumber: '',
+          userTypeId: 0,
+          designationId: 0,
+          activeStatus: 0,
+          emailVerifiedAt: null,
+          emailVerified: false,
+        ),
+      ),
+    );
   }
 
   Future<AuthResponseModel> register({

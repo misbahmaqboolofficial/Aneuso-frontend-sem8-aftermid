@@ -57,8 +57,8 @@ class CheckoutItem {
       productId: json['product_id'] ?? 0,
       productName: json['product_name'] ?? '',
       quantity: json['quantity'] ?? 0,
-      unitPrice: double.tryParse(json['unit_price']?.toString() ?? '0') ?? 0,
-      totalPrice: double.tryParse(json['total_price']?.toString() ?? '0') ?? 0,
+      unitPrice: double.tryParse(json['unit_price']?.toString() ?? '0') ?? 0.0,
+      totalPrice: double.tryParse(json['total_price']?.toString() ?? '0') ?? 0.0,
     );
   }
 }
@@ -82,10 +82,10 @@ class CheckoutSummaryDetails {
 
   factory CheckoutSummaryDetails.fromJson(Map<String, dynamic> json) {
     return CheckoutSummaryDetails(
-      subtotal: double.tryParse(json['subtotal']?.toString() ?? '0') ?? 0,
-      discountAmount: double.tryParse(json['discount_amount']?.toString() ?? '0') ?? 0,
-      taxAmount: double.tryParse(json['tax_amount']?.toString() ?? '0') ?? 0,
-      finalAmount: double.tryParse(json['final_amount']?.toString() ?? '0') ?? 0,
+      subtotal: double.tryParse(json['subtotal']?.toString() ?? '0') ?? 0.0,
+      discountAmount: double.tryParse(json['discount_amount']?.toString() ?? '0') ?? 0.0,
+      taxAmount: double.tryParse(json['tax_amount']?.toString() ?? '0') ?? 0.0,
+      finalAmount: double.tryParse(json['final_amount']?.toString() ?? '0') ?? 0.0,
       itemsCount: json['items_count'] ?? 0,
       totalQuantity: json['total_quantity'] ?? 0,
     );
@@ -152,8 +152,8 @@ class OrderItem {
       orderId: json['order_id'] ?? 0,
       productId: json['product_id'] ?? 0,
       quantity: json['quantity'] ?? 0,
-      unitPrice: double.tryParse(json['unit_price']?.toString() ?? '0') ?? 0,
-      totalPrice: double.tryParse(json['total_price']?.toString() ?? '0') ?? 0,
+      unitPrice: double.tryParse(json['unit_price']?.toString() ?? '0') ?? 0.0,
+      totalPrice: double.tryParse(json['total_price']?.toString() ?? '0') ?? 0.0,
       createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
       productName: json['product_name'] ?? '',
       productCode: json['product_code'] ?? '',
@@ -219,10 +219,10 @@ class Order {
       orderNumber: json['order_number'] ?? '',
       userId: json['user_id'] ?? 0,
       companyId: json['company_id'] ?? 1,
-      totalAmount: double.tryParse(json['total_amount']?.toString() ?? '0') ?? 0,
-      discountAmount: double.tryParse(json['discount_amount']?.toString() ?? '0') ?? 0,
-      taxAmount: double.tryParse(json['tax_amount']?.toString() ?? '0') ?? 0,
-      finalAmount: double.tryParse(json['final_amount']?.toString() ?? '0') ?? 0,
+      totalAmount: double.tryParse(json['total_amount']?.toString() ?? '0') ?? 0.0,
+      discountAmount: double.tryParse(json['discount_amount']?.toString() ?? '0') ?? 0.0,
+      taxAmount: double.tryParse(json['tax_amount']?.toString() ?? '0') ?? 0.0,
+      finalAmount: double.tryParse(json['final_amount']?.toString() ?? '0') ?? 0.0,
       shippingAddress: json['shipping_address'] ?? '',
       billingAddress: json['billing_address'] ?? '',
       orderStatusId: json['order_status_id'] ?? 134,
@@ -275,7 +275,7 @@ class Promotion {
       name: json['name'] ?? '',
       description: json['description'],
       discountTypeId: json['discount_type_id'] ?? 1,
-      discountValue: double.tryParse(json['discount_value']?.toString() ?? '0') ?? 0,
+      discountValue: double.tryParse(json['discount_value']?.toString() ?? '0') ?? 0.0,
       minOrderAmount: json['min_order_amount'] != null 
           ? double.tryParse(json['min_order_amount'].toString()) 
           : null,
@@ -383,13 +383,13 @@ class OrderService {
   }
 
   // Get User Orders
-  static Future<List<Order>> getUserOrders() async {
+  static Future<List<Order>> getUserOrders({int limit = 200}) async {
     try {
       final token = await _getToken();
       if (token == null) return [];
 
       final response = await http.get(
-        Uri.parse('$baseUrl/orders/user/me'),
+        Uri.parse('$baseUrl/orders/user/me?limit=$limit'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

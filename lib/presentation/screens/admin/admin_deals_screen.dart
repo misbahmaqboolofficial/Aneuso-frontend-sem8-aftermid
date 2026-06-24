@@ -4,6 +4,9 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:intl/intl.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('admin_deals_screen.dart');
 
 class AdminDealsScreen extends StatefulWidget {
   @override
@@ -120,7 +123,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text("Deal Details", style: TextStyle(color: Color(0xFF4E56C0), fontWeight: FontWeight.bold)),
+        title: Text("Deal Details", style: TextStyle(color: Color(0xFF6F38C5), fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,24 +189,24 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDCFFA).withOpacity(0.05),
+      backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         title: ShaderMask(
           shaderCallback: (bounds) => LinearGradient(
-            colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)],
+            colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)],
           ).createShader(bounds),
-          child: Text('Deal Management', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+          child: Text(_kScreenTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF4E56C0)),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF6F38C5)),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort_rounded, color: Color(0xFF4E56C0)),
+            icon: Icon(Icons.sort_rounded, color: Color(0xFF6F38C5)),
             onSelected: (value) {
               setState(() {
                 _sortBy = value;
@@ -228,7 +231,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
-                      BoxShadow(color: Color(0xFF4E56C0).withOpacity(0.1), blurRadius: 10, offset: Offset(0, 5)),
+                      BoxShadow(color: Color(0xFF6F38C5).withOpacity(0.1), blurRadius: 10, offset: Offset(0, 5)),
                     ],
                   ),
                   child: TextField(
@@ -261,9 +264,9 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                               });
                             }
                           },
-                          selectedColor: Color(0xFF4E56C0),
+                          selectedColor: Color(0xFF6F38C5),
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : Color(0xFF4E56C0),
+                            color: isSelected ? Colors.white : Color(0xFF6F38C5),
                             fontWeight: FontWeight.bold,
                           ),
                           backgroundColor: Colors.white,
@@ -278,7 +281,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
           ),
           Expanded(
             child: isLoading
-                ? Center(child: CircularProgressIndicator(color: Color(0xFF4E56C0)))
+                ? Center(child: CircularProgressIndicator(color: Color(0xFF6F38C5)))
                 : RefreshIndicator(
                     onRefresh: _fetchDeals,
                     child: filteredDeals.isEmpty
@@ -306,14 +309,14 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                                     width: 50,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(colors: [Color(0xFF4E56C0), Color(0xFF9B5DE0)]),
+                                      gradient: LinearGradient(colors: [Color(0xFF6F38C5), Color(0xFF9B5DE0)]),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(Icons.handshake_rounded, color: Colors.white),
                                   ),
                                   title: Text(
                                     deal['company_name'] ?? "Company ID: ${deal['company_id']}",
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4E56C0)),
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF6F38C5)),
                                   ),
                                   subtitle: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +335,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                                     children: [
                                       Text(
                                         "\$${deal['total_value']}",
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4E56C0), fontSize: 16),
+                                        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF6F38C5), fontSize: 16),
                                       ),
                                       Icon(Icons.chevron_right_rounded, color: Colors.grey),
                                     ],

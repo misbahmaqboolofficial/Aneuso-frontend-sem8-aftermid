@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import '../../domain/entities/product_entity.dart';
+import '../../core/utils/product_image_util.dart';
 
 class ProductModel extends ProductEntity {
   ProductModel({
@@ -11,6 +14,7 @@ class ProductModel extends ProductEntity {
     required int stockQuantity,
     required int statusId,
     required List<String> images,
+    String? categoryName,
   }) : super(
          id: id,
          productName: productName,
@@ -21,9 +25,32 @@ class ProductModel extends ProductEntity {
          stockQuantity: stockQuantity,
          statusId: statusId,
          images: images,
+         categoryName: categoryName,
        );
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    List<String> parseImages(dynamic raw) {
+      if (raw == null) return const [];
+      if (raw is List) {
+        return raw.map((e) => e.toString()).toList();
+      }
+      if (raw is String && raw.trim().isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw);
+          if (decoded is List) {
+            return decoded.map((e) => e.toString()).toList();
+          }
+        } catch (_) {
+          return [raw];
+        }
+      }
+      return const [];
+    }
+
+    final images = resolveProductImages(
+      parseImages(json['image_urls'] ?? json['images']),
+    );
+
     return ProductModel(
       id: json['id'] ?? 0,
       productName: json['product_name'] ?? '',
@@ -35,11 +62,8 @@ class ProductModel extends ProductEntity {
           : null,
       stockQuantity: json['stock_quantity'] ?? 0,
       statusId: json['status_id'] ?? 0,
-      images:
-          (json['images'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
+      images: images,
+      categoryName: json['category_name']?.toString(),
     );
   }
 
@@ -54,6 +78,7 @@ class ProductModel extends ProductEntity {
       'stock_quantity': stockQuantity,
       'status_id': statusId,
       'images': images,
+      if (categoryName != null) 'category_name': categoryName,
     };
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aneuso_app/core/constants/app_constants.dart';
+import 'package:aneuso_app/core/utils/product_image_util.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,16 +56,16 @@ class CartItem {
       productId: json['product_id'] ?? 0,
       quantity: json['quantity'] ?? 0,
       priceAtTime:
-          double.tryParse(json['price_at_time']?.toString() ?? '0') ?? 0,
+          double.tryParse(json['price_at_time']?.toString() ?? '0') ?? 0.0,
       createdAt: DateTime.parse(
         json['created_at'] ?? DateTime.now().toIso8601String(),
       ),
       productName: json['product_name'] ?? '',
       productCode: json['product_code'] ?? '',
       currentPrice:
-          double.tryParse(json['current_price']?.toString() ?? '0') ?? 0,
+          double.tryParse(json['current_price']?.toString() ?? '0') ?? 0.0,
       stockQuantity: json['stock_quantity'] ?? 0,
-      imageUrls: images,
+      imageUrls: resolveProductImages(images),
       categoryName: json['category_name'] ?? '',
     );
   }
@@ -116,7 +117,7 @@ class Cart {
     );
   }
 
-  double get subtotal => totals['subtotal'] ?? 0;
+  double get subtotal => double.tryParse(totals['subtotal']?.toString() ?? '0') ?? 0.0;
   int get totalItems => totals['items'] ?? 0;
 }
 
@@ -174,12 +175,21 @@ class CartService {
     }
   }
 
-  static Future<CartItem?> addToCart(int productId, int quantity) async {
+  static Future<CartItem?> addToCart(
+    int productId,
+    int quantity, {
+    int? specialOfferId,
+  }) async {
     try {
       final token = await _getToken();
-      final cart = await getCart();
+      var cart = await getCart();
 
-      if (token == null || cart == null) return null;
+      if (token == null) return null;
+      if (cart == null) {
+        await createCart();
+        cart = await getCart();
+      }
+      if (cart == null) return null;
 
       final response = await http.post(
         Uri.parse('$baseUrl/cart/${cart.id}/items'),
@@ -187,20 +197,50 @@ class CartService {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({'product_id': productId, 'quantity': quantity}),
+        body: jsonEncode({
+          'product_id': productId,
+          'quantity': quantity,
+          if (specialOfferId != null) 'special_offer_id': specialOfferId,
+        }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonResponse = jsonDecode(response.body);
         if (jsonResponse['success'] == true) {
-          return CartItem.fromJson(jsonResponse['data']);
+          final data = jsonResponse['data'];
+          if (data != null && data is Map<String, dynamic>) {
+            return CartItem.fromJson(data);
+          }
+          return null;
         }
       }
+      print('Add to cart failed: ${response.statusCode} ${response.body}');
       return null;
     } catch (e) {
       print('Error adding to cart: $e');
       return null;
     }
+  }
+
+  /// Adds every product in a bundle offer with offer pricing applied.
+  static Future<bool> addBundleOfferToCart({
+    required int specialOfferId,
+    required List<Map<String, dynamic>> products,
+    int quantityEach = 1,
+  }) async {
+    for (final product in products) {
+      final rawId = product['id'] ?? product['product_id'];
+      final productId = rawId is int ? rawId : int.tryParse('$rawId');
+      if (productId == null || productId <= 0) return false;
+
+      final added = await addToCart(
+        productId,
+        quantityEach,
+        specialOfferId: specialOfferId,
+      );
+      if (added == null) return false;
+    }
+    return true;
   }
 
   static Future<bool> updateCartItem(int itemId, int quantity) async {
@@ -263,7 +303,12 @@ class CartService {
         },
       );
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return jsonResponse['success'] == true;
+      }
+      print('Clear cart failed: ${response.statusCode} ${response.body}');
+      return false;
     } catch (e) {
       print('Error clearing cart: $e');
       return false;
@@ -406,18 +451,18 @@ class CheckoutSummary {
   CheckoutSummary({
     required this.subtotal,
     required this.totalItems,
-    this.tax = 0,
-    this.shipping = 0,
+    this.tax = 0.0,
+    this.shipping = 0.0,
     required this.total,
   });
 
   factory CheckoutSummary.fromJson(Map<String, dynamic> json) {
     return CheckoutSummary(
-      subtotal: (json['subtotal'] ?? 0).toDouble(),
+      subtotal: double.tryParse(json['subtotal']?.toString() ?? '0') ?? 0.0,
       totalItems: json['total_items'] ?? 0,
-      tax: (json['tax'] ?? 0).toDouble(),
-      shipping: (json['shipping'] ?? 0).toDouble(),
-      total: (json['total'] ?? 0).toDouble(),
+      tax: double.tryParse(json['tax']?.toString() ?? '0') ?? 0.0,
+      shipping: double.tryParse(json['shipping']?.toString() ?? '0') ?? 0.0,
+      total: double.tryParse(json['total']?.toString() ?? '0') ?? 0.0,
     );
   }
 
