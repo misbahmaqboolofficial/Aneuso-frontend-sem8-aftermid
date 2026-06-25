@@ -1,20 +1,19 @@
 import '../../services/order_service.dart';
 
-/// Completed or closed orders the user may want to review later.
-bool isPreviousOrder(Order order) {
-  final status = order.orderStatusName.toLowerCase();
-  const previousKeywords = [
-    'delivered',
-    'completed',
-    'cancelled',
-    'canceled',
-    'failed',
-    'refunded',
-  ];
-  return previousKeywords.any(status.contains);
+/// Calendar-day age of an order in the user's local timezone (0 = placed today).
+int orderAgeInDays(Order order) {
+  final local = order.createdAt.toLocal();
+  final orderDay = DateTime(local.year, local.month, local.day);
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  return today.difference(orderDay).inDays;
 }
 
-bool isCurrentOrder(Order order) => !isPreviousOrder(order);
+/// Orders placed 3+ calendar days ago.
+bool isPreviousOrder(Order order) => orderAgeInDays(order) >= 3;
+
+/// Orders placed today or within the last 2 days (not yet 3 days old).
+bool isCurrentOrder(Order order) => orderAgeInDays(order) < 3;
 
 String orderStatusLabel(String rawStatus) {
   return rawStatus
