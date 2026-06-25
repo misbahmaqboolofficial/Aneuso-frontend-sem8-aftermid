@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/constants/pickup_status.dart';
 import 'package:aneuso_app/data/services/driver_tracking_service.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,8 @@ import '../../providers/auth_provider.dart';
 import '../../../core/utils/storage_util.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+final String _kScreenTitle = ScreenTitle.fromFile('DailyTasksScreen.dart');
 
 class DriverTasksScreen extends StatefulWidget {
   const DriverTasksScreen({super.key});
@@ -430,9 +433,9 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Daily Tasks',
-                      style: TextStyle(
+                    Text(
+                      _kScreenTitle,
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

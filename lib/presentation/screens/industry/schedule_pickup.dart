@@ -3,6 +3,7 @@ import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/core/utils/location_util.dart';
 import 'package:aneuso_app/core/utils/form_validators.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/presentation/providers/driver_ratings_provider.dart';
 import 'package:aneuso_app/presentation/screens/industry/industry_pickup_detail_screen.dart';
 import 'package:aneuso_app/presentation/widgets/ratings/rate_driver_sheet.dart';
@@ -15,6 +16,8 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/storage_util.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('schedule_pickup.dart');
 
 class SchedulePickup extends StatefulWidget {
   const SchedulePickup({super.key});
@@ -515,7 +518,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                             color: Colors.white,
                           ),
                           Text(
-                            'Schedule Pickup',
+                            _kScreenTitle,
                             style: TextStyle(
                               fontSize: isMobile ? 22 : 28,
                               fontWeight: FontWeight.bold,

@@ -802,7 +802,7 @@ class _OfferFormScreenState extends State<OfferFormScreen> {
           ),
           const SizedBox(width: 8),
           Text(
-            _isEditingSingleOffer ? 'Edit Offer' : _kScreenTitle,
+            _kScreenTitle,
             style: GoogleFonts.poppins(
               fontSize: 24,
               fontWeight: FontWeight.bold,

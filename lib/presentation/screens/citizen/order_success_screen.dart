@@ -1,6 +1,9 @@
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/presentation/screens/citizen/orders_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/order_service.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('order_success_screen.dart');
 
 class OrderSuccessScreen extends StatelessWidget {
   final Order order;
@@ -11,6 +14,12 @@ class OrderSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F6FF),
+      appBar: AppBar(
+        title: Text(_kScreenTitle),
+        backgroundColor: const Color(0xFF9B5DE0),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: Stack(
         children: [
           // Background gradient

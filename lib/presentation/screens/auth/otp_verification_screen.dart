@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/storage_util.dart';
 import '../../../core/utils/form_validators.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../providers/auth_provider.dart';
@@ -40,13 +41,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     (index) => TextEditingController(),
   );
 
+  String get _verificationEmail {
+    if (widget.email.trim().isNotEmpty) {
+      return widget.email.trim().toLowerCase();
+    }
+    return StorageUtil.getStringData('pending_otp_email')?.trim().toLowerCase() ?? '';
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      auth.startOtpVerification(email: widget.email, purpose: widget.purpose);
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrapOtpSession());
 
     // Setup OTP field focus management
     for (int i = 0; i < _otpFocusNodes.length; i++) {
@@ -59,14 +64,32 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void _updateOtpController() {
-    String otp = '';
-    for (var controller in _otpControllers) {
-      otp += controller.text;
+    _otpController.text = _otpFromBoxes();
+  }
+
+  String _otpFromBoxes() {
+    return _otpControllers.map((c) => c.text.trim()).join();
+  }
+
+  void _fillOtpBoxes(String digits) {
+    final clean = digits.replaceAll(RegExp(r'\D'), '');
+    for (var i = 0; i < _otpControllers.length; i++) {
+      _otpControllers[i].text = i < clean.length ? clean[i] : '';
     }
-    _otpController.text = otp;
+    _updateOtpController();
+    if (clean.length >= 6) {
+      FocusScope.of(context).unfocus();
+    } else if (clean.isNotEmpty) {
+      final next = clean.length.clamp(0, 5);
+      FocusScope.of(context).requestFocus(_otpFocusNodes[next]);
+    }
   }
 
   void _handleOtpInput(int index, String value) {
+    if (value.length > 1) {
+      _fillOtpBoxes(value);
+      return;
+    }
     if (value.isNotEmpty) {
       if (index < 5) {
         FocusScope.of(context).requestFocus(_otpFocusNodes[index + 1]);
@@ -77,6 +100,31 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       }
     }
     _updateOtpController();
+  }
+
+  Future<void> _bootstrapOtpSession() async {
+    if (!mounted) return;
+
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    var email = _verificationEmail;
+    if (email.isEmpty) {
+      email = auth.otpVerificationEmail?.trim().toLowerCase() ?? '';
+    }
+    if (email.isNotEmpty) {
+      await StorageUtil.setStringData('pending_otp_email', email);
+      auth.startOtpVerification(email: email, purpose: widget.purpose);
+    } else {
+      auth.ensureOtpCountdownRunning();
+      auth.ensureOtpSession(email: '', purpose: widget.purpose);
+    }
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AuthProvider>(context, listen: false).ensureOtpCountdownRunning();
+    });
   }
 
   @override
@@ -98,7 +146,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   Future<void> _verifyOtp(AuthProvider authProvider) async {
-    final otpError = FormValidators.otpCode(_otpController.text.trim());
+    _updateOtpController();
+    final otp = _otpFromBoxes();
+
+    final otpError = FormValidators.otpCode(otp);
     if (otpError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(otpError), backgroundColor: Colors.red.shade400),
@@ -107,12 +158,28 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     }
     if (!_formKey.currentState!.validate()) return;
 
+    if (_verificationEmail.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email missing — go back and sign up again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    authProvider.ensureOtpSession(
+      email: _verificationEmail,
+      purpose: widget.purpose,
+    );
+
     final success = await authProvider.verifyOtp(
-      otp: _otpController.text.trim(),
+      otp: otp,
       user: widget.user,
     );
 
     if (success && mounted) {
+      await StorageUtil.removeStringData('pending_otp_email');
       _navigateToDashboard(authProvider.currentUser!);
     }
   }

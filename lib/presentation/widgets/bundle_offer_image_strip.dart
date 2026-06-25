@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import '../../core/constants/app_constants.dart';
+import '../../core/utils/product_image_util.dart';
 
 /// Horizontal gap between bundle product images (~1 mm at 96 dpi).
 const double bundleImageGapMm = 3.78;
@@ -41,17 +41,7 @@ class BundleOfferImageStrip extends StatelessWidget {
     }
   }
 
-  static String resolveUrl(String url) {
-    if (url.startsWith('http')) return url;
-    final base = AppConstants.baseUrl;
-    if (base.endsWith('/') && url.startsWith('/')) {
-      return '$base${url.substring(1)}';
-    }
-    if (!base.endsWith('/') && !url.startsWith('/')) {
-      return '$base/$url';
-    }
-    return '$base$url';
-  }
+  static String? resolveUrl(String url) => resolveProductImageUrl(url);
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +59,18 @@ class BundleOfferImageStrip extends StatelessWidget {
     final isJsonBundle = imageUrl!.trim().startsWith('[') && urls.length > 1;
 
     if (!isJsonBundle && urls.length == 1) {
+      final resolved = resolveUrl(urls.first);
+      if (resolved == null) {
+        return Container(height: height, color: bg, child: empty);
+      }
       return Container(
         height: height,
         width: double.infinity,
         color: bg,
         child: Image.network(
-          resolveUrl(urls.first),
+          resolved,
           fit: fit,
+          headers: kProductImageHeaders,
           errorBuilder: (_, __, ___) => empty,
         ),
       );
@@ -91,11 +86,20 @@ class BundleOfferImageStrip extends StatelessWidget {
           for (int i = 0; i < urls.length; i++) ...[
             if (i > 0) const SizedBox(width: bundleImageGapMm),
             Expanded(
-              child: Image.network(
-                resolveUrl(urls[i]),
-                fit: fit,
-                errorBuilder: (_, __, ___) =>
-                    Icon(Icons.broken_image_outlined, color: Colors.grey.shade400),
+              child: Builder(
+                builder: (context) {
+                  final resolved = resolveUrl(urls[i]);
+                  if (resolved == null) {
+                    return Icon(Icons.broken_image_outlined, color: Colors.grey.shade400);
+                  }
+                  return Image.network(
+                    resolved,
+                    fit: fit,
+                    headers: kProductImageHeaders,
+                    errorBuilder: (_, __, ___) =>
+                        Icon(Icons.broken_image_outlined, color: Colors.grey.shade400),
+                  );
+                },
               ),
             ),
           ],

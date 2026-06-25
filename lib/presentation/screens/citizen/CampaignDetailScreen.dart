@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import '../../../core/utils/screen_title_util.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/pickup_status.dart';
 import '../../../core/utils/storage_util.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('CampaignDetailScreen.dart');
 
 class CampaignDetailScreen extends StatefulWidget {
   final int reportId;
@@ -169,6 +172,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
       expandedHeight: 300,
       pinned: true,
       backgroundColor: const Color(0xFF9B5DE0),
+      title: Text(_kScreenTitle),
       leading: IconButton(
         icon: Container(
           padding: const EdgeInsets.all(8),

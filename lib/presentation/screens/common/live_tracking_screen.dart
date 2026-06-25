@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/core/utils/route_service.dart';
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/theme/app_colors.dart';
@@ -12,6 +13,8 @@ import 'package:aneuso_app/core/utils/storage_util.dart';
 import 'package:aneuso_app/core/utils/location_util.dart';
 import 'package:aneuso_app/presentation/widgets/pickup_tracking_map.dart';
 import 'package:latlong2/latlong.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('live_tracking_screen.dart');
 
 /// Live tracking for industry pickups and admin cleanup missions.
 class LiveTrackingScreen extends StatefulWidget {
@@ -406,9 +409,9 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Live Tracking',
-                  style: TextStyle(
+                Text(
+                  _kScreenTitle,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

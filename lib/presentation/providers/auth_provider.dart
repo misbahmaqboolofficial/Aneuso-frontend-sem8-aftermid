@@ -339,12 +339,33 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Start OTP verification process
+  // Start OTP verification process (resets countdown to 10 minutes).
   void startOtpVerification({required String email, required String purpose}) {
-    _otpVerificationEmail = email;
+    _otpVerificationEmail = email.isNotEmpty ? email : _otpVerificationEmail;
     _otpVerificationPurpose = purpose;
     _otpTimeoutSeconds = 600; // 10 minutes
     _startOtpCountdown();
+    notifyListeners();
+  }
+
+  /// Keep email/purpose in sync without resetting an active countdown.
+  void ensureOtpSession({required String email, required String purpose}) {
+    if (email.isNotEmpty) {
+      _otpVerificationEmail = email;
+    }
+    _otpVerificationPurpose = purpose;
+    ensureOtpCountdownRunning();
+    notifyListeners();
+  }
+
+  /// Start or resume the OTP countdown if it was stopped (e.g. after hot reload).
+  void ensureOtpCountdownRunning() {
+    if (_otpTimeoutSeconds <= 0) {
+      _otpTimeoutSeconds = 600;
+    }
+    if (_otpTimer == null || !_otpTimer!.isActive) {
+      _startOtpCountdown();
+    }
     notifyListeners();
   }
 

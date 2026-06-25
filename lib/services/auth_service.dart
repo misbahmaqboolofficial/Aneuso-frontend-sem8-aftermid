@@ -165,7 +165,14 @@ class AuthService {
           throw Exception(body['message'] ?? 'Failed to verify OTP');
         }
       } else {
-        throw Exception('Failed to verify OTP: ${response.statusCode}');
+        String message = 'Failed to verify OTP (${response.statusCode})';
+        try {
+          final body = jsonDecode(response.body);
+          if (body['message'] is String && body['message'].isNotEmpty) {
+            message = body['message'];
+          }
+        } catch (_) {}
+        throw Exception(message);
       }
     } catch (e) {
       rethrow;

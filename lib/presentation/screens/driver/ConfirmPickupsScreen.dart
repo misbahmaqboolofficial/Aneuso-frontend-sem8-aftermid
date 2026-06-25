@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/constants/pickup_status.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,8 @@ import '../../providers/auth_provider.dart';
 import '../../../core/utils/storage_util.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+final String _kScreenTitle = ScreenTitle.fromFile('ConfirmPickupsScreen.dart');
 
 class ConfirmPickupsScreen extends StatefulWidget {
   const ConfirmPickupsScreen({super.key});
@@ -215,11 +218,11 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Confirm Pickups',
+                            _kScreenTitle,
                             style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,

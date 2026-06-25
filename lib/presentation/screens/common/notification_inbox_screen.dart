@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/app_ui.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('notification_inbox_screen.dart');
 
 class NotificationInboxScreen extends StatefulWidget {
   const NotificationInboxScreen({Key? key}) : super(key: key);
@@ -121,8 +124,8 @@ class _NotificationInboxScreenState extends State<NotificationInboxScreen> {
           ),
           child: Row(
             children: [
-              const Expanded(
-                child: AppSectionTitle('Notifications', subtitle: 'Stay up to date'),
+              Expanded(
+                child: AppSectionTitle(_kScreenTitle, subtitle: 'Stay up to date'),
               ),
               IconButton(
                 tooltip: 'Mark all as read',

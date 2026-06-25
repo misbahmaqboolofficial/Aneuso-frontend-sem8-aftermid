@@ -2,6 +2,8 @@ import 'package:aneuso_app/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/screen_title_util.dart';
+
 import '../../providers/auth_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/app_ui.dart';
@@ -12,6 +14,10 @@ import '../citizen/special_offers_screen.dart';
 import '../admin/admin_offers_screen.dart';
 import '../admin/admin_driver_ratings_screen.dart';
 import '../driver/driver_my_ratings_screen.dart';
+
+final String _kDashboardTitle = ScreenTitle.fromFile('dashboard_screen.dart');
+final String _kNotificationsTitle =
+    ScreenTitle.fromFile('notification_inbox_screen.dart');
 
 class DashboardScreen extends StatefulWidget {
 
@@ -87,27 +93,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // To put title back in the top bar: paste into AppBar title: (line ~407)
   // ═══════════════════════════════════════════════════════════════════
   Widget _buildDashboardTitle(UserEntity user, AuthProvider auth, bool narrow) {
-    final label = auth.showCitizenDashboard && user.canUseCitizenDashboard
-        ? 'Citizen'
-        : user.userType;
     return AppGradientText(
-      '$label Dashboard',
+      _kDashboardTitle,
       style: TextStyle(
-        //fontSize: user.userTypeId == 4 ? 28 : 20,  // 4 = Admin    1=  'Industry'; 2= Driver; 3= Citizen;
         fontSize: narrow ? 18 : 20,
         fontWeight: FontWeight.w800,
       ),
     );
-
-    //dashboard solid color — swap return above for this if you want flat purple:
-    // return Text(
-    //   '${user.userType} Dashboard',
-    //   style: TextStyle(
-    //     fontSize: 22,
-    //     fontWeight: FontWeight.w600,
-    //     color: AppColors.primaryDeep,
-    //   ),
-    //     );
   }
 
   Widget _buildDashboardModeToggle(UserEntity user, AuthProvider auth) {
@@ -261,6 +253,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }),
         _buildDrawerItem(4, 'Product Management', Icons.inventory_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/products'));
+        }),
+        _buildDrawerItem(37, 'Special Offers', Icons.local_offer_rounded, false, () {
+          _pushFromDrawer(() => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminOffersScreen()),
+          ));
         }),
         _buildDrawerItem(23, 'Global Deals', Icons.handshake_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/deals'));
@@ -551,7 +549,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // TOP BAR TITLE — cut next line and paste into body children: [ ] below
         title: _bottomNavIndex == 0
             ? _buildDashboardTitle(user, authProvider, narrow)
-            : const Text('Notifications'),
+            : Text(_kNotificationsTitle),
 
         centerTitle: true,
         leading: Builder(
@@ -801,6 +799,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       cards.add(_dashboardCard('Companies', Icons.business_rounded, const Color(0xFF450693), 'Manage Companies', user, auth));
       cards.add(_dashboardCard('Branches', Icons.account_tree_rounded, const Color(0xFF8A39E1), 'Manage Branches', user, auth));
       cards.add(_dashboardCard('Product Mgmt', Icons.inventory_rounded, const Color(0xFFD78FEE), 'Manage Products', user, auth));
+      cards.add(_dashboardCard('Special Offers', Icons.local_offer_rounded, const Color(0xFFFDCFFA), 'Manage special offers', user, auth));
       cards.add(_dashboardCard('Global Deals', Icons.handshake_rounded, const Color(0xFF6F38C5), 'Manage All Deals', user, auth));
       cards.add(_dashboardCard('All App Pickups', Icons.local_shipping_rounded, const Color(0xFFA555EC), 'All App Pickups', user, auth));
       cards.add(_dashboardCard('Driver ratings', Icons.rate_review_rounded, const Color(0xFF450693), 'Manage reviews', user, auth));
@@ -859,6 +858,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/products');
         } else if (subtitle == 'Manage Products') {
           Navigator.pushNamed(context, '/admin/products');
+        } else if (subtitle == 'Manage special offers') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminOffersScreen()),
+          );
         } else if (subtitle == 'Chat messages') {
           Navigator.pushNamed(context, '/messages');
         } else if (subtitle == 'Pickup schedule') {

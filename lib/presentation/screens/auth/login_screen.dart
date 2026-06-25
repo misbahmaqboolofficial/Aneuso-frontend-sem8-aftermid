@@ -1,3 +1,4 @@
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/core/utils/storage_util.dart';
 import 'package:aneuso_app/core/utils/form_validators.dart';
 import 'package:aneuso_app/domain/entities/user_entity.dart';
@@ -10,27 +11,47 @@ import '../../widgets/app_logo.dart';
 import '../../widgets/loading_overlay.dart';
 import 'register_screen.dart';
 
-/// Login-only palette — deeper purple background, blue-violet fields (no pink).
+/// Login-only palette — purple → pink (brand colors, no blue).
 abstract final class _LoginColors {
-  static const Color bgTop = Color(0xFF1E0448);
-  static const Color bgMid = Color(0xFF35087A);
-  static const Color bgLower = Color(0xFF4A1A9E);
-  static const Color bgBottom = Color(0xFF5C2DAE);
-
-  /// Blue-ish lavender for email/password boxes (not pink).
-  static const Color fieldFill = Color(0xFF9FA3E8);
-  static const Color fieldFillSoft = Color(0xFFB4B8F0);
-  static const Color fieldBorder = Color(0xFF7B82D4);
-  static const Color fieldHint = Color(0xFF3D2B7A);
-  static const Color fieldIcon = Color(0xFF5248A8);
+  static const Color royal = Color(0xFF6F38C5);
+  static const Color vivid = Color(0xFF8A39E1);
 
   static const LinearGradient background = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [bgTop, bgMid, bgLower, bgBottom],
-    stops: [0.0, 0.35, 0.7, 1.0],
+    colors: [
+      AppColors.primaryDeep,
+      royal,
+      vivid,
+      AppColors.accent,
+      AppColors.primary,
+      AppColors.primaryLight,
+    ],
+    stops: [0.0, 0.18, 0.38, 0.55, 0.75, 1.0],
+  );
+
+  static const LinearGradient title = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      AppColors.primaryDeep,
+      royal,
+      vivid,
+      AppColors.primary,
+      AppColors.primaryLight,
+    ],
+    stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+  );
+
+  static const LinearGradient button = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [vivid, AppColors.primary, AppColors.primaryLight],
+    stops: [0.0, 0.5, 1.0],
   );
 }
+
+final String _kScreenTitle = ScreenTitle.fromFile('login_screen.dart');
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -76,11 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
     await StorageUtil.setStringData('password', _passwordController.text);
 
     if (authProvider.loginRequiresVerification && mounted) {
+      final email = _emailController.text.trim().toLowerCase();
+      await StorageUtil.setStringData('pending_otp_email', email);
       Navigator.pushNamed(
         context,
         '/otp-verification',
         arguments: {
-          'email': _emailController.text.trim().toLowerCase(),
+          'email': email,
           'purpose': 'registration',
         },
       );
@@ -114,11 +137,23 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          _kScreenTitle,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.95),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(gradient: _LoginColors.background),
         child: Stack(
           children: [
-            // Soft depth glow — richer purple, no pink
             Positioned(
               top: -80,
               left: -60,
@@ -127,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 220,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.primary.withValues(alpha: 0.22),
+                  color: AppColors.primaryLight.withValues(alpha: 0.2),
                 ),
               ),
             ),
@@ -139,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 260,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.primaryDeep.withValues(alpha: 0.35),
+                  color: AppColors.accentLight.withValues(alpha: 0.18),
                 ),
               ),
             ),
@@ -190,9 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
         const AppRecycleEmblem(size: 108),
         const SizedBox(height: 20),
         ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Colors.white, AppColors.primaryLight],
-          ).createShader(bounds),
+          shaderCallback: (bounds) => _LoginColors.title.createShader(bounds),
           child: const Text(
             'ANEUSO',
             style: TextStyle(
@@ -227,22 +260,16 @@ class _LoginScreenState extends State<LoginScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: 0.16),
-            AppColors.primaryDeep.withValues(alpha: 0.32),
-            AppColors.primary.withValues(alpha: 0.22),
+            Colors.white.withValues(alpha: 0.22),
+            Colors.white.withValues(alpha: 0.08),
           ],
         ),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.28)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.22),
-            blurRadius: 32,
-            offset: const Offset(0, 14),
-          ),
-          BoxShadow(
-            color: AppColors.primaryDeep.withValues(alpha: 0.4),
-            blurRadius: 24,
-            spreadRadius: -4,
+            color: AppColors.primaryDeep.withValues(alpha: 0.18),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -287,7 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _isPasswordVisible
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
-                  color: _LoginColors.fieldIcon.withValues(alpha: 0.7),
+                  color: AppColors.primary.withValues(alpha: 0.7),
                 ),
                 onPressed: () {
                   setState(() => _isPasswordVisible = !_isPasswordVisible);
@@ -336,19 +363,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Ink(
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xFF3B0A7A),
-                        AppColors.primaryDeep,
-                        AppColors.primary,
-                      ],
-                    ),
+                    gradient: _LoginColors.button,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primaryDeep.withValues(alpha: 0.35),
+                        color: AppColors.accent.withValues(alpha: 0.35),
                         blurRadius: 14,
                         offset: const Offset(0, 6),
                       ),
@@ -394,18 +413,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       context,
                       MaterialPageRoute(builder: (context) => const RegisterScreen()),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Sign Up',
                       style: TextStyle(
-                        color: AppColors.primaryLight.withValues(alpha: 0.95),
+                        color: AppColors.accentLight,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        shadows: [
-                          Shadow(
-                            color: AppColors.primaryDeep.withValues(alpha: 0.5),
-                            blurRadius: 8,
-                          ),
-                        ],
                       ),
                     ),
                   ),
@@ -430,20 +443,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _LoginColors.fieldFillSoft,
-            _LoginColors.fieldFill,
-          ],
-        ),
-        border: Border.all(color: _LoginColors.fieldBorder.withValues(alpha: 0.65)),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryDeep.withValues(alpha: 0.12),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: AppColors.primaryDeep.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -453,17 +458,17 @@ class _LoginScreenState extends State<LoginScreen> {
         keyboardType: keyboardType,
         validator: validator,
         style: const TextStyle(
-          color: Color(0xFF2A1560),
+          color: AppColors.primaryDeep,
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(
-            color: _LoginColors.fieldHint.withValues(alpha: 0.55),
+            color: AppColors.accent.withValues(alpha: 0.55),
             fontWeight: FontWeight.w400,
           ),
-          prefixIcon: Icon(icon, color: _LoginColors.fieldIcon.withValues(alpha: 0.75)),
+          prefixIcon: Icon(icon, color: AppColors.primary),
           suffixIcon: suffix,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

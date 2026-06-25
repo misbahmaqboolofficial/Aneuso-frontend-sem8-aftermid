@@ -2,7 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aneuso_app/data/services/chat_api_service.dart';
+import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/presentation/providers/auth_provider.dart';
+
+final String _kScreenTitle = ScreenTitle.fromFile('chat_thread_screen.dart');
 
 class ChatThreadScreen extends StatefulWidget {
   const ChatThreadScreen({
@@ -211,19 +214,25 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
       backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
         title: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.otherUserName,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              _kScreenTitle,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            if (widget.otherUserType != null)
-              Text(
-                widget.otherUserType!,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
-              ),
+            Text(
+              [
+                widget.otherUserName,
+                if (widget.otherUserType != null) widget.otherUserType!,
+              ].join(' · '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+            ),
           ],
         ),
+        toolbarHeight: 56,
         backgroundColor: const Color(0xFF9B5DE0),
         foregroundColor: Colors.white,
         actions: [

@@ -119,7 +119,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         String routeName = '/login';
         Navigator.pushReplacementNamed(context, routeName);
       } else {
-        final email = _emailController.text.trim();
+        final email = _emailController.text.trim().toLowerCase();
+        await StorageUtil.setStringData('pending_otp_email', email);
         Navigator.pushReplacementNamed(
           context,
           '/otp-verification',

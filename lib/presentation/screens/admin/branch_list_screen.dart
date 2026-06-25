@@ -1220,65 +1220,74 @@ class _BranchListScreenState extends State<BranchListScreen> {
             slivers: [
               // App Bar with gradient
               SliverAppBar(
-                expandedHeight: 180,
+                expandedHeight: 220,
                 floating: false,
                 pinned: true,
+                backgroundColor: _primaryColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  titlePadding: const EdgeInsetsDirectional.only(bottom: 108),
+                  title: Text(
+                    _kScreenTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
                   background: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [_primaryColor, _secondaryColor],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        stops: [0.1, 0.9],
+                        stops: const [0.1, 0.9],
                       ),
                     ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(height: 40),
-                              Container(
-                                padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
-                                    width: 2,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.15),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.3),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.business,
+                                    color: Colors.white,
+                                    size: 30,
                                   ),
                                 ),
-                                child: Icon(
-                                  Icons.business,
-                                  color: Colors.white,
-                                  size: 32,
+                                const SizedBox(height: 10),
+                                Text(
+                                  '${provider.branches.length} Branches',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.92),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 15),
-                              Text(
-                                _kScreenTitle,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 26,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                '${provider.branches.length} Branches',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
