@@ -27,7 +27,7 @@
 # 15_schedule_pickup
 # 16_create_deal
 # 17_service_history
-# 18_three_bin_training
+# 17_service_history
 
 # Driver
 # 19_daily_tasks

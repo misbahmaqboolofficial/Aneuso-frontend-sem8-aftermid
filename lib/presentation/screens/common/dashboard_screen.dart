@@ -288,9 +288,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _buildDrawerItem(12, 'Industry Deals', Icons.handshake_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/industry/create_deal'));
         }),
-        _buildDrawerItem(34, '3-Bin Training', Icons.delete_sweep_rounded, false, () {
-          _pushFromDrawer(() => Navigator.pushNamed(context, '/industry/three-bin-training'));
-        }),
       ];
     }
     if (user.userTypeId == 2) {
@@ -805,7 +802,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       cards.add(_dashboardCard('Schedule', Icons.calendar_today_rounded, const Color(0xFF9B5DE0), 'Pickup schedule', user, auth));
       cards.add(_dashboardCard('History', Icons.history_rounded, const Color(0xFFD78FEE), 'Past pickups', user, auth));
       cards.add(_dashboardCard('Industry Deals', Icons.handshake_rounded, const Color(0xFF6F38C5), 'Manage My Deals', user, auth));
-      cards.add(_dashboardCard('3-Bin Training', Icons.delete_sweep_rounded, const Color(0xFF450693), 'Waste separation', user, auth));
     } else if (user.userTypeId == 2) {
       cards.add(_dashboardCard('Daily Tasks', Icons.schedule_rounded, const Color(0xFF9B5DE0), 'Daily tasks', user, auth));
       cards.add(_dashboardCard('Confirm Pickups', Icons.checklist_rounded, const Color(0xFF6F38C5), 'Confirm pickups', user, auth));
@@ -889,8 +885,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         } else if (subtitle == 'Send notification') {
           Navigator.pushNamed(context, '/admin/broadcast');
-        } else if (subtitle == 'Waste separation') {
-          Navigator.pushNamed(context, '/industry/three-bin-training');
         } else if (subtitle == 'Browse tutorials') {
           Navigator.pushNamed(context, '/tutorials/home');
         } else if (subtitle == 'Browse jobs') {

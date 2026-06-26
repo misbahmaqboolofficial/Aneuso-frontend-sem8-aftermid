@@ -46,7 +46,6 @@ import 'presentation/screens/citizen/CleanupCampaignsScreen.dart';
 import 'presentation/screens/citizen/CampaignDetailScreen.dart';
 import 'presentation/screens/admin/AdminCleanupDashboard.dart';
 import 'presentation/screens/admin/admin_broadcast_screen.dart';
-import 'presentation/screens/industry/industry_three_bin_training_screen.dart';
 import 'presentation/screens/common/live_tracking_screen.dart';
 import 'presentation/screens/chat/messages_hub_screen.dart';
 import 'presentation/providers/job_provider.dart';
@@ -193,7 +192,6 @@ class MyApp extends StatelessWidget {
 
           // Industry routes
           '/industry/schedule_pickup': (context) => const SchedulePickup(),
-          '/industry/three-bin-training': (context) => const IndustryThreeBinTrainingScreen(),
           '/industry/service_history': (context) => ServiceHistoryScreen(),
           '/industry/create_deal': (context) => CreateDealScreen(),
           '/industry/view_deals': (context) => const ViewDealsScreen(),

@@ -32,7 +32,6 @@ import 'package:aneuso_app/presentation/screens/driver/DailyTasksScreen.dart';
 import 'package:aneuso_app/presentation/screens/driver/driver_my_ratings_screen.dart';
 import 'package:aneuso_app/presentation/screens/driver/DriverMissionScreen.dart';
 import 'package:aneuso_app/presentation/screens/industry/create_deal_screen.dart';
-import 'package:aneuso_app/presentation/screens/industry/industry_three_bin_training_screen.dart';
 import 'package:aneuso_app/presentation/screens/industry/schedule_pickup.dart';
 import 'package:aneuso_app/presentation/screens/industry/ServiceHistoryScreen.dart';
 import 'package:aneuso_app/presentation/screens/common/jobs/jobs_list_screen.dart';
@@ -169,7 +168,6 @@ void main() {
     ('14_schedule_pickup', () => _wrap(const SchedulePickup(), user: _user(AppConstants.userTypeIndustry))),
     ('15_create_deal', () => _wrap(const CreateDealScreen(), user: _user(AppConstants.userTypeIndustry))),
     ('16_service_history', () => _wrap(ServiceHistoryScreen(), user: _user(AppConstants.userTypeIndustry))),
-    ('17_three_bin_training', () => _wrap(const IndustryThreeBinTrainingScreen(), user: _user(AppConstants.userTypeIndustry))),
     ('18_driver_daily_tasks', () => _wrap(const DriverTasksScreen(), user: _user(AppConstants.userTypeDriver))),
     ('19_confirm_pickups', () => _wrap(const ConfirmPickupsScreen(), user: _user(AppConstants.userTypeDriver))),
     ('20_driver_missions', () => _wrap(const DriverMissionScreen(), user: _user(AppConstants.userTypeDriver))),
