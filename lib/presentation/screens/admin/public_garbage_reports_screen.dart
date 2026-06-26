@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/auth_provider.dart';
 import 'package:aneuso_app/core/utils/screen_title_util.dart';
+import 'package:aneuso_app/core/utils/product_image_util.dart';
 
 final String _kScreenTitle = ScreenTitle.fromFile('public_garbage_reports_screen.dart');
 
@@ -547,6 +548,35 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
     );
   }
 
+  Widget _buildReportCardImage(String photoUrl) {
+    final imageUrl = resolveProductImageUrl(photoUrl);
+    if (imageUrl == null) {
+      return Container(
+        height: 200,
+        color: const Color(0xFFFDCFFA),
+        child: const Center(
+          child: Icon(Icons.photo_camera, size: 50, color: Colors.grey),
+        ),
+      );
+    }
+    return Image.network(
+      imageUrl,
+      height: 200,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      headers: kProductImageHeaders,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          height: 200,
+          color: const Color(0xFFFDCFFA),
+          child: const Center(
+            child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildReportCard(GarbageReport report) {
     return GestureDetector(
       onTap: () async {
@@ -579,29 +609,7 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               child: Stack(
                 children: [
-                  report.photoUrl.isNotEmpty
-                      ? Image.network(
-                          report.photoUrl,
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 200,
-                              color: const Color(0xFFFDCFFA),
-                              child: const Center(
-                                child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-                              ),
-                            );
-                          },
-                        )
-                      : Container(
-                          height: 200,
-                          color: const Color(0xFFFDCFFA),
-                          child: const Center(
-                            child: Icon(Icons.photo_camera, size: 50, color: Colors.grey),
-                          ),
-                        ),
+                  _buildReportCardImage(report.photoUrl),
                   Positioned(
                     top: 12,
                     right: 12,

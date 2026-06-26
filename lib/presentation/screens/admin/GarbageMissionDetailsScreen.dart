@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/pickup_status.dart';
+import '../../../core/utils/product_image_util.dart';
 import '../../../core/utils/storage_util.dart';
 import '../../providers/auth_provider.dart';
 import 'public_garbage_reports_screen.dart';
@@ -74,7 +75,8 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
   }
 
   void _openFullPhoto(String url) {
-    if (url.isEmpty) return;
+    final resolved = resolveProductImageUrl(url) ?? url;
+    if (resolved.isEmpty) return;
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.9),
@@ -85,7 +87,7 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
           alignment: Alignment.center,
           children: [
             InteractiveViewer(
-              child: Image.network(url, fit: BoxFit.contain, width: double.infinity, height: double.infinity),
+              child: Image.network(resolved, fit: BoxFit.contain, width: double.infinity, height: double.infinity, headers: kProductImageHeaders),
             ),
             Positioned(
               top: 40, right: 20,
@@ -497,6 +499,7 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
   }
 
   Widget _wowSmartPhoto(String label, String url) {
+    final resolved = resolveProductImageUrl(url);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -514,8 +517,13 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: url.isNotEmpty 
-                ? Image.network(url, fit: BoxFit.contain) 
+              child: (resolved != null && resolved.isNotEmpty)
+                ? Image.network(
+                    resolved,
+                    fit: BoxFit.cover,
+                    headers: kProductImageHeaders,
+                    errorBuilder: (context, error, stackTrace) => Icon(Icons.image_not_supported_rounded, color: darkPurple.withOpacity(0.1), size: 40),
+                  )
                 : Icon(Icons.hide_image_rounded, color: darkPurple.withOpacity(0.1), size: 40),
             ),
           ),

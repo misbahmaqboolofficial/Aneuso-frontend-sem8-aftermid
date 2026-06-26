@@ -55,10 +55,16 @@ class _AdminBroadcastScreenState extends State<AdminBroadcastScreen> {
           'recipient_type_id': _recipientTypeId,
           'title': title,
           'message': message,
-          'priority_level_id': 2,
+          'priority_level_id': 184,
+          'action_url': null,
         }),
       );
-      final body = jsonDecode(res.body);
+      Map<String, dynamic> body = {};
+      try {
+        body = jsonDecode(res.body) as Map<String, dynamic>;
+      } catch (_) {
+        throw Exception('Server returned an invalid response (${res.statusCode})');
+      }
       if (res.statusCode == 201 && body['success'] == true) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -68,12 +74,22 @@ class _AdminBroadcastScreenState extends State<AdminBroadcastScreen> {
           _messageController.clear();
         }
       } else {
-        throw Exception(body['message'] ?? 'Failed to send');
+        final err = body['message']?.toString();
+        final detail = body['error']?.toString();
+        final generic = err == 'Something went wrong!';
+        throw Exception(
+          (!generic && err != null && err.isNotEmpty)
+              ? err
+              : (detail != null && detail.isNotEmpty)
+                  ? detail
+                  : 'Failed to send broadcast (${res.statusCode})',
+        );
       }
     } catch (e) {
       if (mounted) {
+        final msg = e.toString().replaceFirst('Exception: ', '');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
+          SnackBar(content: Text(msg)),
         );
       }
     } finally {

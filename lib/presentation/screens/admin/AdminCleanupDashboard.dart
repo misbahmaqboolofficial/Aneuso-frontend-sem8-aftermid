@@ -5,6 +5,7 @@ import 'CleanupFinalizationScreen.dart';
 import 'MissionAssignmentScreen.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/pickup_status.dart';
+import '../../../core/utils/product_image_util.dart';
 import '../../../core/utils/storage_util.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -436,18 +437,33 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
   }
 
   Widget _buildWOWSmartImage(String? url, double w, double h, double r) {
+    final resolved = resolveProductImageUrl(url);
     return GestureDetector(
-      onTap: () => _openWOWPhoto(url),
+      onTap: () => _openWOWPhoto(resolved),
       child: Container(
         width: w, height: h,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(r), color: palePink.withOpacity(0.3), border: Border.all(color: darkPurple.withOpacity(0.05))),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(r - 1),
-          child: (url != null && url.isNotEmpty)
-            ? Image.network(url, fit: BoxFit.contain)
-            : Icon(Icons.broken_image_rounded, color: darkPurple.withOpacity(0.1), size: w / 3),
+          child: (resolved != null && resolved.isNotEmpty)
+            ? Image.network(
+                resolved,
+                fit: BoxFit.cover,
+                width: w,
+                height: h,
+                headers: kProductImageHeaders,
+                errorBuilder: (context, error, stackTrace) => _buildImagePlaceholder(w),
+              )
+            : _buildImagePlaceholder(w),
         ),
       ),
+    );
+  }
+
+  Widget _buildImagePlaceholder(double size) {
+    return Container(
+      color: palePink.withOpacity(0.2),
+      child: Icon(Icons.photo_camera_outlined, color: darkPurple.withOpacity(0.2), size: size / 3),
     );
   }
 
@@ -480,7 +496,7 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
         insetPadding: EdgeInsets.zero,
         child: Stack(
           children: [
-            InteractiveViewer(child: Image.network(url, fit: BoxFit.contain, width: double.infinity, height: double.infinity)),
+            InteractiveViewer(child: Image.network(url, fit: BoxFit.contain, width: double.infinity, height: double.infinity, headers: kProductImageHeaders)),
             Positioned(top: 40, right: 20, child: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close_rounded, color: Colors.white, size: 32))),
           ],
         ),

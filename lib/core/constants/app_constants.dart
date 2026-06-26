@@ -17,8 +17,7 @@ class AppConstants {
   /// `api_config.json` example: { "API_BASE_URL": "https://api.yourdomain.com/api" }
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue:
-        'https://nav-astronomy-synopsis-networking.trycloudflare.com/api',
+    defaultValue: 'http://localhost:3000/api',
   );
 
   static const String tokenKey = 'auth_token';

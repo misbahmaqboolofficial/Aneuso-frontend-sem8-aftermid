@@ -19,11 +19,22 @@ bool isPlaceholderProductImage(String? raw) {
 String? resolveProductImageUrl(String? raw) {
   if (raw == null || raw.trim().isEmpty) return null;
   if (isPlaceholderProductImage(raw)) return null;
-  final value = raw.trim();
+
+  final origin = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+  var value = raw.trim().replaceAll('\\', '/');
+
+  // Collapse accidental duplicate slashes (keep scheme:// intact).
+  value = value.replaceAll(RegExp(r'(?<!:)//+'), '/');
+
   if (value.startsWith('http://') || value.startsWith('https://')) {
+    final uri = Uri.tryParse(value);
+    if (uri != null && uri.path.contains('/uploads/')) {
+      // Rebase stored uploads to the API the app is currently using.
+      return '$origin${uri.path}';
+    }
     return value;
   }
-  final origin = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+
   if (value.startsWith('/')) {
     return '$origin$value';
   }
