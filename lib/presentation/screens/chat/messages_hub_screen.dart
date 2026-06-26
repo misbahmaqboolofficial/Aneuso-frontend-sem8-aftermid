@@ -2,9 +2,6 @@ import 'package:aneuso_app/data/services/chat_api_service.dart';
 import 'package:aneuso_app/presentation/widgets/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'chat_thread_screen.dart';
-import 'package:aneuso_app/core/utils/screen_title_util.dart';
-
-final String _kScreenTitle = ScreenTitle.fromFile('messages_hub_screen.dart');
 
 /// Facebook-style messaging: find users, send requests, chat when accepted.
 class MessagesHubScreen extends StatefulWidget {
@@ -57,7 +54,7 @@ class _MessagesHubScreenState extends State<MessagesHubScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
-        title: Text(_kScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Messages', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF6F38C5),
         foregroundColor: Colors.white,
         bottom: TabBar(

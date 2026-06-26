@@ -9,9 +9,6 @@ import '../../../data/services/driver_tracking_service.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../../core/utils/storage_util.dart';
-import 'package:aneuso_app/core/utils/screen_title_util.dart';
-
-final String _kScreenTitle = ScreenTitle.fromFile('DriverMissionScreen.dart');
 
 class DriverMissionScreen extends StatefulWidget {
   const DriverMissionScreen({super.key});
@@ -81,7 +78,7 @@ class _DriverMissionScreenState extends State<DriverMissionScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
-        title: Text(_kScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('My Cleanup Missions', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF9B5DE0),
         elevation: 0,
       ),

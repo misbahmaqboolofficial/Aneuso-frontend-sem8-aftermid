@@ -450,15 +450,45 @@ class DriverTrackingService {
           ? TrackingTaskType.adminCleanup
           : TrackingTaskType.industryPickup;
 
+  static bool isDriverPendingAdminVerification(Map<String, dynamic> task) {
+    if (task['source'] != 'Admin') return false;
+    final marked = task['driver_marked_complete_at'];
+    if (marked == null || marked.toString().isEmpty) return false;
+    final rs = task['report_status_id'];
+    final rid = rs is int ? rs : int.tryParse('$rs') ?? 0;
+    return rid != ReportStatus.collected && rid != ReportStatus.cleaned;
+  }
+
+  static bool isAdminVerifiedComplete(Map<String, dynamic> task) {
+    if (task['source'] == 'Admin') {
+      final rs = task['report_status_id'];
+      final rid = rs is int ? rs : int.tryParse('$rs') ?? 0;
+      return rid == ReportStatus.collected || rid == ReportStatus.cleaned;
+    }
+    return displayStatusForTask(task) == PickupStatus.completed;
+  }
+
+  static String displayStatusLabelForTask(Map<String, dynamic> task) {
+    if (isDriverPendingAdminVerification(task)) {
+      return 'Marked completed by you';
+    }
+    if (isAdminVerifiedComplete(task)) {
+      return 'Completed';
+    }
+    return PickupStatus.label(displayStatusForTask(task));
+  }
+
   static int displayStatusForTask(Map<String, dynamic> task) {
     if (task['source'] == 'Admin') {
       final rs = task['report_status_id'];
       final rid = rs is int ? rs : int.tryParse('$rs') ?? 0;
-      if (rid == ReportStatus.enRoute) return PickupStatus.enRoute;
-      if (rid == ReportStatus.arrived) return PickupStatus.reachedDestination;
-      if (rid == ReportStatus.collected || rid == ReportStatus.cleaned) {
+      if (isDriverPendingAdminVerification(task) ||
+          rid == ReportStatus.collected ||
+          rid == ReportStatus.cleaned) {
         return PickupStatus.completed;
       }
+      if (rid == ReportStatus.enRoute) return PickupStatus.enRoute;
+      if (rid == ReportStatus.arrived) return PickupStatus.reachedDestination;
       return PickupStatus.scheduled;
     }
     final sid = task['pickup_status_id'];

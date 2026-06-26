@@ -6,9 +6,6 @@ import 'package:http/http.dart' as http;
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/form_validators.dart';
 import '../../../core/utils/storage_util.dart';
-import 'package:aneuso_app/core/utils/screen_title_util.dart';
-
-final String _kScreenTitle = ScreenTitle.fromFile('admin_broadcast_screen.dart');
 
 /// Admin compose screen for broadcast notifications to clients or drivers.
 class AdminBroadcastScreen extends StatefulWidget {
@@ -89,7 +86,7 @@ class _AdminBroadcastScreenState extends State<AdminBroadcastScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F6FF),
       appBar: AppBar(
-        title: Text(_kScreenTitle),
+        title: const Text('Send Notification'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

@@ -45,7 +45,6 @@ import 'presentation/screens/admin/admin_pickups_screen.dart';
 import 'presentation/screens/citizen/CleanupCampaignsScreen.dart';
 import 'presentation/screens/citizen/CampaignDetailScreen.dart';
 import 'presentation/screens/admin/AdminCleanupDashboard.dart';
-import 'presentation/screens/driver/DriverMissionScreen.dart';
 import 'presentation/screens/admin/admin_broadcast_screen.dart';
 import 'presentation/screens/industry/industry_three_bin_training_screen.dart';
 import 'presentation/screens/common/live_tracking_screen.dart';
@@ -214,7 +213,6 @@ class MyApp extends StatelessWidget {
             return CampaignDetailScreen(reportId: args?['id'] ?? 0);
           },
           '/admin/cleanup-dashboard': (context) => const AdminCleanupDashboard(),
-          '/driver/cleanup-missions': (context) => const DriverMissionScreen(),
 
           // Live Tracking
           '/messages': (context) => const MessagesHubScreen(),

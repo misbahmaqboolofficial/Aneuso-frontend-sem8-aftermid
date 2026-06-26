@@ -47,6 +47,7 @@ class GarbageReport {
   int? driverId;
   int? urgencyLevelId;
   String? adminNotes;
+  DateTime? driverMarkedCompleteAt;
 
   GarbageReport({
     required this.id,
@@ -78,6 +79,7 @@ class GarbageReport {
     this.driverId,
     this.urgencyLevelId,
     this.adminNotes,
+    this.driverMarkedCompleteAt,
   });
 
   factory GarbageReport.fromJson(Map<String, dynamic> json) {
@@ -118,6 +120,9 @@ class GarbageReport {
       driverId: parseDriverId(json['driver_id']),
       urgencyLevelId: json['urgency_level_id'],
       adminNotes: json['admin_notes'],
+      driverMarkedCompleteAt: json['driver_marked_complete_at'] != null
+          ? DateTime.tryParse(json['driver_marked_complete_at'].toString())
+          : null,
     );
   }
 
@@ -147,6 +152,7 @@ class GarbageReport {
       'labor_expense': laborExpense,
       'other_expense': otherExpense,
       'other_expense_description': otherExpenseDescription,
+      'driver_marked_complete_at': driverMarkedCompleteAt?.toIso8601String(),
     };
   }
 }
@@ -599,7 +605,11 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: _buildStatusBadge(report.reportStatusId, report.reportStatusName),
+                    child: _buildStatusBadge(
+                      report.reportStatusId,
+                      report.reportStatusName,
+                      driverMarkedCompleteAt: report.driverMarkedCompleteAt,
+                    ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -744,41 +754,40 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
     );
   }
 
-  String _getStatusName(int id, [String? fallbackName]) {
-    switch (id) {
-      case 170:
-      case 171: return 'Pending Review';
-      case 172: return 'Report Approved';
-      case 206: return 'Driver Assigned';
-      case 207: return 'Driver on the Way';
-      case 205: return 'Cleaning Started';
-      case 208: return 'Garbage Collected';
-      case 174: return 'Area Cleaned';
-      case 204: return 'Collected / Funding Started';
-      default: 
-        if (fallbackName != null) {
-          return fallbackName.replaceFirst('report_status_', '').replaceAll('_', ' ').toUpperCase();
-        }
-        return 'Unknown';
-    }
+  String _getStatusName(int id, [String? fallbackName, DateTime? driverMarkedCompleteAt]) {
+    return CleanupStatusUtil.adminDisplayLabel(
+      reportStatusId: id,
+      driverMarkedCompleteAt: driverMarkedCompleteAt,
+      fallbackName: fallbackName,
+    );
   }
 
-  Widget _buildStatusBadge(int statusId, String statusName) {
+  Widget _buildStatusBadge(
+    int statusId,
+    String statusName, {
+    DateTime? driverMarkedCompleteAt,
+  }) {
+    final pending = CleanupStatusUtil.isDriverPendingAdminVerification(
+      reportStatusId: statusId,
+      driverMarkedCompleteAt: driverMarkedCompleteAt,
+    );
+    final verified = CleanupStatusUtil.isAdminVerifiedComplete(statusId);
+
     Color color;
     IconData icon;
-    
-    switch (statusId) {
-      case 204: // Collected
-        color = Colors.green;
-        icon = Icons.check_circle_outline;
-        break;
-      case 172: // Funded
-        color = Colors.blue;
-        icon = Icons.volunteer_activism;
-        break;
-      default:
-        color = const Color(0xFF6F38C5);
-        icon = Icons.info_outline;
+
+    if (pending) {
+      color = Colors.orange;
+      icon = Icons.hourglass_top_rounded;
+    } else if (verified || statusId == 204) {
+      color = Colors.green;
+      icon = Icons.check_circle_outline;
+    } else if (statusId == 172) {
+      color = Colors.blue;
+      icon = Icons.volunteer_activism;
+    } else {
+      color = const Color(0xFF6F38C5);
+      icon = Icons.info_outline;
     }
 
     return Container(
@@ -796,7 +805,7 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
           Icon(icon, color: Colors.white, size: 14),
           const SizedBox(width: 4),
           Text(
-            _getStatusName(statusId, statusName).toUpperCase(),
+            _getStatusName(statusId, statusName, driverMarkedCompleteAt).toUpperCase(),
             style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
           ),
         ],
@@ -848,29 +857,19 @@ class _GarbageReportDetailsScreenState extends State<GarbageReportDetailsScreen>
       if (mounted) {
         setState(() {
           _currentStatusId = updated.reportStatusId;
-          widget.report.reportStatusId = updated.reportStatusId; // Update local ref
+          widget.report.reportStatusId = updated.reportStatusId;
+          widget.report.driverMarkedCompleteAt = updated.driverMarkedCompleteAt;
         });
       }
     } catch (e) { print(e); }
   }
 
   String _getStatusName(int id, [String? fallbackName]) {
-    switch (id) {
-      case 170:
-      case 171: return 'Pending Review';
-      case 172: return 'Report Approved';
-      case 206: return 'Driver Assigned';
-      case 207: return 'Driver on the Way';
-      case 205: return 'Cleaning Started';
-      case 208: return 'Garbage Collected';
-      case 174: return 'Area Cleaned';
-      case 204: return 'Collected / Funding Started';
-      default: 
-        if (fallbackName != null) {
-          return fallbackName.replaceFirst('report_status_', '').replaceAll('_', ' ').toUpperCase();
-        }
-        return 'Unknown';
-    }
+    return CleanupStatusUtil.adminDisplayLabel(
+      reportStatusId: id,
+      driverMarkedCompleteAt: widget.report.driverMarkedCompleteAt,
+      fallbackName: fallbackName,
+    );
   }
 
   @override

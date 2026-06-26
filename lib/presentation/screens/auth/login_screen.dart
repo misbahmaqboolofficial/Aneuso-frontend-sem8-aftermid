@@ -137,83 +137,48 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          _kScreenTitle,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.95),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(gradient: _LoginColors.background),
-        child: Stack(
-          children: [
-            Positioned(
-              top: -80,
-              left: -60,
-              child: Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryLight.withValues(alpha: 0.2),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -100,
-              right: -40,
-              child: Container(
-                width: 260,
-                height: 260,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.accentLight.withValues(alpha: 0.18),
-                ),
-              ),
-            ),
-            Consumer<AuthProvider>(
+        child: Consumer<AuthProvider>(
           builder: (context, authProvider, child) {
             return LoadingOverlay(
               isLoading: authProvider.isLoading,
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildHeader(),
-                        const SizedBox(height: 32),
-                        _buildGlassCard(authProvider),
-                        const SizedBox(height: 28),
-                        Text(
-                          'Secure login • Privacy protected',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.75),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height -
+                          MediaQuery.of(context).padding.top -
+                          MediaQuery.of(context).padding.bottom,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildHeader(),
+                          const SizedBox(height: 32),
+                          _buildGlassCard(authProvider),
+                          const SizedBox(height: 28),
+                          Text(
+                            'Secure login • Privacy protected',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.75),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             );
           },
-        ),
-          ],
         ),
       ),
     );
@@ -222,6 +187,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
+        Text(
+          _kScreenTitle,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.95),
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 28),
         const AppRecycleEmblem(size: 108),
         const SizedBox(height: 20),
         ShaderMask(

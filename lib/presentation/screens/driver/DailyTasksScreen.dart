@@ -1,15 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/constants/pickup_status.dart';
-import 'package:aneuso_app/data/services/driver_tracking_service.dart';
+import 'package:aneuso_app/core/utils/form_validators.dart';
+import 'package:aneuso_app/core/utils/product_image_util.dart';
 import 'package:aneuso_app/core/utils/screen_title_util.dart';
+import 'package:aneuso_app/core/utils/storage_util.dart';
+import 'package:aneuso_app/data/services/driver_tracking_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/auth_provider.dart';
-import '../../../core/utils/storage_util.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 final String _kScreenTitle = ScreenTitle.fromFile('DailyTasksScreen.dart');
 
@@ -156,6 +164,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
   }
 
   Future<void> fetchDriverTasks() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
       hasError = false;
@@ -198,9 +207,13 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
           ...Map<String, dynamic>.from(t),
           'source': 'Admin',
           'branch_name': t['address'],
-          'company_name': 'Public Mission',
+          'company_name': 'Public Cleanup',
           'report_status_id': t['report_status_id'],
-          'pickup_status_id': _mapAdminStatusToPickupStatus(t['report_status_id']),
+          'driver_marked_complete_at': t['driver_marked_complete_at'],
+          'pickup_status_id': _mapAdminStatusToPickupStatus(
+            t['report_status_id'],
+            driverMarkedAt: t['driver_marked_complete_at'],
+          ),
           'scheduled_date': t['created_at'],
           'estimated_weight_kg': t['estimated_volume'],
           'waste_type_name': t['urgency_name'] ?? 'Urgent',
@@ -209,6 +222,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
         combinedTasks.addAll(adminTasks);
       }
 
+      if (!mounted) return;
       setState(() {
         tasks = combinedTasks;
         totalTasks = combinedTasks.length;
@@ -217,6 +231,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
       });
     } catch (e) {
       debugPrint('Fetch tasks error: $e');
+      if (!mounted) return;
       setState(() {
         hasError = true;
         errorMessage = 'Network error: $e';
@@ -225,8 +240,13 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
     }
   }
 
-  int _mapAdminStatusToPickupStatus(dynamic adminStatus) {
+  int _mapAdminStatusToPickupStatus(dynamic adminStatus, {dynamic driverMarkedAt}) {
     final s = adminStatus is int ? adminStatus : int.tryParse('$adminStatus') ?? 0;
+    if (driverMarkedAt != null && driverMarkedAt.toString().isNotEmpty) {
+      if (s != ReportStatus.collected && s != ReportStatus.cleaned) {
+        return PickupStatus.completed;
+      }
+    }
     if (s == ReportStatus.enRoute) return PickupStatus.enRoute;
     if (s == ReportStatus.arrived) return PickupStatus.reachedDestination;
     if (s == ReportStatus.collected || s == ReportStatus.cleaned) {
@@ -288,6 +308,16 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
       return dateString;
     }
   }
+
+  Color getStatusColorForTask(Map<String, dynamic> task) {
+    if (DriverTrackingService.isDriverPendingAdminVerification(task)) {
+      return Colors.orange.shade700;
+    }
+    return getStatusColor(DriverTrackingService.displayStatusForTask(task));
+  }
+
+  String getStatusTextForTask(Map<String, dynamic> task) =>
+      DriverTrackingService.displayStatusLabelForTask(task);
 
   Color getStatusColor(int statusId) {
     switch (statusId) {
@@ -803,10 +833,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            // Handle task tap
-            // _showTaskDetails(task);
-          },
+          onTap: () => _showTaskDetails(task),
           borderRadius: BorderRadius.circular(20),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -823,15 +850,11 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: getStatusColor(
-                          DriverTrackingService.displayStatusForTask(task),
-                        ),
+                        color: getStatusColorForTask(task),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        getStatusText(
-                          DriverTrackingService.displayStatusForTask(task),
-                        ),
+                        getStatusTextForTask(task),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -983,7 +1006,17 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                     ),
                   ),
 
-                if (task['id'] != null) ..._buildDriverActionButtons(task),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Tap for details',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    ),
+                    Icon(Icons.chevron_right, size: 18, color: Colors.grey[500]),
+                  ],
+                ),
               ],
             ),
           ),
@@ -1056,6 +1089,8 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
     final reportStatus = task['report_status_id'];
     final reportStatusId =
         reportStatus is int ? reportStatus : int.tryParse('$reportStatus');
+    final driverMarkedComplete = task['driver_marked_complete_at'] != null &&
+        task['driver_marked_complete_at'].toString().isNotEmpty;
     final canViewMap = isTrackingThis ||
         PickupStatus.canLiveTrack(statusId) ||
         (isAdmin && ReportStatus.canLiveTrack(reportStatusId));
@@ -1141,24 +1176,202 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
       );
     }
 
-    if (isAdmin && statusId == PickupStatus.reachedDestination) {
+    if (isAdmin &&
+        !driverMarkedComplete &&
+        reportStatusId != ReportStatus.collected &&
+        reportStatusId != ReportStatus.cleaned &&
+        (statusId == PickupStatus.reachedDestination ||
+            reportStatusId == ReportStatus.arrived ||
+            reportStatusId == ReportStatus.enRoute)) {
       widgets.add(
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
-            onPressed: () => Navigator.pushNamed(context, '/driver/cleanup-missions'),
-            icon: const Icon(Icons.cleaning_services),
-            label: const Text('Confirm Cleanup'),
+            onPressed: () => _showAdminCleanupCompletionSheet(taskId, task),
+            icon: const Icon(Icons.check_circle_outline),
+            label: const Text('Mark as Completed'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF06D6A0),
               foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),
       );
     }
 
+    if (isAdmin &&
+        driverMarkedComplete &&
+        reportStatusId != ReportStatus.collected &&
+        reportStatusId != ReportStatus.cleaned) {
+      widgets.add(
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.orange.shade300),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.hourglass_top_rounded, color: Colors.orange.shade800, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Waiting for admin to verify your submission',
+                  style: TextStyle(
+                    color: Colors.orange.shade900,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return widgets;
+  }
+
+  Future<String?> _uploadCleanupPhoto(XFile file) async {
+    try {
+      final token = StorageUtil.getToken();
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/upload/photo'),
+      );
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      if (kIsWeb) {
+        final bytes = await file.readAsBytes();
+        request.files.add(http.MultipartFile.fromBytes(
+          'photo',
+          bytes,
+          filename: file.name,
+        ));
+      } else {
+        request.files.add(await http.MultipartFile.fromPath('photo', file.path));
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['url']?.toString();
+      }
+    } catch (e) {
+      debugPrint('Cleanup photo upload error: $e');
+    }
+    return null;
+  }
+
+  Future<void> _submitAdminCleanupCollection({
+    required int reportId,
+    required String weightKg,
+    required XFile afterPhoto,
+  }) async {
+    final afterUrl = await _uploadCleanupPhoto(afterPhoto);
+    if (afterUrl == null || afterUrl.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload after-cleanup photo')),
+        );
+      }
+      return;
+    }
+
+    double? latitude;
+    double? longitude;
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+      latitude = pos.latitude;
+      longitude = pos.longitude;
+    } catch (e) {
+      debugPrint('GPS unavailable on cleanup completion: $e');
+    }
+
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.put(
+        Uri.parse('$baseUrl/reports/cleanup/$reportId/submit-collection'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'actual_volume': weightKg,
+          'after_photo_url': afterUrl,
+          if (latitude != null) 'latitude': latitude,
+          if (longitude != null) 'longitude': longitude,
+        }),
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Completion submitted. Awaiting admin verification.'),
+          ),
+        );
+        await fetchDriverTasks();
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      } else {
+        final body = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(body['message']?.toString() ?? 'Failed to submit cleanup')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _showAdminCleanupCompletionSheet(int reportId, Map<String, dynamic> task) async {
+    final initialWeight =
+        task['estimated_weight_kg']?.toString() ?? task['estimated_volume']?.toString() ?? '';
+
+    final result = await showModalBottomSheet<_CleanupCompletionResult>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
+          ),
+          child: _CleanupCompletionSheet(initialWeight: initialWeight),
+        );
+      },
+    );
+
+    if (!mounted || result == null) return;
+
+    await _submitAdminCleanupCollection(
+      reportId: reportId,
+      weightKg: result.weightKg,
+      afterPhoto: XFile.fromData(
+        result.photoBytes,
+        name: result.photoName,
+        mimeType: 'image/jpeg',
+      ),
+    );
   }
 
   Future<void> _onToggleTracking(
@@ -1502,11 +1715,15 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
   }
 
   void _showTaskDetails(Map<String, dynamic> task) {
+    final isAdminTask = task['source'] == 'Admin';
+    final statusLabel = getStatusTextForTask(task);
+    final statusColor = getStatusColorForTask(task);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
+      builder: (sheetContext) {
         return Container(
           margin: const EdgeInsets.only(top: 50),
           decoration: const BoxDecoration(
@@ -1515,41 +1732,538 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
               topLeft: Radius.circular(30),
               topRight: Radius.circular(30),
             ),
+            boxShadow: [
+              BoxShadow(color: Colors.black12, blurRadius: 20, spreadRadius: 5),
+            ],
           ),
           child: DraggableScrollableSheet(
-            initialChildSize: 0.9,
+            initialChildSize: 0.85,
             minChildSize: 0.5,
             maxChildSize: 0.95,
             expand: false,
             builder: (context, scrollController) {
-              return SingleChildScrollView(
-                controller: scrollController,
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 60,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(2),
+              return StatefulBuilder(
+                builder: (context, setSheetState) {
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 60,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Task Details',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF333333),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: statusColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: statusColor),
+                                ),
+                                child: Text(
+                                  statusLabel,
+                                  style: TextStyle(
+                                    color: statusColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: isAdminTask ? Colors.blue[50] : Colors.purple[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  isAdminTask ? 'ADMIN CLEANUP' : 'INDUSTRY PICKUP',
+                                  style: TextStyle(
+                                    color: isAdminTask ? Colors.blue[800] : Colors.purple[800],
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            task['branch_name'] ?? 'Unknown location',
+                            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF9F6FF),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.grey[100]!),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildSheetDetailRow(
+                                  'Company',
+                                  task['company_name'] ?? 'N/A',
+                                  Icons.business,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildSheetDetailRow(
+                                  'Location',
+                                  task['location_address'] ?? task['address'] ?? 'N/A',
+                                  Icons.location_on,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildSheetDetailRow(
+                                  'Scheduled',
+                                  formatDate(task['scheduled_date']?.toString() ?? ''),
+                                  Icons.calendar_today,
+                                ),
+                                if (!isAdminTask) ...[
+                                  const SizedBox(height: 12),
+                                  _buildSheetDetailRow(
+                                    'Time slot',
+                                    task['time_slot']?.toString() ?? 'N/A',
+                                    Icons.access_time,
+                                  ),
+                                ],
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildSheetDetailRow(
+                                        'Est. weight',
+                                        '${task['estimated_weight_kg'] ?? task['estimated_volume'] ?? '0'} kg',
+                                        Icons.scale,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _buildSheetDetailRow(
+                                        isAdminTask ? 'Urgency' : 'Waste type',
+                                        task['waste_type_name']?.toString() ?? 'N/A',
+                                        Icons.category,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (isAdminTask &&
+                                    task['description'] != null &&
+                                    task['description'].toString().isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  _buildSheetDetailRow(
+                                    'Description',
+                                    task['description'].toString(),
+                                    Icons.notes,
+                                  ),
+                                ],
+                                if (task['notes'] != null && task['notes'].toString().isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  _buildSheetDetailRow(
+                                    'Notes',
+                                    task['notes'].toString(),
+                                    Icons.note,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          ..._buildTaskImagesSection(task, isAdminTask),
+                          if (task['id'] != null) ..._buildDriverActionButtons(task),
+                          const SizedBox(height: 24),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      // Task details content...
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               );
             },
           ),
         );
       },
+    ).whenComplete(() {
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) fetchDriverTasks();
+        });
+      }
+    });
+  }
+
+  bool _isTaskComplete(Map<String, dynamic> task) {
+    return DriverTrackingService.isDriverPendingAdminVerification(task) ||
+        DriverTrackingService.isAdminVerifiedComplete(task);
+  }
+
+  List<String> _parsePhotoUrls(dynamic raw) {
+    if (raw == null) return const [];
+    if (raw is List) {
+      return raw.map((e) => e.toString()).where((s) => s.isNotEmpty).toList();
+    }
+    if (raw is String) {
+      final trimmed = raw.trim();
+      if (trimmed.isEmpty) return const [];
+      if (trimmed.startsWith('[')) {
+        try {
+          final decoded = json.decode(trimmed);
+          if (decoded is List) {
+            return decoded.map((e) => e.toString()).where((s) => s.isNotEmpty).toList();
+          }
+        } catch (_) {}
+      }
+      return [trimmed];
+    }
+    return const [];
+  }
+
+  Future<List<String>> _loadIndustryAfterPhotoUrls(int scheduleId) async {
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.get(
+        Uri.parse('$baseUrl/pickups/confirmations/schedule/$scheduleId'),
+        headers: {
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode != 200) return const [];
+      final body = json.decode(response.body);
+      final confirmation = body['data'];
+      if (confirmation is! Map) return const [];
+      return _parsePhotoUrls(confirmation['photos_urls'])
+          .map(resolveProductImageUrl)
+          .whereType<String>()
+          .toList();
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  List<Widget> _buildTaskImagesSection(
+    Map<String, dynamic> task,
+    bool isAdminTask,
+  ) {
+    final isComplete = _isTaskComplete(task);
+    final beforeUrl = isAdminTask
+        ? resolveProductImageUrl(task['photo_url']?.toString())
+        : null;
+    final afterUrl = isAdminTask
+        ? resolveProductImageUrl(task['after_photo_url']?.toString())
+        : null;
+
+    if (isComplete && isAdminTask && (beforeUrl != null || afterUrl != null)) {
+      return [
+        const SizedBox(height: 20),
+        const Text(
+          'Before & after cleanup',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: _buildTaskPhotoTile('Before', beforeUrl)),
+            const SizedBox(width: 12),
+            Expanded(child: _buildTaskPhotoTile('After', afterUrl)),
+          ],
+        ),
+      ];
+    }
+
+    if (isComplete && !isAdminTask) {
+      final scheduleId = task['id'];
+      final id = scheduleId is int ? scheduleId : int.tryParse('$scheduleId');
+      if (id == null) return const [];
+
+      return [
+        const SizedBox(height: 20),
+        const Text(
+          'Pickup photos',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 12),
+        FutureBuilder<List<String>>(
+          future: _loadIndustryAfterPhotoUrls(id),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            final photos = snapshot.data ?? const [];
+            if (photos.isEmpty) {
+              return Text(
+                'No pickup photos uploaded for this task.',
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              );
+            }
+            if (photos.length == 1) {
+              return _buildTaskPhotoTile('After pickup', photos.first, fullWidth: true);
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _buildTaskPhotoTile('Photo 1', photos[0])),
+                if (photos.length > 1) ...[
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildTaskPhotoTile('Photo 2', photos[1])),
+                ],
+              ],
+            );
+          },
+        ),
+      ];
+    }
+
+    if (beforeUrl != null) {
+      return [
+        const SizedBox(height: 20),
+        const Text(
+          'Site photo',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        _buildTaskPhotoTile('Before cleanup', beforeUrl, fullWidth: true),
+      ];
+    }
+
+    return const [];
+  }
+
+  Widget _buildTaskPhotoTile(String label, String? url, {bool fullWidth = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[600],
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: fullWidth ? 160 : 130,
+            color: const Color(0xFFF3EEFF),
+            child: url != null && url.isNotEmpty
+                ? Image.network(
+                    url,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _buildPhotoPlaceholder(),
+                  )
+                : _buildPhotoPlaceholder(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhotoPlaceholder() {
+    return Center(
+      child: Icon(Icons.image_not_supported_outlined, color: Colors.grey[400], size: 36),
+    );
+  }
+
+  Widget _buildSheetDetailRow(String label, String value, IconData icon) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18, color: const Color(0xFF9B5DE0)),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF333333),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CleanupCompletionResult {
+  final String weightKg;
+  final Uint8List photoBytes;
+  final String photoName;
+
+  const _CleanupCompletionResult({
+    required this.weightKg,
+    required this.photoBytes,
+    required this.photoName,
+  });
+}
+
+class _CleanupCompletionSheet extends StatefulWidget {
+  final String initialWeight;
+
+  const _CleanupCompletionSheet({required this.initialWeight});
+
+  @override
+  State<_CleanupCompletionSheet> createState() => _CleanupCompletionSheetState();
+}
+
+class _CleanupCompletionSheetState extends State<_CleanupCompletionSheet> {
+  late final TextEditingController _weightController;
+  final _formKey = GlobalKey<FormState>();
+  final _picker = ImagePicker();
+  Uint8List? _photoBytes;
+  String? _photoName;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _weightController = TextEditingController(text: widget.initialWeight);
+  }
+
+  @override
+  void dispose() {
+    _weightController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickPhoto() async {
+    final photo = await _picker.pickImage(
+      source: kIsWeb ? ImageSource.gallery : ImageSource.camera,
+      imageQuality: 80,
+    );
+    if (photo == null || !mounted) return;
+    final bytes = await photo.readAsBytes();
+    if (!mounted) return;
+    setState(() {
+      _photoBytes = bytes;
+      _photoName = photo.name.isNotEmpty ? photo.name : 'after_cleanup.jpg';
+    });
+  }
+
+  void _submit() {
+    if (_isSubmitting) return;
+    if (!_formKey.currentState!.validate()) return;
+    if (_photoBytes == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please add an after-cleanup photo')),
+      );
+      return;
+    }
+    _isSubmitting = true;
+    Navigator.pop(
+      context,
+      _CleanupCompletionResult(
+        weightKg: _weightController.text.trim(),
+        photoBytes: _photoBytes!,
+        photoName: _photoName ?? 'after_cleanup.jpg',
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Mark Cleanup as Completed',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Submit weight and after photo. Admin will verify before the task is closed.',
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _weightController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Actual weight collected (kg)',
+                border: OutlineInputBorder(),
+              ),
+              validator: FormValidators.weightKg,
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: _isSubmitting ? null : _pickPhoto,
+              icon: const Icon(Icons.camera_alt_outlined),
+              label: Text(_photoBytes == null ? 'Add after photo' : 'Change after photo'),
+            ),
+            if (_photoBytes != null) ...[
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.memory(
+                  _photoBytes!,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: _isSubmitting ? null : _submit,
+              icon: _isSubmitting
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.check_circle_outline),
+              label: const Text('Submit for verification'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF06D6A0),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

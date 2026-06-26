@@ -100,9 +100,44 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
     );
   }
 
+  bool get _isDriverPendingVerification => CleanupStatusUtil.isDriverPendingAdminVerification(
+    reportStatusId: currentReport.reportStatusId,
+    driverMarkedCompleteAt: currentReport.driverMarkedCompleteAt,
+  );
+
+  bool get _isAdminVerified => CleanupStatusUtil.isAdminVerifiedComplete(currentReport.reportStatusId);
+
+  Future<void> _verifyDriverCollection() async {
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.put(
+        Uri.parse('${AppConstants.baseUrl}/reports/cleanup/${currentReport.id}/verify-collection'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+      );
+      final body = json.decode(response.body);
+      if (!mounted) return;
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(body['message'] ?? 'Mission marked as completed'), backgroundColor: Colors.green),
+        );
+        await _refreshData();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(body['message'] ?? 'Verification failed'), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not verify completion'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bool isFinalized = currentReport.reportStatusId == 174 || currentReport.reportStatusId == 208;
+    final bool isFinalized = _isAdminVerified;
+    final bool showCompletionReport = _isDriverPendingVerification || isFinalized;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -119,15 +154,16 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
                     child: Column(
                       children: [
                         if (isRefreshing) const LinearProgressIndicator(backgroundColor: Colors.transparent, color: brightPurp),
+                        if (_isDriverPendingVerification) _buildDriverPendingBanner(),
                         _buildWOWStatusHeader(isFinalized),
                         const SizedBox(height: 32),
-                        _lightCard(child: _buildWOWStepper(currentReport.reportStatusId)),
+                        _lightCard(child: _buildWOWStepper()),
                         const SizedBox(height: 32),
                         _wowSectionHeader('MISSION INTELLIGENCE', Icons.psychology_rounded),
                         const SizedBox(height: 16),
                         _buildWOWInfoCard(),
                         const SizedBox(height: 40),
-                        if (isFinalized) _buildWOWCompletionReport() else _buildWOWLiveTracking(),
+                        if (showCompletionReport) _buildWOWCompletionReport() else _buildWOWLiveTracking(),
                       ],
                     ),
                   ),
@@ -163,31 +199,115 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
     );
   }
 
+  Widget _buildDriverPendingBanner() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.hourglass_top_rounded, color: Colors.orange.shade800),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Completed marked by driver',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: Colors.orange.shade900,
+                    fontSize: 13,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Review the after photo below, then verify to mark this mission as Completed.',
+            style: TextStyle(fontSize: 12, color: darkPurple.withOpacity(0.6), height: 1.4),
+          ),
+          if (Provider.of<AuthProvider>(context, listen: false).currentUser?.isAdmin == true) ...[
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: isRefreshing ? null : _verifyDriverCollection,
+              icon: const Icon(Icons.verified_rounded),
+              label: const Text('VERIFY & MARK COMPLETED', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange.shade700,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildWOWStatusHeader(bool isFinalized) {
+    final statusLabel = CleanupStatusUtil.adminDisplayLabel(
+      reportStatusId: currentReport.reportStatusId,
+      driverMarkedCompleteAt: currentReport.driverMarkedCompleteAt,
+    );
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(color: brightPurp.withOpacity(0.05), shape: BoxShape.circle, border: Border.all(color: brightPurp.withOpacity(0.1))),
-          child: Icon(isFinalized ? Icons.verified_rounded : Icons.radar_rounded, color: brightPurp, size: 40),
+          decoration: BoxDecoration(
+            color: _isDriverPendingVerification
+                ? Colors.orange.withOpacity(0.08)
+                : brightPurp.withOpacity(0.05),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: _isDriverPendingVerification
+                  ? Colors.orange.withOpacity(0.2)
+                  : brightPurp.withOpacity(0.1),
+            ),
+          ),
+          child: Icon(
+            isFinalized
+                ? Icons.verified_rounded
+                : _isDriverPendingVerification
+                    ? Icons.hourglass_top_rounded
+                    : Icons.radar_rounded,
+            color: _isDriverPendingVerification ? Colors.orange.shade700 : brightPurp,
+            size: 40,
+          ),
         ),
         const SizedBox(height: 20),
-        Text(isFinalized ? 'MISSION SECURED' : 'OPS IN PROGRESS', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: darkPurple, letterSpacing: 2)),
+        Text(
+          statusLabel.toUpperCase(),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: darkPurple, letterSpacing: 2),
+        ),
         const SizedBox(height: 4),
-        Text(isFinalized ? 'Final protocols active' : 'Live field intelligence tracking', style: TextStyle(color: darkPurple.withOpacity(0.4), fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(
+          isFinalized
+              ? 'Admin verified — mission completed'
+              : _isDriverPendingVerification
+                  ? 'Awaiting your verification'
+                  : 'Live field intelligence tracking',
+          style: TextStyle(color: darkPurple.withOpacity(0.4), fontSize: 11, fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }
 
-  Widget _buildWOWStepper(int statusId) {
-    int cur = 0; // Default to 0 (Pending, completely grey)
-    if (statusId == 172) cur = 1;
-    else if (statusId == 206) cur = 2; 
-    else if (statusId == 207) cur = 3; 
-    else if (statusId == 205) cur = 4; 
-    else if (statusId == 208 || statusId == 174) cur = 5;
+  Widget _buildWOWStepper() {
+    final cur = CleanupStatusUtil.stepperStep(
+      reportStatusId: currentReport.reportStatusId,
+      driverMarkedCompleteAt: currentReport.driverMarkedCompleteAt,
+    );
 
-    final steps = ['Report Approved', 'Driver Assigned', 'Driver on the Way', 'Cleaning Started', 'Garbage Collected'];
+    final steps = ['Report Approved', 'Driver Assigned', 'Driver on the Way', 'Cleaning Started', _isDriverPendingVerification ? 'Awaiting Verification' : 'Completed'];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
@@ -365,7 +485,10 @@ class _GarbageMissionDetailsScreenState extends State<GarbageMissionDetailsScree
               const SizedBox(height: 16),
               Text(currentReport.otherExpenseDescription ?? 'Operational objective achieved. Full environmental restoration completed.', style: TextStyle(fontSize: 14, color: darkPurple.withOpacity(0.7), height: 1.6)),
               const SizedBox(height: 24),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_wowMiniStat('CARGO MASS', '${currentReport.estimatedVolume}KG'), _wowMiniStat('PROTOCOL', 'VERIFIED')]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                _wowMiniStat('CARGO MASS', '${currentReport.estimatedVolume}KG'),
+                _wowMiniStat('STATUS', _isDriverPendingVerification ? 'PENDING VERIFY' : 'COMPLETED'),
+              ]),
             ],
           ),
         ),

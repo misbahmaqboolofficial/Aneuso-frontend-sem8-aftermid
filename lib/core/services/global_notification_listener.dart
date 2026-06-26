@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -76,24 +77,30 @@ class _GlobalNotificationListenerState extends State<GlobalNotificationListener>
       'GlobalNotificationListener: listening for user ${widget.userId}',
     );
 
-    _realtimeSubscription = Supabase.instance.client
-        .from('notifications')
-        .stream(primaryKey: ['id'])
-        .eq('recipient_user_id', widget.userId)
-        .listen(
-      (List<Map<String, dynamic>> data) {
-        if (data.isEmpty) return;
-        final latest = data.last;
-        _onNotification(latest);
-      },
-      onError: (error) {
-        debugPrint('GlobalNotificationListener realtime error: $error');
-      },
-    );
+    // Supabase realtime is unreliable on Flutter web (CORS / websocket). Poll API instead.
+    if (!kIsWeb) {
+      _realtimeSubscription = Supabase.instance.client
+          .from('notifications')
+          .stream(primaryKey: ['id'])
+          .eq('recipient_user_id', widget.userId)
+          .listen(
+        (List<Map<String, dynamic>> data) {
+          if (data.isEmpty) return;
+          final latest = data.last;
+          _onNotification(latest);
+        },
+        onError: (error) {
+          debugPrint('GlobalNotificationListener realtime error: $error');
+        },
+      );
+    }
 
     _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       _pollNotifications();
     });
+
+    // Initial poll so alerts work even when realtime is off.
+    _pollNotifications();
   }
 
   Future<void> _pollNotifications() async {

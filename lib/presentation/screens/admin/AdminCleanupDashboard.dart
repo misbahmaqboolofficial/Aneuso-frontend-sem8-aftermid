@@ -25,6 +25,7 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
   final String baseUrl = AppConstants.baseUrl;
   Map<String, dynamic> stats = {};
   List<dynamic> allCollections = [];
+  List<dynamic> pendingDriverVerification = [];
   List<dynamic> newReports = [];
   bool isLoading = true;
 
@@ -53,7 +54,20 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
       if (allReportsRes.statusCode == 200) {
         final all = json.decode(allReportsRes.body)['data'] as List;
         newReports = all.where((r) => r['report_status_id'] == 170 || r['report_status_id'] == 171).toList();
-        allCollections = all.where((r) => [172, 204, 206, 207, 205, 208, 174].contains(r['report_status_id'])).toList();
+        pendingDriverVerification = all.where((r) =>
+          CleanupStatusUtil.isDriverPendingAdminVerification(
+            reportStatusId: r['report_status_id'],
+            driverMarkedCompleteAt: r['driver_marked_complete_at'],
+          )).toList();
+        allCollections = all.where((r) {
+          if ([172, 204, 206, 207, 205, 208, 174].contains(r['report_status_id'])) {
+            return !CleanupStatusUtil.isDriverPendingAdminVerification(
+              reportStatusId: r['report_status_id'],
+              driverMarkedCompleteAt: r['driver_marked_complete_at'],
+            );
+          }
+          return false;
+        }).toList();
       }
       setState(() => isLoading = false);
     } catch (e) { setState(() => isLoading = false); }
@@ -83,6 +97,12 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
                               _wowSectionHeader('NEW COMMANDS', newReports.length),
                               const SizedBox(height: 16),
                               ...newReports.map((r) => _buildWOWReportCard(r)),
+                              const SizedBox(height: 40),
+                            ],
+                            if (pendingDriverVerification.isNotEmpty) ...[
+                              _wowSectionHeader('DRIVER COMPLETION REVIEW', pendingDriverVerification.length),
+                              const SizedBox(height: 16),
+                              ...pendingDriverVerification.map((r) => _buildWOWPendingVerificationCard(r)),
                               const SizedBox(height: 40),
                             ],
                             _wowSectionHeader('ACTIVE OPERATIONS', allCollections.length),
@@ -194,10 +214,94 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
     );
   }
 
+  Widget _buildWOWPendingVerificationCard(Map<String, dynamic> report) {
+    return _lightCard(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.zero,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => GarbageMissionDetailsScreen(report: GarbageReport.fromJson(report)))).then((_) => fetchData());
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _buildWOWSmartImage(report['photo_url'], 64, 64, 16),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(report['address'] ?? 'SECTOR UNKNOWN', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: darkPurple, letterSpacing: -0.3)),
+                        const SizedBox(height: 8),
+                        _wowPill('COMPLETED MARKED BY DRIVER', Colors.orange.withOpacity(0.15), Colors.orange.shade800),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (Provider.of<AuthProvider>(context, listen: false).currentUser?.isAdmin == true)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _verifyDriverCollection(report['id']),
+                    icon: const Icon(Icons.verified_rounded, size: 18),
+                    label: const Text('VERIFY COMPLETION', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _verifyDriverCollection(int reportId) async {
+    try {
+      final token = StorageUtil.getToken();
+      final response = await http.put(
+        Uri.parse('$baseUrl/reports/cleanup/$reportId/verify-collection'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+      );
+      final body = json.decode(response.body);
+      if (!mounted) return;
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(body['message'] ?? 'Mission marked as completed'), backgroundColor: Colors.green),
+        );
+        fetchData();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(body['message'] ?? 'Verification failed'), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not verify completion'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   Widget _buildWOWCollectionCard(Map<String, dynamic> report) {
     final int statusId = report['report_status_id'] ?? 172;
     final bool isDone = statusId == 174;
+    final bool isCompleted = CleanupStatusUtil.isAdminVerifiedComplete(statusId);
     final String driver = report['driver_name']?.toString() ?? 'UNASSIGNED';
+    final String statusLabel = CleanupStatusUtil.adminDisplayLabel(
+      reportStatusId: statusId,
+      driverMarkedCompleteAt: report['driver_marked_complete_at'],
+    );
 
     return _lightCard(
       margin: const EdgeInsets.only(bottom: 24),
@@ -221,6 +325,12 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
                         Text(report['address'] ?? 'SECTOR UNKNOWN', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: darkPurple, letterSpacing: -0.3)),
                         const SizedBox(height: 6),
                         Text('DRIVER: $driver'.toUpperCase(), style: TextStyle(color: darkPurple.withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                        const SizedBox(height: 6),
+                        _wowPill(
+                          statusLabel.toUpperCase(),
+                          isCompleted ? Colors.green.withOpacity(0.12) : brightPurp.withOpacity(0.1),
+                          isCompleted ? Colors.green.shade800 : brightPurp,
+                        ),
                       ],
                     ),
                   ),
@@ -231,7 +341,7 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
                 ],
               ),
             ),
-            _buildWOWMiniStepper(statusId),
+            _buildWOWMiniStepper(report),
             if (ReportStatus.canLiveTrack(statusId) && report['driver_id'] != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -270,13 +380,11 @@ class _AdminCleanupDashboardState extends State<AdminCleanupDashboard> {
     );
   }
 
-  Widget _buildWOWMiniStepper(int statusId) {
-    int cur = 0; // Default to 0 (Pending, completely grey)
-    if (statusId == 172) cur = 1;
-    else if (statusId == 206) cur = 2; 
-    else if (statusId == 207) cur = 3; 
-    else if (statusId == 205) cur = 4; 
-    else if (statusId == 208 || statusId == 174) cur = 5;
+  Widget _buildWOWMiniStepper(Map<String, dynamic> report) {
+    final cur = CleanupStatusUtil.stepperStep(
+      reportStatusId: report['report_status_id'],
+      driverMarkedCompleteAt: report['driver_marked_complete_at'],
+    );
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),

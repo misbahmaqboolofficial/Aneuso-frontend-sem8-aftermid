@@ -6,9 +6,6 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/pickup_status.dart';
 import '../../../core/utils/storage_util.dart';
-import 'package:aneuso_app/core/utils/screen_title_util.dart';
-
-final String _kScreenTitle = ScreenTitle.fromFile('admin_pickups_screen.dart');
 
 class AdminPickupsScreen extends StatefulWidget {
   const AdminPickupsScreen({super.key});
@@ -230,7 +227,7 @@ class _AdminPickupsScreenState extends State<AdminPickupsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _kScreenTitle,
+                    'Pickup Management',
                     style: GoogleFonts.poppins(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,

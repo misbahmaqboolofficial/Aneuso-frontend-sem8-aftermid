@@ -304,9 +304,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _buildDrawerItem(31, 'My Ratings', Icons.star_rate_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/driver/my_ratings'));
         }),
-        _buildDrawerItem(16, 'Cleanup Missions', Icons.cleaning_services_rounded, false, () {
-          _pushFromDrawer(() => Navigator.pushNamed(context, '/driver/cleanup-missions'));
-        }),
       ];
     }
     return [];
@@ -813,7 +810,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       cards.add(_dashboardCard('Daily Tasks', Icons.schedule_rounded, const Color(0xFF9B5DE0), 'Daily tasks', user, auth));
       cards.add(_dashboardCard('Confirm Pickups', Icons.checklist_rounded, const Color(0xFF6F38C5), 'Confirm pickups', user, auth));
       cards.add(_dashboardCard('My Ratings', Icons.star_rate_rounded, const Color(0xFF450693), 'Driver reviews', user, auth));
-      cards.add(_dashboardCard('Cleanup Missions', Icons.cleaning_services_rounded, const Color(0xFF8A39E1), 'Cleanup missions', user, auth));
     }
 
     final narrow = isNarrowPhone(context);
@@ -913,8 +909,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Navigator.pushNamed(context, '/admin/cleanup-dashboard');
         } else if (subtitle == 'Review Citizen Reports') {
           Navigator.pushNamed(context, '/garbage-reports');
-        } else if (subtitle == 'Cleanup missions') {
-          Navigator.pushNamed(context, '/driver/cleanup-missions');
         } else if (subtitle == 'All App Pickups') {
           Navigator.pushNamed(context, '/admin/all_pickups');
         } else if (subtitle == 'View Cart') {
