@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -52,12 +53,13 @@ class AppGradientText extends StatelessWidget {
 
 /// Frosted glass card for login and overlays.
 class AppGlassCard extends StatelessWidget {
+  // AppGlassCard card
   const AppGlassCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(28),
     this.margin,
-  });
+  }); // end AppGlassCard card
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -94,13 +96,14 @@ class AppGlassCard extends StatelessWidget {
 
 /// White card with soft purple border and shadow.
 class AppCard extends StatelessWidget {
+  // AppCard card
   const AppCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(20),
     this.margin,
     this.onTap,
-  });
+  }); // end AppCard card
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -135,6 +138,7 @@ class AppCard extends StatelessWidget {
 
 /// Primary gradient button.
 class AppPrimaryButton extends StatelessWidget {
+  // AppPrimaryButton button
   const AppPrimaryButton({
     super.key,
     required this.label,
@@ -142,7 +146,7 @@ class AppPrimaryButton extends StatelessWidget {
     this.icon,
     this.expanded = true,
     this.height = 54,
-  });
+  }); // end AppPrimaryButton button
 
   final String label;
   final VoidCallback? onPressed;
@@ -350,6 +354,7 @@ class AppWelcomeBanner extends StatelessWidget {
 
 /// Quick-action tile for dashboard grids.
 class AppActionTile extends StatelessWidget {
+  // AppActionTile card
   const AppActionTile({
     super.key,
     required this.title,
@@ -358,7 +363,7 @@ class AppActionTile extends StatelessWidget {
     required this.color,
     required this.onTap,
     this.compact = false,
-  });
+  }); // end AppActionTile card
 
   final String title;
   final String subtitle;
@@ -455,7 +460,8 @@ class AppActionTile extends StatelessWidget {
 
 /// Styled menu button for app bars.
 class AppMenuButton extends StatelessWidget {
-  const AppMenuButton({super.key, required this.onPressed, this.compact = false});
+  // AppMenuButton button
+  const AppMenuButton({super.key, required this.onPressed, this.compact = false}); // end AppMenuButton button
 
   final VoidCallback onPressed;
   final bool compact;

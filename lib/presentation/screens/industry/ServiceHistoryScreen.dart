@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/core/utils/storage_util.dart';
@@ -530,6 +531,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 20),
+            // Retry button
             ElevatedButton(
               onPressed: fetchServiceHistory,
               style: ElevatedButton.styleFrom(
@@ -550,7 +552,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                   color: Colors.white,
                 ),
               ),
-            ),
+            ), // end Retry button
           ],
         ),
       ),
@@ -595,6 +597,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
               style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
             ),
             const SizedBox(height: 20),
+            // Refresh button
             ElevatedButton(
               onPressed: fetchServiceHistory,
               style: ElevatedButton.styleFrom(
@@ -615,7 +618,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                   color: Colors.white,
                 ),
               ),
-            ),
+            ), // end Refresh button
           ],
         ),
       ),

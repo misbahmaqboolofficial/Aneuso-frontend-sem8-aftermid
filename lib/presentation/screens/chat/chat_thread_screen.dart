@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -101,7 +102,8 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           'Block ${widget.otherUserName}? They won\'t be able to message you.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), // end Cancel button
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
@@ -162,7 +164,8 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               : 'Delete "$snippet"?',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), // end Cancel button
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),

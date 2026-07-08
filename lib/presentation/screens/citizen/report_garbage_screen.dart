@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';
@@ -525,6 +526,7 @@ class _ReportGarbageScreenState extends State<ReportGarbageScreen> {
                 style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 20),
+              // Great! button
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
@@ -532,7 +534,7 @@ class _ReportGarbageScreenState extends State<ReportGarbageScreen> {
                   foregroundColor: const Color(0xFF6F38C5),
                 ),
                 child: const Text('Great!'),
-              ),
+              ), // end Great! button
             ],
           ),
         ),
@@ -650,6 +652,7 @@ class _ReportGarbageScreenState extends State<ReportGarbageScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (final suggestion in _addressSuggestions)
+                  // TextButton button
                   TextButton(
                     onPressed: () => _selectAddressSuggestion(suggestion),
                     style: TextButton.styleFrom(
@@ -685,7 +688,7 @@ class _ReportGarbageScreenState extends State<ReportGarbageScreen> {
                         ),
                       ],
                     ),
-                  ),
+                  ), // end TextButton button
               ],
             ),
           ),
@@ -969,6 +972,7 @@ class _ReportGarbageScreenState extends State<ReportGarbageScreen> {
                           child: CircularProgressIndicator(color: Colors.white),
                         ),
                       )
+                    // Submit Report button
                     : ElevatedButton(
                         onPressed: _submitReport,
                         child: const Text(
@@ -978,7 +982,7 @@ class _ReportGarbageScreenState extends State<ReportGarbageScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
+                      ), // end Submit Report button
                 const SizedBox(height: 20),
                 // Info Card
                 Container(

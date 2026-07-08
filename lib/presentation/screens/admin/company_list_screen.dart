@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -241,6 +242,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
+                              // Cancel button
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
                                 style: TextButton.styleFrom(
@@ -260,10 +262,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ),
+                              ), // end Cancel button
                               SizedBox(width: 10),
                               Container(
                                 height: 48,
+                                // Company created successfully! button
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     if (!_formKey.currentState!.validate())
@@ -372,7 +375,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                       ),
                                     ),
                                   ),
-                                ),
+                                ), // end Company created successfully! button
                               ),
                             ],
                           ),
@@ -604,6 +607,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          // Cancel button
                           TextButton(
                             onPressed: () => Navigator.pop(context),
                             style: TextButton.styleFrom(
@@ -623,10 +627,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
+                          ), // end Cancel button
                           SizedBox(width: 10),
                           Container(
                             height: 48,
+                            // Company updated successfully! button
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (!_formKey.currentState!.validate()) return;
@@ -724,7 +729,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                   ),
                                 ),
                               ),
-                            ),
+                            ), // end Company updated successfully! button
                           ),
                         ],
                       ),
@@ -976,6 +981,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                   ),
                                   child: Container(
                                     height: 48,
+                                    // Load More Companies button
                                     child: ElevatedButton(
                                       onPressed: () => provider.loadNextPage(),
                                       style: ElevatedButton.styleFrom(
@@ -1022,7 +1028,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ), // end Load More Companies button
                                   ),
                                 );
                               }
@@ -1293,6 +1299,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                     Container(
                                                       height: 48,
                                                       width: double.infinity,
+                                                      // Close button
                                                       child: ElevatedButton(
                                                         onPressed: () =>
                                                             Navigator.pop(
@@ -1346,7 +1353,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
+                                                      ), // end Close button
                                                     ),
                                                   ],
                                                 ),
@@ -1433,6 +1440,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           );
         },
       ),
+      // FloatingActionButton button
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateDialog(context),
         backgroundColor: Color(0xFF6F38C5),
@@ -1456,7 +1464,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           ),
           child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
         ),
-      ),
+      ), // end FloatingActionButton button
     );
   }
 
@@ -1723,6 +1731,7 @@ class _CompanyDeleteDialogState extends State<CompanyDeleteDialog> {
                 ),
               ),
               SizedBox(height: 25),
+              // Close button
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, false),
                 style: ElevatedButton.styleFrom(
@@ -1732,7 +1741,7 @@ class _CompanyDeleteDialogState extends State<CompanyDeleteDialog> {
                   ),
                 ),
                 child: Text('Close', style: TextStyle(color: Colors.white)),
-              ),
+              ), // end Close button
             ] else ...[
               Container(
                 width: 60,
@@ -1865,6 +1874,7 @@ class _CompanyDeleteDialogState extends State<CompanyDeleteDialog> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
+                      // Cancel button
                       child: TextButton(
                         onPressed: () => Navigator.pop(context, false),
                         style: TextButton.styleFrom(
@@ -1881,12 +1891,13 @@ class _CompanyDeleteDialogState extends State<CompanyDeleteDialog> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
+                      ), // end Cancel button
                     ),
                     SizedBox(width: 10),
                     Expanded(
                       child: Container(
                         height: 48,
+                        // Delete button
                         child: ElevatedButton(
                           onPressed: () async {
                             setState(() {
@@ -1959,7 +1970,7 @@ class _CompanyDeleteDialogState extends State<CompanyDeleteDialog> {
                               ),
                             ),
                           ),
-                        ),
+                        ), // end Delete button
                       ),
                     ),
                   ],

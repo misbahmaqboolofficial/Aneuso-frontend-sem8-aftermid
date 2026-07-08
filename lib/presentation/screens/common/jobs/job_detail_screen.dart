@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -419,6 +420,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                       ),
                                     ],
                                   ),
+                                  // Submit Application button
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.transparent,
@@ -429,7 +431,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                     ),
                                     onPressed: _apply,
                                     child: const Text('Submit Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                  ),
+                                  ), // end Submit Application button
                                 ),
                               ),
                       ],

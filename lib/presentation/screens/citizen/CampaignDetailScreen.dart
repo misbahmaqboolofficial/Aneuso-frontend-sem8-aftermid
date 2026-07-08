@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -73,7 +74,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')), // end Cancel button
           FilledButton(
             onPressed: () {
               final value = double.tryParse(amountController.text.trim());

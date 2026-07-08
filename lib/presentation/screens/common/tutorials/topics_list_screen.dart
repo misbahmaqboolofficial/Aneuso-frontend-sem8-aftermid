@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -326,6 +327,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                             ),
                           ),
                           SizedBox(height: 24),
+                          // Clear Search button
                           ElevatedButton(
                             onPressed: () {
                               _searchController.clear();
@@ -353,7 +355,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
+                          ), // end Clear Search button
                         ],
                       ),
                     ),

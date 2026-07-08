@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -183,6 +184,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                           ),
                         ),
                         SizedBox(height: 30),
+                        // Refresh button
                         ElevatedButton(
                           onPressed: () => provider.fetchVideos(
                             topicId: widget.topicId,
@@ -218,7 +220,7 @@ class _TopicDetailScreenState extends State<TopicDetailScreen> {
                               ),
                             ],
                           ),
-                        ),
+                        ), // end Refresh button
                       ],
                     ),
                   ),

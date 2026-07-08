@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/presentation/screens/citizen/order_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/order_service.dart';
@@ -235,6 +236,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
                 Container(
                   height: 40,
+                  // View Details button
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -285,7 +287,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         ),
                       ),
                     ),
-                  ),
+                  ), // end View Details button
                 ),
               ],
             ),
@@ -338,6 +340,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             SizedBox(height: 30),
             Container(
               height: 50,
+              // Start Shopping button
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -391,7 +394,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                   ),
                 ),
-              ),
+              ), // end Start Shopping button
             ),
           ],
         ],
@@ -590,6 +593,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   SizedBox(height: 20),
                   Container(
                     height: 48,
+                    // Try Again button
                     child: ElevatedButton(
                       onPressed: _loadOrders,
                       style: ElevatedButton.styleFrom(
@@ -640,7 +644,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Try Again button
                   ),
                 ],
               ),

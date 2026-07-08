@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/presentation/screens/citizen/checkout_screen.dart';
 import 'package:aneuso_app/presentation/widgets/app_ui.dart';
 import 'package:flutter/material.dart';
@@ -130,10 +131,12 @@ class _CartScreenState extends State<CartScreen> {
         ),
         content: Text('Remove ${item.productName} from cart?'),
         actions: [
+          // Cancel button
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text('Cancel', style: TextStyle(color: Colors.grey[700])),
-          ),
+          ), // end Cancel button
+          // Remove button
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
@@ -143,7 +146,7 @@ class _CartScreenState extends State<CartScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
+          ), // end Remove button
         ],
       ),
     );
@@ -208,17 +211,19 @@ class _CartScreenState extends State<CartScreen> {
         ),
         content: Text('Remove all items from your cart?'),
         actions: [
+          // Cancel button
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text('Cancel', style: TextStyle(color: Colors.grey[700])),
-          ),
+          ), // end Cancel button
+          // Clear All button
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               'Clear All',
               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
             ),
-          ),
+          ), // end Clear All button
         ],
       ),
     );
@@ -330,6 +335,7 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 30),
           Container(
             height: 50,
+            // Start Shopping button
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/products');
@@ -383,7 +389,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
               ),
-            ),
+            ), // end Start Shopping button
           ),
         ],
       ),
@@ -890,6 +896,7 @@ class _CartScreenState extends State<CartScreen> {
                   SizedBox(height: 20),
                   Container(
                     height: 48,
+                    // Try Again button
                     child: ElevatedButton(
                       onPressed: _loadCart,
                       style: ElevatedButton.styleFrom(
@@ -940,7 +947,7 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Try Again button
                   ),
                 ],
               ),

@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/presentation/providers/driver_ratings_provider.dart';
 import 'package:aneuso_app/presentation/widgets/app_ui.dart';
@@ -208,6 +209,7 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Rating summary card
     return Card(
       elevation: 0,
       shadowColor: AppColors.primary.withValues(alpha: 0.25),
@@ -298,7 +300,7 @@ class _SummaryCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ); // end Rating summary card
   }
 
   static Widget _miniStat(IconData icon, String value, String label) {
@@ -354,6 +356,7 @@ class _AnalyticsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Positive reviews card
     return Card(
       elevation: 0,
       color: AppColors.surface,
@@ -401,7 +404,7 @@ class _AnalyticsStrip extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ); // end Positive reviews card
   }
 }
 
@@ -505,6 +508,7 @@ class _ReviewTile extends StatelessWidget {
     final dateStr =
         dt != null ? DateFormat('MMM d, yyyy').format(dt.toLocal()) : '';
 
+    // Card card
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       elevation: 0,
@@ -554,7 +558,7 @@ class _ReviewTile extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ); // end Card card
   }
 }
 

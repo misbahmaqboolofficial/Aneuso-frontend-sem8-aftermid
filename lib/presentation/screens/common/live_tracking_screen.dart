@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -1042,7 +1043,8 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen>
   }
 
   // ─────────────────────────────────────────────────────
-  // Journey Stats Card (Total / Covered / Remaining / ETA)
+  // Card card
+  // Journey Stats Card (Total / Covered / Remaining / ETA) // end Card card
   // ─────────────────────────────────────────────────────
   Widget _buildJourneyStatsCard() {
     if (!_hasDriverLocation) return const SizedBox.shrink();

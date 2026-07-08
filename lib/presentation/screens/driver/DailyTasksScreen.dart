@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -657,6 +658,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
           style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
+        // Clear filters button
         TextButton(
           onPressed: () {
             setState(() {
@@ -667,7 +669,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
             });
           },
           child: const Text('Clear filters'),
-        ),
+        ), // end Clear filters button
       ],
     );
   }
@@ -783,6 +785,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
 
   Widget _buildSourceChip(String label) {
     bool isSelected = _sourceFilter == label;
+    // ChoiceChip button
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -795,11 +798,12 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         fontSize: 12,
       ),
-    );
+    ); // end ChoiceChip button
   }
 
   Widget _buildFilterChip(String label) {
     bool isSelected = _statusFilter == label;
+    // ChoiceChip button
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -812,7 +816,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         fontSize: 12,
       ),
-    );
+    ); // end ChoiceChip button
   }
 
   Widget _buildTaskCard(Map<String, dynamic> task) {
@@ -1608,6 +1612,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
+            // Try Again button
             ElevatedButton(
               onPressed: fetchDriverTasks,
               style: ElevatedButton.styleFrom(
@@ -1634,7 +1639,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                   ),
                 ],
               ),
-            ),
+            ), // end Try Again button
           ],
         ),
       ),
@@ -1683,6 +1688,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
+            // Refresh button
             OutlinedButton(
               onPressed: fetchDriverTasks,
               style: OutlinedButton.styleFrom(
@@ -1707,7 +1713,7 @@ class _DriverTasksScreenState extends State<DriverTasksScreen> {
                   ),
                 ],
               ),
-            ),
+            ), // end Refresh button
           ],
         ),
       ),

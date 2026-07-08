@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/constants/pickup_status.dart';
 import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/core/utils/location_util.dart';
@@ -1525,6 +1526,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                   SizedBox(
                     width: double.infinity,
                     height: 56,
+                    // Schedule Pickup button
                     child: ElevatedButton(
                       onPressed: isSubmitting ? null : schedulePickup,
                       style: ElevatedButton.styleFrom(
@@ -1561,7 +1563,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                                 ),
                               ],
                             ),
-                    ),
+                    ), // end Schedule Pickup button
                   ),
 
                   const SizedBox(height: 16),
@@ -1570,6 +1572,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                   SizedBox(
                     width: double.infinity,
                     height: 56,
+                    // Reset Form button
                     child: OutlinedButton(
                       onPressed: resetForm,
                       style: OutlinedButton.styleFrom(
@@ -1593,7 +1596,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                           ),
                         ],
                       ),
-                    ),
+                    ), // end Reset Form button
                   ),
 
                   // Extra space for mobile keyboard
@@ -1888,6 +1891,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
           const SizedBox(height: 12),
           Row(
             children: [
+              // Details button
               TextButton(
                 onPressed: () async {
                   await Navigator.push(
@@ -1901,7 +1905,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
                   await fetchPickups();
                 },
                 child: const Text('Details'),
-              ),
+              ), // end Details button
               // Live Track button — shown when driver is assigned and pickup is active
               if (pickup['driver_id'] != null &&
                   pickup['driver_id'] != 0 &&
@@ -2086,6 +2090,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
 
   Widget _buildFilterChip(String label, bool isMobile) {
     bool isSelected = _statusFilter == label;
+    // ChoiceChip button
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -2105,7 +2110,7 @@ class _SchedulePickupState extends State<SchedulePickup> {
       backgroundColor: Colors.grey[100],
       elevation: isSelected ? 2 : 0,
       padding: EdgeInsets.symmetric(horizontal: isMobile ? 4 : 8),
-    );
+    ); // end ChoiceChip button
   }
 
   List<dynamic> _getFilteredPickups() {

@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -298,6 +299,7 @@ class _JobsListScreenState extends State<JobsListScreen> with SingleTickerProvid
                 ),
               ),
               actions: [
+                // Cancel button
                 TextButton(
                   onPressed: () {
                     _clearForm();
@@ -310,7 +312,8 @@ class _JobsListScreenState extends State<JobsListScreen> with SingleTickerProvid
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
+                ), // end Cancel button
+                // Post Vacancy button
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF8A39E1),
@@ -344,7 +347,7 @@ class _JobsListScreenState extends State<JobsListScreen> with SingleTickerProvid
                     }
                   },
                   child: const Text('Post Vacancy', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
+                ), // end Post Vacancy button
               ],
             );
           },
@@ -554,6 +557,7 @@ class _JobsListScreenState extends State<JobsListScreen> with SingleTickerProvid
  
                           return Padding(
                             padding: const EdgeInsets.only(right: 10.0),
+                            // ChoiceChip button
                             child: ChoiceChip(
                               label: Text(category),
                               selected: isSelected,
@@ -581,7 +585,7 @@ class _JobsListScreenState extends State<JobsListScreen> with SingleTickerProvid
                                       : const Color(0xFF6F38C5).withOpacity(0.3)
                                 ),
                               ),
-                            ),
+                            ), // end ChoiceChip button
                           );
                         },
                       ),

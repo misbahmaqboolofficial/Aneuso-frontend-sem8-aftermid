@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -206,101 +207,125 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   List<Widget> _buildCitizenDrawerItems(UserEntity user) {
     return [
+      // My Cart drawer item
       _buildDrawerItem(20, 'My Cart', Icons.shopping_cart_rounded, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/citizen/mycart'));
-      }),
+      }), // end My Cart drawer item
+      // My Orders drawer item
       _buildDrawerItem(21, 'My Orders', Icons.assignment_rounded, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/citizen/myorders'));
-      }),
+      }), // end My Orders drawer item
+      // Report Garbage drawer item
       _buildDrawerItem(17, 'Report Garbage', Icons.add_a_photo_rounded, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/citizen/report-garbage'));
-      }),
+      }), // end Report Garbage drawer item
+      // Active Campaigns drawer item
       _buildDrawerItem(18, 'Active Campaigns', Icons.campaign_rounded, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/citizen/cleanup-campaigns'));
-      }),
+      }), // end Active Campaigns drawer item
+      // Tutorials drawer item
       _buildDrawerItem(19, 'Tutorials', Icons.play_circle_fill_rounded, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/tutorials/home'));
-      }),
+      }), // end Tutorials drawer item
+      // Jobs Portal drawer item
       _buildDrawerItem(35, 'Jobs Portal', Icons.work_outline, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/jobs'));
-      }),
+      }), // end Jobs Portal drawer item
+      // Browse Products drawer item
       _buildDrawerItem(5, 'Browse Products', Icons.shopping_bag_rounded, false, () {
         _pushFromDrawer(() => Navigator.pushNamed(context, '/products'));
-      }),
+      }), // end Browse Products drawer item
+      // Special Offers drawer item
       _buildDrawerItem(30, 'Special Offers', Icons.local_offer_rounded, false, () {
         _pushFromDrawer(() => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SpecialOffersScreen()),
         ));
-      }),
+      }), // end Special Offers drawer item
     ];
   }
 
   List<Widget> _buildProfessionalDrawerItems(UserEntity user) {
     if (user.userTypeId == 4) {
       return [
+        // Branch Management drawer item
         _buildDrawerItem(3, 'Branch Management', Icons.account_tree_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/branches'));
-        }),
+        }), // end Branch Management drawer item
+        // Cleanup Operations drawer item
         _buildDrawerItem(25, 'Cleanup Operations', Icons.cleaning_services_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/cleanup-dashboard'));
-        }),
+        }), // end Cleanup Operations drawer item
+        // Company Management drawer item
         _buildDrawerItem(2, 'Company Management', Icons.business_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/companies'));
-        }),
+        }), // end Company Management drawer item
+        // Public Garbage drawer item
         _buildDrawerItem(22, 'Public Garbage', Icons.report_problem_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/garbage-reports'));
-        }),
+        }), // end Public Garbage drawer item
+        // Product Management drawer item
         _buildDrawerItem(4, 'Product Management', Icons.inventory_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/products'));
-        }),
+        }), // end Product Management drawer item
+        // Special Offers drawer item
         _buildDrawerItem(37, 'Special Offers', Icons.local_offer_rounded, false, () {
           _pushFromDrawer(() => Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AdminOffersScreen()),
           ));
-        }),
+        }), // end Special Offers drawer item
+        // Global Deals drawer item
         _buildDrawerItem(23, 'Global Deals', Icons.handshake_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/deals'));
-        }),
+        }), // end Global Deals drawer item
+        // All App Pickups drawer item
         _buildDrawerItem(24, 'All App Pickups', Icons.local_shipping_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/all_pickups'));
-        }),
+        }), // end All App Pickups drawer item
+        // Driver Ratings drawer item
         _buildDrawerItem(32, 'Driver Ratings', Icons.rate_review_rounded, false, () {
           _pushFromDrawer(() => Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AdminDriverRatingsScreen()),
           ));
-        }),
+        }), // end Driver Ratings drawer item
+        // Send Notification drawer item
         _buildDrawerItem(33, 'Send Notification', Icons.campaign_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/admin/broadcast'));
-        }),
+        }), // end Send Notification drawer item
       ];
     }
     if (user.userTypeId == 1) {
       return [
+        // Schedule Pickups drawer item
         _buildDrawerItem(10, 'Schedule Pickups', Icons.calendar_today_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/industry/schedule_pickup'));
-        }),
+        }), // end Schedule Pickups drawer item
+        // Service History drawer item
         _buildDrawerItem(11, 'Service History', Icons.history_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/industry/service_history'));
-        }),
+        }), // end Service History drawer item
+        // Industry Deals drawer item
         _buildDrawerItem(12, 'Industry Deals', Icons.handshake_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/industry/create_deal'));
-        }),
+        }), // end Industry Deals drawer item
       ];
     }
     if (user.userTypeId == 2) {
       return [
+        // Daily Tasks drawer item
         _buildDrawerItem(14, 'Daily Tasks', Icons.schedule_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/driver/driverdailytasks'));
-        }),
+        }), // end Daily Tasks drawer item
+        // Confirm Pickups drawer item
         _buildDrawerItem(15, 'Confirm Pickups', Icons.checklist_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/driver/confirm_pickups'));
-        }),
+        }), // end Confirm Pickups drawer item
+        // My Ratings drawer item
         _buildDrawerItem(31, 'My Ratings', Icons.star_rate_rounded, false, () {
           _pushFromDrawer(() => Navigator.pushNamed(context, '/driver/my_ratings'));
-        }),
+        }), // end My Ratings drawer item
       ];
     }
     return [];
@@ -433,6 +458,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ? Border.all(color: AppColors.border)
             : null,
       ),
+      // drawer ListTile card
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         leading: Container(
@@ -473,7 +499,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               )
             : null,
         onTap: onTap,
-      ),
+      ), // end drawer ListTile card
     );
   }
 
@@ -579,6 +605,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: ListView(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 children: [
+                  // Dashboard drawer item
                   _buildDrawerItem(
                     0,
                     'Dashboard',
@@ -591,7 +618,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       });
                       Navigator.pop(context);
                     },
-                  ),
+                  ), // end Dashboard drawer item
+                  // My Profile drawer item
                   _buildDrawerItem(
                     1,
                     'My Profile',
@@ -600,7 +628,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     () => _pushFromDrawer(
                       () => Navigator.pushNamed(context, '/profile'),
                     ),
-                  ),
+                  ), // end My Profile drawer item
 
                   if (authProvider.canToggleCitizenDashboard(user)) ...[
                     Padding(
@@ -615,9 +643,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ? _buildCitizenDrawerItems(user)
                           : _buildProfessionalDrawerItems(user),
 
+                  // Messages drawer item
                   _buildDrawerItem(36, 'Messages', Icons.chat_bubble_rounded, false, () {
                     _pushFromDrawer(() => Navigator.pushNamed(context, '/messages'));
-                  }),
+                  }), // end Messages drawer item
 
                   SizedBox(height: 20),
                   Padding(
@@ -640,6 +669,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         width: 1,
                       ),
                     ),
+                    // Logout button card
                     child: ListTile(
                       leading: Container(
                         width: 40,
@@ -662,7 +692,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                       onTap: () => authProvider.logout(),
-                    ),
+                    ), // end Logout button card
                   ),
                 ],
               ),
@@ -735,6 +765,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           : const NotificationInboxScreen(),
       ),
       bottomNavigationBar: AppBottomNavShell(
+        // bottom navigation bar
         child: BottomNavigationBar(
           currentIndex: _bottomNavIndex,
           onTap: (index) {
@@ -763,7 +794,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           
            
           ],
-        ),
+        ), // end bottom navigation bar
       ),
     );
   }
@@ -776,36 +807,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final List<Widget> cards = [];
     final citizenView = auth.showCitizenDashboard;
 
-    cards.add(_dashboardCard('Messages', Icons.chat_bubble_rounded, AppColors.primaryVariant, 'Chat messages', user, auth));
+    // Messages dashboard card
+    cards.add(_dashboardCard('Messages', Icons.chat_bubble_rounded, AppColors.primaryVariant, 'Chat messages', user, auth)); // end Messages dashboard card
 
     if (citizenView) {
-      cards.add(_dashboardCard('Browse Products', Icons.shopping_bag_rounded, AppColors.accent, 'Browse products', user, auth));
-      cards.add(_dashboardCard('Tutorials', Icons.play_circle_fill_rounded, AppColors.primaryLight, 'Browse tutorials', user, auth));
-      cards.add(_dashboardCard('Special Offers', Icons.local_offer_rounded, AppColors.primary, 'Fertilizer Deals', user, auth));
-      cards.add(_dashboardCard('Jobs Portal', Icons.work_outline, AppColors.primaryDeep, 'Browse jobs', user, auth));
-      cards.add(_dashboardCard('My Cart', Icons.shopping_cart_rounded, const Color(0xFFFDCFFA), 'View Cart', user, auth));
-      cards.add(_dashboardCard('My Orders', Icons.assignment_rounded, const Color(0xFF9B5DE0), 'View Orders', user, auth));
-      cards.add(_dashboardCard('Report Waste', Icons.add_a_photo_rounded, const Color(0xFFA555EC), 'Report garbage', user, auth));
-      cards.add(_dashboardCard('Campaigns', Icons.campaign_rounded, const Color(0xFF8A39E1), 'Active Cleanups', user, auth));
+      // Browse Products dashboard card
+      cards.add(_dashboardCard('Browse Products', Icons.shopping_bag_rounded, AppColors.accent, 'Browse products', user, auth)); // end Browse Products dashboard card
+      // Tutorials dashboard card
+      cards.add(_dashboardCard('Tutorials', Icons.play_circle_fill_rounded, AppColors.primaryLight, 'Browse tutorials', user, auth)); // end Tutorials dashboard card
+      // Special Offers dashboard card
+      cards.add(_dashboardCard('Special Offers', Icons.local_offer_rounded, AppColors.primary, 'Fertilizer Deals', user, auth)); // end Special Offers dashboard card
+      // Jobs Portal dashboard card
+      cards.add(_dashboardCard('Jobs Portal', Icons.work_outline, AppColors.primaryDeep, 'Browse jobs', user, auth)); // end Jobs Portal dashboard card
+      // My Cart dashboard card
+      cards.add(_dashboardCard('My Cart', Icons.shopping_cart_rounded, const Color(0xFFFDCFFA), 'View Cart', user, auth)); // end My Cart dashboard card
+      // My Orders dashboard card
+      cards.add(_dashboardCard('My Orders', Icons.assignment_rounded, const Color(0xFF9B5DE0), 'View Orders', user, auth)); // end My Orders dashboard card
+      // Report Waste dashboard card
+      cards.add(_dashboardCard('Report Waste', Icons.add_a_photo_rounded, const Color(0xFFA555EC), 'Report garbage', user, auth)); // end Report Waste dashboard card
+      // Campaigns dashboard card
+      cards.add(_dashboardCard('Campaigns', Icons.campaign_rounded, const Color(0xFF8A39E1), 'Active Cleanups', user, auth)); // end Campaigns dashboard card
     } else if (user.userTypeId == 4) {
-      cards.add(_dashboardCard('Cleanup Ops', Icons.cleaning_services_rounded, const Color(0xFF6F38C5), 'Manage Cleanups', user, auth));
-      cards.add(_dashboardCard('Public Garbage', Icons.report_problem_rounded, const Color(0xFFA555EC), 'Public Garbage', user, auth));
-      cards.add(_dashboardCard('Companies', Icons.business_rounded, const Color(0xFF450693), 'Manage Companies', user, auth));
-      cards.add(_dashboardCard('Branches', Icons.account_tree_rounded, const Color(0xFF8A39E1), 'Manage Branches', user, auth));
-      cards.add(_dashboardCard('Product Mgmt', Icons.inventory_rounded, const Color(0xFFD78FEE), 'Manage Products', user, auth));
-      cards.add(_dashboardCard('Special Offers', Icons.local_offer_rounded, const Color(0xFFFDCFFA), 'Manage special offers', user, auth));
-      cards.add(_dashboardCard('Global Deals', Icons.handshake_rounded, const Color(0xFF6F38C5), 'Manage All Deals', user, auth));
-      cards.add(_dashboardCard('All App Pickups', Icons.local_shipping_rounded, const Color(0xFFA555EC), 'All App Pickups', user, auth));
-      cards.add(_dashboardCard('Driver ratings', Icons.rate_review_rounded, const Color(0xFF450693), 'Manage reviews', user, auth));
-      cards.add(_dashboardCard('Send Alert', Icons.campaign_rounded, const Color(0xFF8A39E1), 'Send notification', user, auth));
+      // Cleanup Ops dashboard card
+      cards.add(_dashboardCard('Cleanup Ops', Icons.cleaning_services_rounded, const Color(0xFF6F38C5), 'Manage Cleanups', user, auth)); // end Cleanup Ops dashboard card
+      // Public Garbage dashboard card
+      cards.add(_dashboardCard('Public Garbage', Icons.report_problem_rounded, const Color(0xFFA555EC), 'Public Garbage', user, auth)); // end Public Garbage dashboard card
+      // Companies dashboard card
+      cards.add(_dashboardCard('Companies', Icons.business_rounded, const Color(0xFF450693), 'Manage Companies', user, auth)); // end Companies dashboard card
+      // Branches dashboard card
+      cards.add(_dashboardCard('Branches', Icons.account_tree_rounded, const Color(0xFF8A39E1), 'Manage Branches', user, auth)); // end Branches dashboard card
+      // Product Mgmt dashboard card
+      cards.add(_dashboardCard('Product Mgmt', Icons.inventory_rounded, const Color(0xFFD78FEE), 'Manage Products', user, auth)); // end Product Mgmt dashboard card
+      // Special Offers dashboard card
+      cards.add(_dashboardCard('Special Offers', Icons.local_offer_rounded, const Color(0xFFFDCFFA), 'Manage special offers', user, auth)); // end Special Offers dashboard card
+      // Global Deals dashboard card
+      cards.add(_dashboardCard('Global Deals', Icons.handshake_rounded, const Color(0xFF6F38C5), 'Manage All Deals', user, auth)); // end Global Deals dashboard card
+      // All App Pickups dashboard card
+      cards.add(_dashboardCard('All App Pickups', Icons.local_shipping_rounded, const Color(0xFFA555EC), 'All App Pickups', user, auth)); // end All App Pickups dashboard card
+      // Driver ratings dashboard card
+      cards.add(_dashboardCard('Driver ratings', Icons.rate_review_rounded, const Color(0xFF450693), 'Manage reviews', user, auth)); // end Driver ratings dashboard card
+      // Send Alert dashboard card
+      cards.add(_dashboardCard('Send Alert', Icons.campaign_rounded, const Color(0xFF8A39E1), 'Send notification', user, auth)); // end Send Alert dashboard card
     } else if (user.userTypeId == 1) {
-      cards.add(_dashboardCard('Schedule', Icons.calendar_today_rounded, const Color(0xFF9B5DE0), 'Pickup schedule', user, auth));
-      cards.add(_dashboardCard('History', Icons.history_rounded, const Color(0xFFD78FEE), 'Past pickups', user, auth));
-      cards.add(_dashboardCard('Industry Deals', Icons.handshake_rounded, const Color(0xFF6F38C5), 'Manage My Deals', user, auth));
+      // Schedule dashboard card
+      cards.add(_dashboardCard('Schedule', Icons.calendar_today_rounded, const Color(0xFF9B5DE0), 'Pickup schedule', user, auth)); // end Schedule dashboard card
+      // History dashboard card
+      cards.add(_dashboardCard('History', Icons.history_rounded, const Color(0xFFD78FEE), 'Past pickups', user, auth)); // end History dashboard card
+      // Industry Deals dashboard card
+      cards.add(_dashboardCard('Industry Deals', Icons.handshake_rounded, const Color(0xFF6F38C5), 'Manage My Deals', user, auth)); // end Industry Deals dashboard card
     } else if (user.userTypeId == 2) {
-      cards.add(_dashboardCard('Daily Tasks', Icons.schedule_rounded, const Color(0xFF9B5DE0), 'Daily tasks', user, auth));
-      cards.add(_dashboardCard('Confirm Pickups', Icons.checklist_rounded, const Color(0xFF6F38C5), 'Confirm pickups', user, auth));
-      cards.add(_dashboardCard('My Ratings', Icons.star_rate_rounded, const Color(0xFF450693), 'Driver reviews', user, auth));
+      // Daily Tasks dashboard card
+      cards.add(_dashboardCard('Daily Tasks', Icons.schedule_rounded, const Color(0xFF9B5DE0), 'Daily tasks', user, auth)); // end Daily Tasks dashboard card
+      // Confirm Pickups dashboard card
+      cards.add(_dashboardCard('Confirm Pickups', Icons.checklist_rounded, const Color(0xFF6F38C5), 'Confirm pickups', user, auth)); // end Confirm Pickups dashboard card
+      // My Ratings dashboard card
+      cards.add(_dashboardCard('My Ratings', Icons.star_rate_rounded, const Color(0xFF450693), 'Driver reviews', user, auth)); // end My Ratings dashboard card
     }
 
     final narrow = isNarrowPhone(context);
@@ -842,7 +898,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       color: color,
       compact: narrow,
       onTap: () => _handleDashboardTap(subtitle, user, auth),
-    );
+    ); // end dashboard quick action card
   }
 
   void _handleDashboardTap(String subtitle, UserEntity user, AuthProvider auth) {

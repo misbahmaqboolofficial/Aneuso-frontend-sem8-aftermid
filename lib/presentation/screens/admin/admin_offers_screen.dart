@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -74,13 +75,15 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
           style: GoogleFonts.poppins(),
         ),
         actions: [
+          // Cancel button
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               'Cancel',
               style: GoogleFonts.poppins(color: Colors.grey),
             ),
-          ),
+          ), // end Cancel button
+          // Delete button
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -88,7 +91,7 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
               'Delete',
               style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
             ),
-          ),
+          ), // end Delete button
         ],
       ),
     );
@@ -234,6 +237,7 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
             final isSelected = _currentFilter == filter;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
+              // ChoiceChip button
               child: ChoiceChip(
                 label: Text(
                   filter,
@@ -256,7 +260,7 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
                     setState(() => _currentFilter = filter);
                   }
                 },
-              ),
+              ), // end ChoiceChip button
             );
           }).toList(),
         ),

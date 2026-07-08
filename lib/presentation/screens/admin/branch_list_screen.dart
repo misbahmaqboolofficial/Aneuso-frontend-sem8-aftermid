@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -322,6 +323,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 child: Row(
                   children: [
                     Expanded(
+                      // Cancel button
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
@@ -339,7 +341,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                             fontSize: 16,
                           ),
                         ),
-                      ),
+                      ), // end Cancel button
                     ),
                     const SizedBox(width: 15),
                     Expanded(
@@ -359,6 +361,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                             ),
                           ],
                         ),
+                        // Create button
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!(_formKey.currentState?.validate() ?? false))
@@ -420,7 +423,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                               color: Colors.white,
                             ),
                           ),
-                        ),
+                        ), // end Create button
                       ),
                     ),
                   ],
@@ -768,6 +771,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 child: Row(
                   children: [
                     Expanded(
+                      // Cancel button
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
@@ -785,7 +789,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                             fontSize: 16,
                           ),
                         ),
-                      ),
+                      ), // end Cancel button
                     ),
                     const SizedBox(width: 15),
                     Expanded(
@@ -805,6 +809,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                             ),
                           ],
                         ),
+                        // Save Changes button
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!(_formKey.currentState?.validate() ?? false))
@@ -866,7 +871,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                               color: Colors.white,
                             ),
                           ),
-                        ),
+                        ), // end Save Changes button
                       ),
                     ),
                   ],
@@ -1115,6 +1120,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                       ),
                     ],
                   ),
+                  // Close button
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
@@ -1134,7 +1140,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                         color: Colors.white,
                       ),
                     ),
-                  ),
+                  ), // end Close button
                 ),
               ),
             ],
@@ -2112,6 +2118,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                 child: Row(
                                                   children: [
                                                     Expanded(
+                                                      // Cancel button
                                                       child: OutlinedButton(
                                                         onPressed: () =>
                                                             Navigator.pop(
@@ -2145,7 +2152,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                             fontSize: 16,
                                                           ),
                                                         ),
-                                                      ),
+                                                      ), // end Cancel button
                                                     ),
                                                     const SizedBox(width: 15),
                                                     Expanded(
@@ -2178,6 +2185,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                             ),
                                                           ],
                                                         ),
+                                                        // Delete button
                                                         child: ElevatedButton(
                                                           onPressed: () =>
                                                               Navigator.pop(
@@ -2212,7 +2220,7 @@ class _BranchListScreenState extends State<BranchListScreen> {
                                                                   Colors.white,
                                                             ),
                                                           ),
-                                                        ),
+                                                        ), // end Delete button
                                                       ),
                                                     ),
                                                   ],
@@ -2349,12 +2357,13 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 ),
               ],
             ),
+            // FloatingActionButton button
             child: FloatingActionButton(
               onPressed: () => _openCreateDialog(provider),
               backgroundColor: Colors.transparent,
               elevation: 0,
               child: const Icon(Icons.add, color: Colors.white, size: 30),
-            ),
+            ), // end FloatingActionButton button
           ),
         );
       },

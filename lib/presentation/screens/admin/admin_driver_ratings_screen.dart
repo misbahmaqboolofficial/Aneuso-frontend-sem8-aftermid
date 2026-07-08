@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/presentation/providers/driver_ratings_provider.dart';
 import 'package:aneuso_app/presentation/widgets/app_ui.dart';
@@ -53,7 +54,8 @@ class _AdminDriverRatingsScreenState extends State<AdminDriverRatingsScreen> {
           'Remove this rating permanently. Use for inappropriate content only.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), // end Cancel button
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () => Navigator.pop(ctx, true),
@@ -135,6 +137,7 @@ class _AdminDriverRatingsScreenState extends State<AdminDriverRatingsScreen> {
                     child: Wrap(
                       spacing: 8,
                       children: [
+                        // All ratings button
                         ChoiceChip(
                           label: const Text('All ratings'),
                           selected: _filter == 'all',
@@ -143,7 +146,8 @@ class _AdminDriverRatingsScreenState extends State<AdminDriverRatingsScreen> {
                             _filter = 'all';
                             _reload();
                           }),
-                        ),
+                        ), // end All ratings button
+                        // Low ratings button
                         ChoiceChip(
                           label: const Text('Low ratings'),
                           selected: _filter == 'low',
@@ -152,7 +156,8 @@ class _AdminDriverRatingsScreenState extends State<AdminDriverRatingsScreen> {
                             _filter = 'low';
                             _reload();
                           }),
-                        ),
+                        ), // end Low ratings button
+                        // Top drivers button
                         ChoiceChip(
                           label: const Text('Top drivers'),
                           selected: _filter == 'top',
@@ -161,7 +166,7 @@ class _AdminDriverRatingsScreenState extends State<AdminDriverRatingsScreen> {
                             _filter = 'top';
                             _reload();
                           }),
-                        ),
+                        ), // end Top drivers button
                       ],
                     ),
                   ),
@@ -252,6 +257,7 @@ class _AnalyticsHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // System overview card
         Card(
           elevation: 0,
           color: AppColors.surface,
@@ -311,9 +317,10 @@ class _AnalyticsHeader extends StatelessWidget {
               ],
             ),
           ),
-        ),
+        ), // end System overview card
         if (warns.isNotEmpty) ...[
           const SizedBox(height: 12),
+          // Low rating alerts card
           Card(
             color: AppColors.accentLight.withValues(alpha: 0.35),
             elevation: 0,
@@ -350,7 +357,7 @@ class _AnalyticsHeader extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          ), // end Low rating alerts card
         ],
       ],
     );
@@ -398,6 +405,7 @@ class _AdminRatingRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isTopMode) {
+      // Avg ${data[ card
       return Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         color: AppColors.surface,
@@ -422,13 +430,14 @@ class _AdminRatingRow extends StatelessWidget {
             style: const TextStyle(color: AppColors.textSecondary),
           ),
         ),
-      );
+      ); // end Avg ${data[ card
     }
 
     final dt = DateTime.tryParse(data['created_at']?.toString() ?? '');
     final dateStr =
         dt != null ? DateFormat('MMM d, yyyy HH:mm').format(dt.toLocal()) : '';
 
+    // ${data[ card
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       elevation: 0,
@@ -476,6 +485,6 @@ class _AdminRatingRow extends StatelessWidget {
                 onPressed: onDelete,
               ),
       ),
-    );
+    ); // end ${data[ card
   }
 }

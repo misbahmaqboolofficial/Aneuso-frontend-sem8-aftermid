@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -123,6 +124,7 @@ class _SpecialOffersScreenState extends State<SpecialOffersScreen> {
             final isSelected = _currentFilter == filter;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
+              // ChoiceChip button
               child: ChoiceChip(
                 label: Text(
                   filter,
@@ -145,7 +147,7 @@ class _SpecialOffersScreenState extends State<SpecialOffersScreen> {
                     setState(() => _currentFilter = filter);
                   }
                 },
-              ),
+              ), // end ChoiceChip button
             );
           }).toList(),
         ),

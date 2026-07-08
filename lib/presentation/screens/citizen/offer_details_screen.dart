@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -483,6 +484,7 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
           SizedBox(
             width: double.infinity,
             height: 56,
+            // ElevatedButton button
             child: ElevatedButton(
               onPressed: outOfStock ? null : () => _addToCart(goToCart: true),
               style: ElevatedButton.styleFrom(
@@ -514,7 +516,7 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
                   ),
                 ],
               ),
-            ),
+            ), // end ElevatedButton button
           ),
         ],
       ),

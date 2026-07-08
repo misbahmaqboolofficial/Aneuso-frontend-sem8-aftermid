@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -147,18 +148,21 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("Close")),
+          // Close button
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("Close")), // end Close button
           if (deal['bid_status_name'].toString().toLowerCase().contains('pending')) ...[
+            // Accept button
             ElevatedButton(
               onPressed: () => _updateStatus(deal['id'], 'accepted'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: Text("Accept"),
-            ),
+            ), // end Accept button
+            // Reject button
             ElevatedButton(
               onPressed: () => _updateStatus(deal['id'], 'rejected'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: Text("Reject"),
-            ),
+            ), // end Reject button
           ]
         ],
       ),
@@ -253,6 +257,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                       bool isSelected = _selectedStatusFilter == status;
                       return Padding(
                         padding: const EdgeInsets.only(right: 8.0),
+                        // ChoiceChip button
                         child: ChoiceChip(
                           label: Text(status),
                           selected: isSelected,
@@ -271,7 +276,7 @@ class _AdminDealsScreenState extends State<AdminDealsScreen> {
                           ),
                           backgroundColor: Colors.white,
                           elevation: isSelected ? 4 : 0,
-                        ),
+                        ), // end ChoiceChip button
                       );
                     }).toList(),
                   ),

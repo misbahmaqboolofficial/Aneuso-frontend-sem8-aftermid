@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/constants/pickup_status.dart';
 import 'package:aneuso_app/presentation/screens/admin/MissionAssignmentScreen.dart';
@@ -475,6 +476,7 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
+                        // Retry button
                         ElevatedButton(
                           onPressed: _refreshReports,
                           style: ElevatedButton.styleFrom(
@@ -486,7 +488,7 @@ class _PublicGarbageReportsScreenState extends State<PublicGarbageReportsScreen>
                             ),
                           ),
                           child: const Text('Retry'),
-                        ),
+                        ), // end Retry button
                       ],
                     ),
                   ),
@@ -1246,8 +1248,10 @@ class _GarbageReportDetailsScreenState extends State<GarbageReportDetailsScreen>
           'Mark this campaign as collected? Gulbahao will dispatch a cleanup truck to the location and citizens will be notified.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes, Collected')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')), // end Cancel button
+          // Yes, Collected button
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes, Collected')), // end Yes, Collected button
         ],
       ),
     );
@@ -1610,6 +1614,7 @@ class _UpdateStatusBottomSheetState extends State<_UpdateStatusBottomSheet> {
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
+            // UPDATE STATUS button
             child: ElevatedButton(
               onPressed: isLoading ? null : _submitStatus,
               style: ElevatedButton.styleFrom(
@@ -1636,7 +1641,7 @@ class _UpdateStatusBottomSheetState extends State<_UpdateStatusBottomSheet> {
                         letterSpacing: 1,
                       ),
                     ),
-            ),
+            ), // end UPDATE STATUS button
           ),
           const SizedBox(height: 16),
         ],

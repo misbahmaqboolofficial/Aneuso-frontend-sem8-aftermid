@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import '../../../../services/tutorial_service.dart';
 import '../../../../domain/entities/tutorial_video_entity.dart';
@@ -280,6 +281,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       ),
                     ),
                     SizedBox(height: 30),
+                    // Try Again button
                     ElevatedButton(
                       onPressed: _load,
                       style: ElevatedButton.styleFrom(
@@ -313,7 +315,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                           ),
                         ],
                       ),
-                    ),
+                    ), // end Try Again button
                   ],
                 ),
               ),

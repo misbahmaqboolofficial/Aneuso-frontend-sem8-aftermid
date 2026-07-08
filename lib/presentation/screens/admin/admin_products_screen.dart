@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aneuso_app/presentation/providers/admin_product_provider.dart';
@@ -164,6 +165,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
+                    // Cancel button
                     child: TextButton(
                       onPressed: () => Navigator.pop(ctx, false),
                       style: TextButton.styleFrom(
@@ -180,12 +182,13 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
+                    ), // end Cancel button
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: Container(
                       height: 48,
+                      // Delete button
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
                         style: ElevatedButton.styleFrom(
@@ -226,7 +229,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      ), // end Delete button
                     ),
                   ),
                 ],
@@ -397,6 +400,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               Container(
                 height: 48,
                 width: double.infinity,
+                // Close button
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
@@ -426,7 +430,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                       ),
                     ),
                   ),
-                ),
+                ), // end Close button
               ),
             ],
           ),
@@ -558,6 +562,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                   SizedBox(height: 20),
                   Container(
                     height: 48,
+                    // Try Again button
                     child: ElevatedButton(
                       onPressed: () => provider.loadProducts(),
                       style: ElevatedButton.styleFrom(
@@ -608,7 +613,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Try Again button
                   ),
                 ],
               ),
@@ -654,6 +659,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                   SizedBox(height: 30),
                   Container(
                     height: 48,
+                    // Add First Product button
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/admin/product/form');
@@ -710,7 +716,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Add First Product button
                   ),
                 ],
               ),
@@ -820,7 +826,8 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                     SizedBox(height: 15),
                   ],
 
-                  // Stats Card (only show when not searching)
+                  // Card card
+                  // Stats Card (only show when not searching) // end Card card
                   if (!isSearching && displayProducts.isNotEmpty)
                     Container(
                       padding: EdgeInsets.all(20),
@@ -943,6 +950,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                             SizedBox(height: 20),
                             Container(
                               height: 48,
+                              // Clear Search button
                               child: ElevatedButton(
                                 onPressed: _clearSearch,
                                 style: ElevatedButton.styleFrom(
@@ -995,7 +1003,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                                     ),
                                   ),
                                 ),
-                              ),
+                              ), // end Clear Search button
                             ),
                           ],
                         ),
@@ -1273,6 +1281,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           );
         },
       ),
+      // FloatingActionButton button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/admin/product/form');
@@ -1298,7 +1307,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
           ),
           child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
         ),
-      ),
+      ), // end FloatingActionButton button
     );
   }
 

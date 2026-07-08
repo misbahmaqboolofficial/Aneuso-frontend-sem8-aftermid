@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/presentation/screens/citizen/orders_screen.dart';
 import 'package:flutter/material.dart';
@@ -333,6 +334,7 @@ class OrderSuccessScreen extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: 55,
+                        // View All Orders button
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -371,7 +373,7 @@ class OrderSuccessScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
+                        ), // end View All Orders button
                       ),
                     ),
 
@@ -380,6 +382,7 @@ class OrderSuccessScreen extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: 55,
+                        // Continue Shopping button
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.popUntil(
@@ -436,7 +439,7 @@ class OrderSuccessScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
+                        ), // end Continue Shopping button
                       ),
                     ),
                   ],

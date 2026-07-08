@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/utils/screen_title_util.dart';
 import 'package:aneuso_app/core/utils/storage_util.dart';
 import 'package:aneuso_app/core/utils/form_validators.dart';
@@ -325,6 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               width: double.infinity,
               height: 54,
+              // Sign In button
               child: ElevatedButton(
                 onPressed: () => _login(authProvider),
                 style: ElevatedButton.styleFrom(
@@ -367,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-              ),
+              ), // end Sign In button
             ),
             const SizedBox(height: 22),
             Center(

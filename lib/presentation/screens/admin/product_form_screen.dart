@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:convert';
 
 import 'package:aneuso_app/core/constants/app_constants.dart';
@@ -606,6 +607,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                       SizedBox(
                         width: double.infinity,
                         height: 56,
+                        // Please upload a product image. button
                         child: ElevatedButton(
                           onPressed: _isSubmitting
                               ? null
@@ -812,7 +814,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                                     ),
                             ),
                           ),
-                        ),
+                        ), // end Please upload a product image. button
                       ),
                     ],
                   ),

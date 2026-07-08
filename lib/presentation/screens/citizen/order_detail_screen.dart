@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:aneuso_app/services/order_service.dart';
 import 'package:aneuso_app/core/utils/screen_title_util.dart';
@@ -694,6 +695,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   SizedBox(height: 20),
                   Container(
                     height: 48,
+                    // Try Again button
                     child: ElevatedButton(
                       onPressed: _loadOrder,
                       style: ElevatedButton.styleFrom(
@@ -744,7 +746,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Try Again button
                   ),
                 ],
               ),

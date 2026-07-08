@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aneuso_app/presentation/providers/admin_product_provider.dart';
@@ -1297,6 +1298,7 @@ class _OfferFormScreenState extends State<OfferFormScreen> {
           ),
         ],
       ),
+      // ElevatedButton button
       child: ElevatedButton(
         onPressed: _save,
         style: ElevatedButton.styleFrom(
@@ -1314,7 +1316,7 @@ class _OfferFormScreenState extends State<OfferFormScreen> {
             color: Colors.white,
           ),
         ),
-      ),
+      ), // end ElevatedButton button
     );
   }
 

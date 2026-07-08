@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -554,6 +555,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             SizedBox(
                               width: double.infinity,
                               height: 52,
+                              // OTP resent successfully! button
                               child: ElevatedButton(
                                 onPressed:
                                     authProvider.otpTimeoutSeconds <= 0 &&
@@ -691,7 +693,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                           ),
                                   ),
                                 ),
-                              ),
+                              ), // end OTP resent successfully! button
                             ),
                           ],
                         ),
@@ -743,6 +745,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       SizedBox(
                         width: double.infinity,
                         height: 56,
+                        // VERIFY & CONTINUE button
                         child: ElevatedButton(
                           onPressed: () => _verifyOtp(authProvider),
                           style: ElevatedButton.styleFrom(
@@ -794,7 +797,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                               ),
                             ),
                           ),
-                        ),
+                        ), // end VERIFY & CONTINUE button
                       ),
                       SizedBox(height: 20),
 

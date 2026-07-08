@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/presentation/screens/citizen/cart_screen.dart';
 import 'package:aneuso_app/presentation/screens/citizen/orders_screen.dart';
 import 'package:aneuso_app/services/cart_service.dart';
@@ -247,6 +248,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      // Cancel button
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
@@ -266,10 +268,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
+                      ), // end Cancel button
                       SizedBox(width: 10),
                       Container(
                         height: 48,
+                        // Product created successfully! button
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
@@ -350,7 +353,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               ),
                             ),
                           ),
-                        ),
+                        ), // end Product created successfully! button
                       ),
                     ],
                   ),
@@ -494,6 +497,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      // Cancel button
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
@@ -513,10 +517,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
+                      ), // end Cancel button
                       SizedBox(width: 10),
                       Container(
                         height: 48,
+                        // Product updated successfully! button
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
@@ -600,7 +605,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               ),
                             ),
                           ),
-                        ),
+                        ), // end Product updated successfully! button
                       ),
                     ],
                   ),
@@ -786,6 +791,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               Container(
                 height: 48,
                 width: double.infinity,
+                // Close button
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
@@ -815,7 +821,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       ),
                     ),
                   ),
-                ),
+                ), // end Close button
               ),
             ],
           ),
@@ -871,6 +877,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
+                    // Cancel button
                     child: TextButton(
                       onPressed: () => Navigator.pop(ctx, false),
                       style: TextButton.styleFrom(
@@ -887,12 +894,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
+                    ), // end Cancel button
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: Container(
                       height: 48,
+                      // Delete button
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
                         style: ElevatedButton.styleFrom(
@@ -933,7 +941,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      ), // end Delete button
                     ),
                   ),
                 ],
@@ -1183,6 +1191,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   SizedBox(height: 20),
                   Container(
                     height: 48,
+                    // Try Again button
                     child: ElevatedButton(
                       onPressed: () => _loadProductsForCurrentUser(),
                       style: ElevatedButton.styleFrom(
@@ -1233,7 +1242,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Try Again button
                   ),
                 ],
               ),
@@ -1280,6 +1289,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     SizedBox(height: 30),
                     Container(
                       height: 48,
+                      // Add First Product button
                       child: ElevatedButton(
                         onPressed: () => _showAddProductDialog(context),
                         style: ElevatedButton.styleFrom(
@@ -1334,7 +1344,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      ), // end Add First Product button
                     ),
                   ],
                 ],
@@ -1458,6 +1468,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         },
       ),
       floatingActionButton: isAdmin
+          // FloatingActionButton button
           ? FloatingActionButton(
               onPressed: () => _showAddProductDialog(context),
               backgroundColor: Color(0xFF6F38C5),
@@ -1483,7 +1494,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 ),
                 child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
               ),
-            )
+            ) // end FloatingActionButton button
           : null,
     );
   }

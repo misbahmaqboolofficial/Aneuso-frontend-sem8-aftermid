@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -210,7 +211,8 @@ class _CleanupFinalizationScreenState extends State<CleanupFinalizationScreen> {
     return Container(
       width: double.infinity, height: 64,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), gradient: const LinearGradient(colors: [brightPurp, mainPurple]), boxShadow: [BoxShadow(color: brightPurp.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 10))]),
-      child: ElevatedButton(onPressed: _isUploading ? null : _submit, style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: _isUploading ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2) : const Text('SUBMIT REPORT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5))),
+      // SUBMIT REPORT button
+      child: ElevatedButton(onPressed: _isUploading ? null : _submit, style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))), child: _isUploading ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2) : const Text('SUBMIT REPORT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5))), // end SUBMIT REPORT button
     );
   }
 }

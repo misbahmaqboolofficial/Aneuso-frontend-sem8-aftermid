@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:convert';
 
 import 'package:aneuso_app/core/utils/form_validators.dart';
@@ -708,6 +709,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   SizedBox(
                                     width: double.infinity,
                                     height: 56,
+                                    // CREATE ACCOUNT button
                                     child: ElevatedButton(
                                       onPressed: () => _register(authProvider),
                                       style: ElevatedButton.styleFrom(
@@ -758,7 +760,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ), // end CREATE ACCOUNT button
                                   ),
 
                                   SizedBox(height: 25),
@@ -774,6 +776,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           fontSize: 15,
                                         ),
                                       ),
+                                      // Sign In button
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
                                         style: TextButton.styleFrom(
@@ -793,7 +796,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             decorationThickness: 2,
                                           ),
                                         ),
-                                      ),
+                                      ), // end Sign In button
                                     ],
                                   ),
                                 ],

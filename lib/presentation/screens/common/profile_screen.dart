@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/flag_phone_field.dart';
@@ -621,6 +622,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(
                             width: double.infinity,
                             height: 56,
+                            // SAVE CHANGES button
                             child: ElevatedButton(
                               onPressed: () => _saveProfile(authProvider),
                               style: ElevatedButton.styleFrom(
@@ -672,7 +674,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                               ),
-                            ),
+                            ), // end SAVE CHANGES button
                           ),
                         ],
                       ),

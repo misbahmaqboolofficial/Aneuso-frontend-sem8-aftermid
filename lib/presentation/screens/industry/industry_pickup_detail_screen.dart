@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/core/constants/pickup_status.dart';
 import 'package:aneuso_app/core/theme/app_colors.dart';
 import 'package:aneuso_app/presentation/providers/driver_ratings_provider.dart';
@@ -151,6 +152,7 @@ class _IndustryPickupDetailScreenState extends State<IndustryPickupDetailScreen>
         child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          // Driver card
           Card(
             elevation: 0,
             color: Colors.white,
@@ -213,7 +215,7 @@ class _IndustryPickupDetailScreenState extends State<IndustryPickupDetailScreen>
                 ],
               ),
             ),
-          ),
+          ), // end Driver card
           const SizedBox(height: 16),
           if (_canLiveTrack) ...[
             Text(

@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 // provider not required here
 
@@ -512,6 +513,7 @@ class _BranchStatsScreenState extends State<BranchStatsScreen> {
                         ),
                       ),
                       SizedBox(height: 30),
+                      // Try Again button
                       ElevatedButton(
                         onPressed: _loadStats,
                         style: ElevatedButton.styleFrom(
@@ -536,7 +538,7 @@ class _BranchStatsScreenState extends State<BranchStatsScreen> {
                             ),
                           ],
                         ),
-                      ),
+                      ), // end Try Again button
                     ],
                   ),
                 )

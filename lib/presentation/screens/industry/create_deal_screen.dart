@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -541,6 +542,7 @@ class _CreateDealScreenState extends State<CreateDealScreen> {
           BoxShadow(color: primaryColor.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
         ],
       ),
+      // PUBLISH DEAL button
       child: ElevatedButton(
         onPressed: _isLoading ? null : _submitDeal,
         style: ElevatedButton.styleFrom(
@@ -551,7 +553,7 @@ class _CreateDealScreenState extends State<CreateDealScreen> {
         child: _isLoading 
           ? const CircularProgressIndicator(color: Colors.white) 
           : Text('PUBLISH DEAL', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1.1)),
-      ),
+      ), // end PUBLISH DEAL button
     );
   }
 }

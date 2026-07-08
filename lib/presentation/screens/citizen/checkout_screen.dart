@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 // import 'package:aneuso_app/presentation/screens/citizen/order_success_screen.dart';
 // import 'package:flutter/material.dart';
 // import 'package:aneuso_app/services/order_service.dart';
@@ -1463,6 +1464,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Container(
                 height: 48,
                 width: double.infinity,
+                // Back to Home button
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.popUntil(context, (route) => route.isFirst);
@@ -1494,7 +1496,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                   ),
-                ),
+                ), // end Back to Home button
               ),
             ],
           ),
@@ -1806,6 +1808,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   SizedBox(height: 20),
                   Container(
                     height: 48,
+                    // Try Again button
                     child: ElevatedButton(
                       onPressed: _loadData,
                       style: ElevatedButton.styleFrom(
@@ -1856,7 +1859,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ), // end Try Again button
                   ),
                 ],
               ),
@@ -2105,6 +2108,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Container(
                     height: 56,
                     width: double.infinity,
+                    // Place Order - Rs ${_checkoutSummary?.total.toStringAsFixed(2) ??  button
                     child: ElevatedButton(
                       onPressed: _isProcessing ? null : _processCheckout,
                       style: ElevatedButton.styleFrom(
@@ -2175,7 +2179,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 ),
                         ),
                       ),
-                    ),
+                    ), // end Place Order - Rs ${_checkoutSummary?.total.toStringAsFixed(2) ??  button
                   ),
                   SizedBox(height: 20),
                 ],

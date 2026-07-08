@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:aneuso_app/data/services/chat_api_service.dart';
 import 'package:aneuso_app/presentation/widgets/app_ui.dart';
 import 'package:flutter/material.dart';
@@ -394,6 +395,7 @@ class _RequestsTabState extends State<_RequestsTab> {
                         itemBuilder: (_, i) {
                           final m = Map<String, dynamic>.from(_items[i] as Map);
                           final id = m['id'] is int ? m['id'] as int : int.parse('${m['id']}');
+                          // Pending card
                           return Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -447,7 +449,7 @@ class _RequestsTabState extends State<_RequestsTab> {
                                       ),
                                     ),
                             ),
-                          );
+                          ); // end Pending card
                         },
                       ),
                     ),
@@ -541,7 +543,8 @@ class _FindPeopleTabState extends State<_FindPeopleTab> {
           'Block $name? They won\'t be able to message you or send chat requests.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), // end Cancel button
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
@@ -668,6 +671,7 @@ class _FindPeopleTabState extends State<_FindPeopleTab> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Request button
         OutlinedButton(
           onPressed: () => _sendRequest(u),
           style: OutlinedButton.styleFrom(
@@ -676,7 +680,7 @@ class _FindPeopleTabState extends State<_FindPeopleTab> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
           child: const Text('Request'),
-        ),
+        ), // end Request button
         IconButton(
           icon: Icon(Icons.block, color: Colors.red.shade300, size: 22),
           tooltip: 'Block',
@@ -775,6 +779,7 @@ class _FindPeopleTabState extends State<_FindPeopleTab> {
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (_, i) {
                         final u = Map<String, dynamic>.from(_users[i] as Map);
+                        // Card card
                         return Card(
                           child: ListTile(
                             leading: CircleAvatar(
@@ -794,7 +799,7 @@ class _FindPeopleTabState extends State<_FindPeopleTab> {
                             isThreeLine: false,
                             trailing: _actionButton(u),
                           ),
-                        );
+                        ); // end Card card
                       },
                     ),
         ),
@@ -845,7 +850,8 @@ class _BlockedTabState extends State<_BlockedTab> {
         title: const Text('Unblock user?'),
         content: Text('Unblock $name? They will be able to send you chat requests again.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          // Cancel button
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), // end Cancel button
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Unblock'),
@@ -904,6 +910,7 @@ class _BlockedTabState extends State<_BlockedTab> {
         separatorBuilder: (_, __) => const SizedBox(height: 8),
         itemBuilder: (_, i) {
           final u = Map<String, dynamic>.from(_items[i] as Map);
+          // Unblock card
           return Card(
             child: ListTile(
               leading: CircleAvatar(
@@ -924,7 +931,7 @@ class _BlockedTabState extends State<_BlockedTab> {
                 child: const Text('Unblock'),
               ),
             ),
-          );
+          ); // end Unblock card
         },
       ),
     );

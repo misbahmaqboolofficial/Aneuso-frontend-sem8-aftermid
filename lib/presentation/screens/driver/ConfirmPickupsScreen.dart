@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:io';
 
 import 'package:aneuso_app/core/constants/app_constants.dart';
@@ -779,6 +780,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
+            // Try Again button
             ElevatedButton(
               onPressed: fetchDriverTasks,
               style: ElevatedButton.styleFrom(
@@ -805,7 +807,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                   ),
                 ],
               ),
-            ),
+            ), // end Try Again button
           ],
         ),
       ),
@@ -854,6 +856,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
+            // Refresh button
             OutlinedButton(
               onPressed: fetchDriverTasks,
               style: OutlinedButton.styleFrom(
@@ -878,7 +881,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                   ),
                 ],
               ),
-            ),
+            ), // end Refresh button
           ],
         ),
       ),
@@ -1146,6 +1149,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                             const SizedBox(height: 16),
 
                             // Issue Report Section
+                            // No Issue card
                             Card(
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -1243,10 +1247,11 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                   ],
                                 ),
                               ),
-                            ),
+                            ), // end No Issue card
                             // const SizedBox(height: 16),
 
                             // // Photos Section
+                            // Cancel card
                             // Card(
                             //   elevation: 0,
                             //   shape: RoundedRectangleBorder(
@@ -1384,6 +1389,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                             SizedBox(
                               width: double.infinity,
                               height: 56,
+                              // Confirm Pickup button
                               child: ElevatedButton(
                                 onPressed: isSubmitting
                                     ? null
@@ -1423,7 +1429,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                           ),
                                         ],
                                       ),
-                              ),
+                              ), // end Confirm Pickup button
                             ),
                             const SizedBox(height: 20),
 
@@ -1431,6 +1437,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                             SizedBox(
                               width: double.infinity,
                               height: 56,
+                              // Cancel button
                               child: OutlinedButton(
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -1446,13 +1453,13 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                                   ),
                                 ),
                                 child: const Text('Cancel'),
-                              ),
+                              ), // end Cancel button
                             ),
 
                             const SizedBox(height: 30),
                           ],
                         ],
-                      ),
+                      ), // end Cancel card
                     ),
                   );
                 },
@@ -1674,6 +1681,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
+                // OK button
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context); // Close dialog
@@ -1689,7 +1697,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: const Text('OK'),
-                ),
+                ), // end OK button
               ),
             ],
           ),
@@ -1720,6 +1728,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
   }
   Widget _buildFilterChip(String label) {
     bool isSelected = _statusFilter == label;
+    // ChoiceChip button
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -1737,7 +1746,7 @@ class _ConfirmPickupsScreenState extends State<ConfirmPickupsScreen> {
       ),
       backgroundColor: Colors.grey[100],
       elevation: isSelected ? 2 : 0,
-    );
+    ); // end ChoiceChip button
   }
 
   List<dynamic> _getFilteredTasks() {

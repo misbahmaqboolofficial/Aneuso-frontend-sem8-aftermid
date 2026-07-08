@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'dart:convert';
 import 'package:aneuso_app/core/constants/app_constants.dart';
 import 'package:aneuso_app/core/utils/storage_util.dart';
@@ -316,6 +317,7 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
                   SizedBox(
                     width: double.infinity,
                     height: 54,
+                    // View Campaign Details button
                     child: ElevatedButton(
                       onPressed: () {
                         // Navigate to detail screen
@@ -333,7 +335,7 @@ class _CleanupCampaignsScreenState extends State<CleanupCampaignsScreen> {
                         elevation: 0,
                       ),
                       child: const Text('View Campaign Details', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
+                    ), // end View Campaign Details button
                   ),
                 ],
               ),

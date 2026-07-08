@@ -1,3 +1,4 @@
+//  — search // <name> button|card|drawer item|dashboard card
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -113,6 +114,7 @@ class _ViewDealsScreenState extends State<ViewDealsScreen> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final deal = deals[index];
+                    // ${deal[ card
                     return Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -162,7 +164,7 @@ class _ViewDealsScreenState extends State<ViewDealsScreen> {
                           ],
                         ),
                       ),
-                    );
+                    ); // end ${deal[ card
                   },
                 ),
     );
