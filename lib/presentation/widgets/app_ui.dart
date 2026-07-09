@@ -36,6 +36,7 @@ class AppGradientText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //gradient
     return ShaderMask(
       shaderCallback: (bounds) => gradient.createShader(bounds),
       child: Text(
@@ -48,6 +49,19 @@ class AppGradientText extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
     );
+
+//color
+    // return Text(
+    //     text,
+    //     style: (style ?? Theme.of(context).textTheme.titleLarge)?.copyWith(
+    //       color: Colors.white,
+    //       fontWeight: FontWeight.w400,
+    //     ),
+    //     maxLines: maxLines,
+    //     overflow: TextOverflow.ellipsis,
+      
+    // );
+
   }
 }
 
@@ -722,7 +736,7 @@ class AppInfoRow extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: 13,
-              color: Colors.white.withValues(alpha: 0.92),
+              color: Colors.white,
               fontWeight: FontWeight.w400,
             ),
             overflow: TextOverflow.ellipsis,

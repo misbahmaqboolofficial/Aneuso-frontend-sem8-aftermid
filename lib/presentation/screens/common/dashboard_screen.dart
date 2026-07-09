@@ -781,6 +781,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           unselectedItemColor: AppColors.textMuted,
           selectedFontSize: narrow ? 11 : 12,
           unselectedFontSize: narrow ? 10 : 11,
+          selectedLabelStyle: TextStyle(
+            fontSize: narrow ? 11 : 12,
+            // fontWeight: FontWeight.w700,
+            // color: AppColors.primaryDeep,
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: narrow ? 10 : 11,
+            // fontWeight: FontWeight.w500,
+            // color: AppColors.textMuted,
+          ),
           iconSize: narrow ? 22 : 24,
           items: [
               BottomNavigationBarItem(
